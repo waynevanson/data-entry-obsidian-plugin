@@ -11,8 +11,12 @@
             "id": "3b5a4d006b3f6b60",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "Yello world.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -81,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Yello world.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Yello world.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "Yello world.md"
+              }
             }
           }
         ],
@@ -130,6 +138,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "sample-plugin:Sample Plugin": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
@@ -138,6 +147,8 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7085d479077456dd",
-  "lastOpenFiles": []
+  "active": "b89efebf8ef0af4d",
+  "lastOpenFiles": [
+    "Yello world.md"
+  ]
 }
