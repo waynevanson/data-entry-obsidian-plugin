@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "80b07183cf4fc492",
+        "id": "b22b5830e9c1ba9b",
         "type": "tabs",
         "children": [
           {
-            "id": "625be9df96f5dd7e",
+            "id": "b4dc2b6ffd628376",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -146,7 +146,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "625be9df96f5dd7e",
+  "active": "b4dc2b6ffd628376",
   "lastOpenFiles": [
     "Untitled 1.md",
     "Yello world.md",

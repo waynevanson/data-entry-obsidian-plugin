@@ -3,7 +3,7 @@ import { App, Command, Plugin, parseYaml } from 'obsidian';
 import * as React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { CommandSource, Configuration } from '../common';
+import { Configuration } from '../common';
 
 export class MainPlugin extends Plugin {
 	async onload(): Promise<void> {
@@ -29,27 +29,13 @@ export class MainPlugin extends Plugin {
 					const container = element.createEl('div');
 					const root = createRoot(container);
 
-					const handleSubmit = makeHandleSubmitCommand(
-						json,
-						this.app,
-					);
-
-					const getDatasourceCommand = makeGetDatasourceCommand(
-						json,
-						this.app,
-					);
-
-					const initialState = getDatasourceCommand();
-
 					root.render(
 						<StrictMode>
 							<Main
-								initialState={initialState}
 								app={this.app}
 								schema={json.forms.schema}
 								uischema={json.forms.uischema}
 								submit={json.submit}
-								onSubmit={() => handleSubmit()}
 							/>
 						</StrictMode>,
 					);
@@ -58,42 +44,6 @@ export class MainPlugin extends Plugin {
 		);
 	}
 }
-
-const makeHandleSubmitCommand = (json: Configuration, app: App) => () => {
-	const command: CommandSource | undefined =
-		'command' in json.datasource ? json.datasource.command : undefined;
-
-	const commandSet = command?.set
-		? 'name' in command.set
-			? getCommandByName(app, command.set.name)
-			: 'id' in command.set
-			? getCommandById(app, command.set.id)
-			: undefined
-		: undefined;
-
-	if (!commandSet?.id) return;
-
-	//@ts-expect-error
-	app.commands.executeCommandById(commandSet.id);
-};
-
-const makeGetDatasourceCommand = (json: Configuration, app: App) => () => {
-	const command: CommandSource | undefined =
-		'command' in json.datasource ? json.datasource.command : undefined;
-
-	const commandGet = command?.get
-		? 'name' in command.get
-			? getCommandByName(app, command.get.name)
-			: 'id' in command.get
-			? getCommandById(app, command.get.id)
-			: undefined
-		: undefined;
-
-	if (!commandGet) return;
-
-	//@ts-expect-error
-	app.commands.executeCommandById(commandGet.id);
-};
 
 export const getCommandByName = (
 	app: App,
