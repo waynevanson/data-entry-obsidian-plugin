@@ -1,4 +1,14 @@
-# Installing plugins and stuff
+# Data Entry - Obsidian Plugin
+
+Create beautiful forms for use in data entry contexts.
+
+## WIP
+
+This is a work in progress.
+
+You can use it if you want, but there are no guarentees.
+
+## Installing plugins and stuff
 
 ```sh
 VAULT_DIRECTORY=".vault"

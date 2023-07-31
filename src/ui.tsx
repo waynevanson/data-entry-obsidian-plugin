@@ -7,22 +7,34 @@ import { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { App } from 'obsidian';
 import * as React from 'react';
 import { ReactNode, useState } from 'react';
+import { Button } from './components';
 
 export interface MainProps {
-	initialState?: unknown;
 	app: App;
 	schema: JsonSchema;
 	uischema?: UISchemaElement;
 	submit?: string;
 	onSubmit?: (data: unknown) => void;
+	data: Array<unknown>;
+	selected: number | null;
 }
 
+// selects a current thing until told otherwise.
 export function Main(props: MainProps) {
-	const [form, formSet] = useState<unknown>(props.initialState ?? {});
+	const [selected, selectedSet] = useState<number | null>(props.selected);
+	const [form, formSet] = useState<unknown>(
+		selected !== null ? props.data[selected] : {},
+	);
 	const [errors, errorsSet] = useState<Array<unknown>>([]);
 
 	return (
 		<ErrorBoundary>
+			<Button
+				onChange={() => selectedSet(null)}
+				disabled={selected != null}
+			>
+				New
+			</Button>
 			<form
 				onSubmit={(event) => {
 					event.preventDefault();

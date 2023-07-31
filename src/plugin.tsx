@@ -26,13 +26,27 @@ export class MainPlugin extends Plugin {
 						: JSON.parse;
 
 					const json = jsonify(source) as Configuration;
+					const file = this.app.vault
+						.getFiles()
+						.find(
+							(file) => file.path === json.datasource.set.file,
+						)!;
+					const inputRaw = await this.app.vault.read(file);
+					const inputJson: Array<unknown> = JSON.parse(inputRaw);
+
 					const container = element.createEl('div');
 					const root = createRoot(container);
+
+					// Last index of the input, or null
+					const selected =
+						inputJson.length > 0 ? inputJson.length - 1 : null;
 
 					root.render(
 						<StrictMode>
 							<Main
+								data={inputJson}
 								app={this.app}
+								selected={selected}
 								schema={json.forms.schema}
 								uischema={json.forms.uischema}
 								submit={json.submit}
