@@ -13,10 +13,12 @@ export interface MainProps {
 	schema: JsonSchema;
 	uischema?: UISchemaElement;
 	submit?: string;
+	onSubmit?: () => void;
 }
 
 export function Main(props: MainProps) {
 	const [data, dataSet] = useState({});
+
 	return (
 		<>
 			<div>Hello, Obsidian!</div>
@@ -24,6 +26,7 @@ export function Main(props: MainProps) {
 				<form
 					onSubmit={(event) => {
 						event.preventDefault();
+						props.onSubmit?.();
 					}}
 				>
 					<JsonForms

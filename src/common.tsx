@@ -6,6 +6,7 @@ export interface Configuration {
 		file: string & never;
 		directory: string & never;
 		dataview: never;
+		command: CommandSource;
 	}>;
 	forms: {
 		schema: JsonSchema;
@@ -13,6 +14,11 @@ export interface Configuration {
 	};
 	submit?: string;
 }
+
+export type CommandSource = Record<
+	'get' | 'set',
+	Sum<Record<'name' | 'id', string>>
+>;
 
 export type Sum<T extends Record<string, unknown>> = keyof T extends never
 	? never
