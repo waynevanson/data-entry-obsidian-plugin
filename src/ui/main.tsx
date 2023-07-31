@@ -12,6 +12,7 @@ export interface MainProps {
 	app: App;
 	schema: JsonSchema;
 	uischema?: UISchemaElement;
+	submit?: string;
 }
 
 export function Main(props: MainProps) {
@@ -33,7 +34,7 @@ export function Main(props: MainProps) {
 						renderers={materialRenderers}
 						onChange={({ data, errors: _errors }) => dataSet(data)}
 					/>
-					<button type="submit">Submit</button>
+					<button type="submit">{props.submit ?? 'Submit'}</button>
 				</form>
 			</ErrorBoundary>
 		</>

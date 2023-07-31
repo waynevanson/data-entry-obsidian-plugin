@@ -11,6 +11,7 @@ export interface Configuration {
 		schema: JsonSchema;
 		uischema?: UISchemaElement;
 	};
+	submit?: string;
 }
 
 export type Sum<T extends Record<string, unknown>> = keyof T extends never

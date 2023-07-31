@@ -34,6 +34,7 @@ export class MainPlugin extends Plugin {
 								app={this.app}
 								schema={json.forms.schema}
 								uischema={json.forms.uischema}
+								submit={json.submit}
 							/>
 						</StrictMode>,
 					);
