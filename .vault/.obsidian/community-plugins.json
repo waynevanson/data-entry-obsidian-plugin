@@ -1,4 +1,5 @@
 [
   "hot-reload",
-  "sample-plugin"
+  "sample-plugin",
+  "obsidian-plugin-prettier"
 ]

@@ -2,9 +2,10 @@ import { JsonSchema, UISchemaElement } from '@jsonforms/core';
 
 export interface Configuration {
 	datasource: Sum<{
-		templater: { template: string };
-		file: string;
-		directory: string;
+		templater: { template: string } & never;
+		file: string & never;
+		directory: string & never;
+		dataview: never;
 	}>;
 	forms: {
 		schema: JsonSchema;

@@ -20,14 +20,21 @@ export function Main(props: MainProps) {
 		<>
 			<div>Hello, Obsidian!</div>
 			<ErrorBoundary>
-				<JsonForms
-					data={data}
-					cells={materialCells}
-					schema={props.schema ?? undefined}
-					uischema={props.uischema ?? undefined}
-					renderers={materialRenderers}
-					onChange={({ data, errors: _errors }) => dataSet(data)}
-				/>
+				<form
+					onSubmit={(event) => {
+						event.preventDefault();
+					}}
+				>
+					<JsonForms
+						data={data}
+						cells={materialCells}
+						schema={props.schema ?? undefined}
+						uischema={props.uischema ?? undefined}
+						renderers={materialRenderers}
+						onChange={({ data, errors: _errors }) => dataSet(data)}
+					/>
+					<button type="submit">Submit</button>
+				</form>
 			</ErrorBoundary>
 		</>
 	);
@@ -37,12 +44,12 @@ class ErrorBoundary extends React.Component<
 	{ children?: ReactNode },
 	{ hasError: boolean }
 > {
-	constructor(props: any) {
+	constructor(props: { children?: ReactNode }) {
 		super(props);
 		this.state = { hasError: false };
 	}
 
-	static getDerivedStateFromError(error: any) {
+	static getDerivedStateFromError(error: unknown) {
 		return { hasError: true };
 	}
 

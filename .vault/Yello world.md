@@ -12,12 +12,17 @@ All as JSON files.
 
 ```yaml-data-entry
 datasource:
-    templater:
-        template: Template Name.md
+  templater:
+    template: Template Name.md
 forms:
-    schema:
-        properties:
-            name:
-                type: string
-    uischema:
+  schema:
+    properties:
+      name:
+        type: string
+  uischema:
+    type: VerticalLayout
+    elements:
+      - type: Control
+        label: Name
+        scope: '#/properties/name'
 ```

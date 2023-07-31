@@ -17,14 +17,15 @@ export class MainPlugin extends Plugin {
 		const name = 'data-entry';
 
 		files.forEach((extension) =>
+			// todo - create DIY code block processor that allows ```lang plugin
 			this.registerMarkdownCodeBlockProcessor(
 				`${extension}-${name}`,
 				(source, element, context) => {
-					const stringify = yamls.includes(extension)
+					const jsonify = yamls.includes(extension)
 						? parseYaml
 						: JSON.parse;
 
-					const json = stringify(source) as Configuration;
+					const json = jsonify(source) as Configuration;
 					const container = element.createEl('div');
 					const root = createRoot(container);
 					root.render(
@@ -41,3 +42,5 @@ export class MainPlugin extends Plugin {
 		);
 	}
 }
+
+// function that can get data
