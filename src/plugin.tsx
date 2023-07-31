@@ -3,7 +3,7 @@ import * as React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Configuration } from './common';
-import { Main } from './ui';
+import { Application } from './ui';
 
 export class MainPlugin extends Plugin {
 	async onload(): Promise<void> {
@@ -38,15 +38,12 @@ export class MainPlugin extends Plugin {
 					const root = createRoot(container);
 
 					// Last index of the input, or null
-					const selected =
-						inputJson.length > 0 ? inputJson.length - 1 : null;
 
 					root.render(
 						<StrictMode>
-							<Main
+							<Application
 								data={inputJson}
 								app={this.app}
-								selected={selected}
 								schema={json.forms.schema}
 								uischema={json.forms.uischema}
 								submit={json.submit}

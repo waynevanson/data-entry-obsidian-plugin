@@ -8,20 +8,57 @@ import { App } from 'obsidian';
 import * as React from 'react';
 import { ReactNode, useState } from 'react';
 import { Button } from './components';
+import { ThemeProvider } from 'styled-components';
+import {
+	QueryClientProvider,
+	QueryClient,
+	useQuery,
+} from '@tanstack/react-query';
 
-export interface MainProps {
+export interface ProviderProps {
+	query: QueryClient;
+	theme: Parameters<typeof ThemeProvider>[0]['theme'];
+	children: ReactNode;
+}
+
+export const Providers = (props: ProviderProps) => (
+	<QueryClientProvider client={props.query}>
+		<ThemeProvider theme={props.theme}>{props.children}</ThemeProvider>
+	</QueryClientProvider>
+);
+
+export interface ApplicationProps {
 	app: App;
 	schema: JsonSchema;
 	uischema?: UISchemaElement;
 	submit?: string;
 	onSubmit?: (data: unknown) => void;
 	data: Array<unknown>;
-	selected: number | null;
+}
+
+export const Entry = (props: ApplicationProps) => {
+	const [queryClient] = useState(new QueryClient());
+	return (
+		<Providers query={queryClient} theme={{}}>
+			<Application {...props} />
+		</Providers>
+	);
+};
+
+// keep files in sync
+export function useQueryFiles(app: App) {
+	return useQuery({
+		queryFn: async (context) => {
+			app.vault.getFiles();
+		},
+	});
 }
 
 // selects a current thing until told otherwise.
-export function Main(props: MainProps) {
-	const [selected, selectedSet] = useState<number | null>(props.selected);
+export function Application(props: ApplicationProps) {
+	const [selected, selectedSet] = useState<number | null>(
+		props.data.length > 0 ? props.data.length - 1 : null,
+	);
 	const [form, formSet] = useState<unknown>(
 		selected !== null ? props.data[selected] : {},
 	);
@@ -34,6 +71,27 @@ export function Main(props: MainProps) {
 				disabled={selected != null}
 			>
 				New
+			</Button>
+
+			<Button
+				onChange={() =>
+					selectedSet((selected) =>
+						selected !== null ? selected - 1 : null,
+					)
+				}
+				disabled={selected === null || selected <= 0}
+			>
+				Previous
+			</Button>
+			<Button
+				onChange={() =>
+					selectedSet((selected) =>
+						selected !== null ? selected + 1 : null,
+					)
+				}
+				disabled={selected === null || selected < props.data.length}
+			>
+				Next
 			</Button>
 			<form
 				onSubmit={(event) => {
