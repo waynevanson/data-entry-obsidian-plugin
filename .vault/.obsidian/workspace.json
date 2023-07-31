@@ -4,19 +4,15 @@
     "type": "split",
     "children": [
       {
-        "id": "afb5eae102410a1e",
+        "id": "e7ebbc92e240620a",
         "type": "tabs",
         "children": [
           {
-            "id": "8af2163887fdcadf",
+            "id": "cd985a3da8f63ccf",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "data.md",
-                "mode": "preview",
-                "source": true
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -85,7 +81,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "data.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +97,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "data.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -124,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "data.md"
-              }
+              "state": {}
             }
           }
         ],
@@ -146,10 +138,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "8af2163887fdcadf",
+  "active": "cd985a3da8f63ccf",
   "lastOpenFiles": [
-    "Yello world.md",
     "data.md",
+    "Yello world.md",
     "data.ms",
     "data.json.md",
     "data.json",

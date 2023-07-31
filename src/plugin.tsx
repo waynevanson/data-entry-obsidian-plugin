@@ -1,9 +1,9 @@
-import { Main } from './ui';
 import { App, Command, Plugin, parseYaml } from 'obsidian';
 import * as React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Configuration } from './common';
+import { Main } from './ui';
 
 export class MainPlugin extends Plugin {
 	async onload(): Promise<void> {
@@ -20,7 +20,7 @@ export class MainPlugin extends Plugin {
 			// todo - create DIY code block processor that allows ```lang plugin-name
 			this.registerMarkdownCodeBlockProcessor(
 				`${extension}-${name}`,
-				(source, element, context) => {
+				async (source, element, context) => {
 					const jsonify = yamls.includes(extension)
 						? parseYaml
 						: JSON.parse;
@@ -28,11 +28,6 @@ export class MainPlugin extends Plugin {
 					const json = jsonify(source) as Configuration;
 					const container = element.createEl('div');
 					const root = createRoot(container);
-					const file = this.app.vault
-						.getFiles()
-						.find(
-							(file) => file.path === json.datasource.set.file,
-						)!;
 
 					root.render(
 						<StrictMode>
@@ -41,20 +36,12 @@ export class MainPlugin extends Plugin {
 								schema={json.forms.schema}
 								uischema={json.forms.uischema}
 								submit={json.submit}
-								onSubmit={(data) => {
-									let stringified = JSON.stringify(
-										data,
-										null,
-										2,
+								onSubmit={(outputJs) => {
+									readPushSave(
+										this.app,
+										json.datasource.set.file,
+										outputJs,
 									);
-
-									stringified = [
-										'```json',
-										stringified,
-										'```',
-									].join('\n');
-
-									this.app.vault.modify(file, stringified);
 								}}
 							/>
 						</StrictMode>,
@@ -64,6 +51,24 @@ export class MainPlugin extends Plugin {
 		);
 	}
 }
+
+async function readPushSave(app: App, path: string, element: unknown) {
+	const file = app.vault.getFiles().find((file) => file.path === path)!;
+
+	const inputRaw = await app.vault.read(file);
+	const inputJson: Array<unknown> = JSON.parse(inputRaw);
+	inputJson.push(element);
+
+	const outputJsonRaw = JSON.stringify(inputJson, null, 2);
+	const outputJson = outputJsonRaw;
+	app.vault.modify(file, outputJson);
+}
+
+const removeCodeFence = (string: string) =>
+	/(?:```[a-z]*\n)[\s\S]*?(?:\n```)/g.exec(string)?.[0];
+
+const addCodeFence = (string: string, format = '') =>
+	[['```', format].join(''), string, '```'].join('\n');
 
 export const getCommandByName = (
 	app: App,

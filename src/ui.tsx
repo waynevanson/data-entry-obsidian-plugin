@@ -22,31 +22,29 @@ export function Main(props: MainProps) {
 	const [errors, errorsSet] = useState<Array<unknown>>([]);
 
 	return (
-		<>
-			<ErrorBoundary>
-				<form
-					onSubmit={(event) => {
-						event.preventDefault();
-						props.onSubmit?.(form);
+		<ErrorBoundary>
+			<form
+				onSubmit={(event) => {
+					event.preventDefault();
+					props.onSubmit?.(form);
+				}}
+			>
+				<JsonForms
+					data={form}
+					cells={materialCells}
+					schema={props.schema ?? undefined}
+					uischema={props.uischema ?? undefined}
+					renderers={materialRenderers}
+					onChange={({ data, errors: _errors }) => {
+						formSet(data);
+						errorsSet(errors);
 					}}
-				>
-					<JsonForms
-						data={form}
-						cells={materialCells}
-						schema={props.schema ?? undefined}
-						uischema={props.uischema ?? undefined}
-						renderers={materialRenderers}
-						onChange={({ data, errors: _errors }) => {
-							formSet(data);
-							errorsSet(errors);
-						}}
-					/>
-					<button type="submit" disabled={errors.length > 0}>
-						{props.submit ?? 'Submit'}
-					</button>
-				</form>
-			</ErrorBoundary>
-		</>
+				/>
+				<button type="submit" disabled={errors.length > 0}>
+					{props.submit ?? 'Submit'}
+				</button>
+			</form>
+		</ErrorBoundary>
 	);
 }
 
