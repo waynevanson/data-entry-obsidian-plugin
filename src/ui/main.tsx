@@ -9,6 +9,7 @@ import * as React from 'react';
 import { ReactNode, useState } from 'react';
 
 export interface MainProps {
+	initialState?: unknown;
 	app: App;
 	schema: JsonSchema;
 	uischema?: UISchemaElement;
@@ -17,7 +18,7 @@ export interface MainProps {
 }
 
 export function Main(props: MainProps) {
-	const [data, dataSet] = useState({});
+	const [data, dataSet] = useState(props.initialState ?? {});
 
 	return (
 		<>

@@ -17,7 +17,7 @@ export class MainPlugin extends Plugin {
 		const name = 'data-entry';
 
 		files.forEach((extension) =>
-			// todo - create DIY code block processor that allows ```lang plugin
+			// todo - create DIY code block processor that allows ```lang plugin-name
 			this.registerMarkdownCodeBlockProcessor(
 				`${extension}-${name}`,
 				(source, element, context) => {
@@ -29,11 +29,22 @@ export class MainPlugin extends Plugin {
 					const container = element.createEl('div');
 					const root = createRoot(container);
 
-					const handleSubmit = makeHandleSubmit(json, this.app);
+					const handleSubmit = makeHandleSubmitCommand(
+						json,
+						this.app,
+					);
+
+					const getDatasourceCommand = makeGetDatasourceCommand(
+						json,
+						this.app,
+					);
+
+					const initialState = getDatasourceCommand();
 
 					root.render(
 						<StrictMode>
 							<Main
+								initialState={initialState}
 								app={this.app}
 								schema={json.forms.schema}
 								uischema={json.forms.uischema}
@@ -48,7 +59,7 @@ export class MainPlugin extends Plugin {
 	}
 }
 
-const makeHandleSubmit = (json: Configuration, app: App) => () => {
+const makeHandleSubmitCommand = (json: Configuration, app: App) => () => {
 	const command: CommandSource | undefined =
 		'command' in json.datasource ? json.datasource.command : undefined;
 
@@ -64,6 +75,24 @@ const makeHandleSubmit = (json: Configuration, app: App) => () => {
 
 	//@ts-expect-error
 	app.commands.executeCommandById(commandSet.id);
+};
+
+const makeGetDatasourceCommand = (json: Configuration, app: App) => () => {
+	const command: CommandSource | undefined =
+		'command' in json.datasource ? json.datasource.command : undefined;
+
+	const commandGet = command?.get
+		? 'name' in command.get
+			? getCommandByName(app, command.get.name)
+			: 'id' in command.get
+			? getCommandById(app, command.get.id)
+			: undefined
+		: undefined;
+
+	if (!commandGet) return;
+
+	//@ts-expect-error
+	app.commands.executeCommandById(commandGet.id);
 };
 
 export const getCommandByName = (
