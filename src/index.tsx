@@ -1,1 +1,1 @@
-export * from './obsidian';
+export { MainPlugin } from './plugin';

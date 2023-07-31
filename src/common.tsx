@@ -1,9 +1,7 @@
 import { JsonSchema, UISchemaElement } from '@jsonforms/core';
 
 export interface Configuration {
-	datasource: Sum<{
-		file: string;
-	}>;
+	datasource: Record<'get' | 'set', Sum<{ file: string }>>;
 	forms: {
 		schema: JsonSchema;
 		uischema?: UISchemaElement;

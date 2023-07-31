@@ -1,9 +1,9 @@
-import { Main } from '../ui';
+import { Main } from './ui';
 import { App, Command, Plugin, parseYaml } from 'obsidian';
 import * as React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Configuration } from '../common';
+import { Configuration } from './common';
 
 export class MainPlugin extends Plugin {
 	async onload(): Promise<void> {
@@ -28,6 +28,11 @@ export class MainPlugin extends Plugin {
 					const json = jsonify(source) as Configuration;
 					const container = element.createEl('div');
 					const root = createRoot(container);
+					const file = this.app.vault
+						.getFiles()
+						.find(
+							(file) => file.path === json.datasource.set.file,
+						)!;
 
 					root.render(
 						<StrictMode>
@@ -36,6 +41,21 @@ export class MainPlugin extends Plugin {
 								schema={json.forms.schema}
 								uischema={json.forms.uischema}
 								submit={json.submit}
+								onSubmit={(data) => {
+									let stringified = JSON.stringify(
+										data,
+										null,
+										2,
+									);
+
+									stringified = [
+										'```json',
+										stringified,
+										'```',
+									].join('\n');
+
+									this.app.vault.modify(file, stringified);
+								}}
 							/>
 						</StrictMode>,
 					);

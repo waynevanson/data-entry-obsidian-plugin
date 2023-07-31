@@ -12,8 +12,8 @@ All as JSON files.
 
 ```yaml-data-entry
 datasource:
-  templater:
-    template: Template Name.md
+  set:
+    file: data.md
 forms:
   schema:
     properties:

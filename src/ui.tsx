@@ -14,31 +14,36 @@ export interface MainProps {
 	schema: JsonSchema;
 	uischema?: UISchemaElement;
 	submit?: string;
-	onSubmit?: () => void;
+	onSubmit?: (data: unknown) => void;
 }
 
 export function Main(props: MainProps) {
-	const [data, dataSet] = useState(props.initialState ?? {});
+	const [form, formSet] = useState<unknown>(props.initialState ?? {});
+	const [errors, errorsSet] = useState<Array<unknown>>([]);
 
 	return (
 		<>
-			<div>Hello, Obsidian!</div>
 			<ErrorBoundary>
 				<form
 					onSubmit={(event) => {
 						event.preventDefault();
-						props.onSubmit?.();
+						props.onSubmit?.(form);
 					}}
 				>
 					<JsonForms
-						data={data}
+						data={form}
 						cells={materialCells}
 						schema={props.schema ?? undefined}
 						uischema={props.uischema ?? undefined}
 						renderers={materialRenderers}
-						onChange={({ data, errors: _errors }) => dataSet(data)}
+						onChange={({ data, errors: _errors }) => {
+							formSet(data);
+							errorsSet(errors);
+						}}
 					/>
-					<button type="submit">{props.submit ?? 'Submit'}</button>
+					<button type="submit" disabled={errors.length > 0}>
+						{props.submit ?? 'Submit'}
+					</button>
 				</form>
 			</ErrorBoundary>
 		</>
