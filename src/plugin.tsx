@@ -3,7 +3,7 @@ import * as React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Configuration } from './common';
-import { Application } from './ui';
+import { Main } from './components/main';
 
 export class MainPlugin extends Plugin {
 	async onload(): Promise<void> {
@@ -41,7 +41,7 @@ export class MainPlugin extends Plugin {
 
 					root.render(
 						<StrictMode>
-							<Application
+							<Main
 								data={inputJson}
 								app={this.app}
 								schema={json.forms.schema}
