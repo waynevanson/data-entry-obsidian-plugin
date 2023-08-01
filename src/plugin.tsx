@@ -3,7 +3,7 @@ import * as React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Configuration } from './common';
-import { Main } from './components/main';
+import { Application } from './components';
 
 export class MainPlugin extends Plugin {
 	async onload(): Promise<void> {
@@ -26,34 +26,17 @@ export class MainPlugin extends Plugin {
 						: JSON.parse;
 
 					const json = jsonify(source) as Configuration;
-					const file = this.app.vault
-						.getFiles()
-						.find(
-							(file) => file.path === json.datasource.set.file,
-						)!;
-					const inputRaw = await this.app.vault.read(file);
-					const inputJson: Array<unknown> = JSON.parse(inputRaw);
-
 					const container = element.createEl('div');
 					const root = createRoot(container);
 
-					// Last index of the input, or null
-
 					root.render(
 						<StrictMode>
-							<Main
-								data={inputJson}
+							<Application
+								fileName={json.datasource.file}
 								app={this.app}
 								schema={json.forms.schema}
 								uischema={json.forms.uischema}
 								submit={json.submit}
-								onSubmit={(outputJs) => {
-									readPushSave(
-										this.app,
-										json.datasource.set.file,
-										outputJs,
-									);
-								}}
 							/>
 						</StrictMode>,
 					);
@@ -61,18 +44,6 @@ export class MainPlugin extends Plugin {
 			),
 		);
 	}
-}
-
-async function readPushSave(app: App, path: string, element: unknown) {
-	const file = app.vault.getFiles().find((file) => file.path === path)!;
-
-	const inputRaw = await app.vault.read(file);
-	const inputJson: Array<unknown> = JSON.parse(inputRaw);
-	inputJson.push(element);
-
-	const outputJsonRaw = JSON.stringify(inputJson, null, 2);
-	const outputJson = outputJsonRaw;
-	app.vault.modify(file, outputJson);
 }
 
 const removeCodeFence = (string: string) =>

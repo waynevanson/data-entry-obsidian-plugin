@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const useCursor = (max: number | undefined = Infinity) => {
 	const [value, valueSet] = useState<number | null>(null);
+
+	useEffect(() => {
+		max !== Infinity && valueSet(max);
+	}, [max]);
 
 	const incrementBy = (count: number) =>
 		valueSet((cursor) => {

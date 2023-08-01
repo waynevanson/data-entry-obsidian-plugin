@@ -1,19 +1,5 @@
-import {
-	materialCells,
-	materialRenderers,
-} from '@jsonforms/material-renderers';
-import { JsonForms } from '@jsonforms/react';
-import { JsonSchema, UISchemaElement } from '@jsonforms/core';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { App, TFile } from 'obsidian';
-import * as React from 'react';
-import { ReactNode, useMemo, useState } from 'react';
-import { ThemeProvider } from 'styled-components';
-import {
-	QueryClientProvider,
-	QueryClient,
-	useQuery,
-	useMutation,
-} from '@tanstack/react-query';
 
 export const useQueryFile = (app: App, fileName: string) =>
 	useQuery({

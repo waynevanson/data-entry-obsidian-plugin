@@ -1,6 +1,5 @@
 ```yaml-data-entry
 datasource:
-  set:
     file: data.md
 forms:
   schema:
