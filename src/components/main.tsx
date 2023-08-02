@@ -22,15 +22,12 @@ export interface UseQueryFileReturn {
 	contents: Array<unknown>;
 }
 
+const useMax = (fa: Array<unknown> | undefined) =>
+	useMemo(() => (fa?.length != null ? fa.length - 1 : null), [fa?.length]);
+
 export function Main(props: MainProps) {
 	const file = useFile(props.app, props.fileName);
-	const max = useMemo(
-		() =>
-			file.query.data?.contents?.length
-				? file.query.data.contents.length - 1
-				: null,
-		[file.query.data?.contents.length],
-	);
+	const max = useMax(file.query.data?.contents);
 
 	const cursor = useCursor(max);
 
