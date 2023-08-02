@@ -42,7 +42,7 @@ export function Main(props: MainProps) {
 				? file.query.data?.contents?.[cursor.value]
 				: null;
 
-		form && formSet(form);
+		formSet(form ?? {});
 	}, [file.query.data?.contents, cursor.value, formSet]);
 
 	const [errors, errorsSet] = useState<Array<unknown>>([]);
@@ -54,14 +54,20 @@ export function Main(props: MainProps) {
 		} else {
 			array[cursor.value] = form;
 		}
-		file.mutation.mutate(array);
+		file.mutation.mutateAsync(array);
 	};
 
 	return (
 		<ErrorBoundary>
-			<button onClick={cursor.clear}>New</button>
-			<button onClick={cursor.decrement}>Previous</button>
-			<button onClick={cursor.increment}>Next</button>
+			<button onClick={cursor.clear} disabled={cursor.value == null}>
+				New
+			</button>
+			<button onClick={cursor.decrement} disabled={cursor.value == null}>
+				Previous
+			</button>
+			<button onClick={cursor.increment} disabled={cursor.value == null}>
+				Next
+			</button>
 			<form
 				onSubmit={(event) => {
 					event.preventDefault();

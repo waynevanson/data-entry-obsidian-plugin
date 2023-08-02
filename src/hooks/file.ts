@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { App, TFile } from 'obsidian';
+import { App, Notice, TFile } from 'obsidian';
 
 export const useQueryFile = (app: App, fileName: string) =>
 	useQuery({
@@ -30,6 +30,9 @@ export const useMutationFile = (app: App, file: TFile | undefined) =>
 			}
 			const stringified = JSON.stringify(contents);
 			await app.vault.modify(file, stringified);
+		},
+		onSuccess: () => {
+			new Notice('File has been saved!');
 		},
 	});
 
