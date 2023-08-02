@@ -37,11 +37,13 @@ export function Main(props: MainProps) {
 	const [form, formSet] = useState<unknown>({});
 
 	useEffect(() => {
-		const form = cursor.value
-			? file.query.data?.contents?.[cursor.value]
-			: null;
+		const form =
+			cursor.value != null
+				? file.query.data?.contents?.[cursor.value]
+				: null;
+
 		form && formSet(form);
-	}, [file.query.data?.contents, cursor.value, form, formSet]);
+	}, [file.query.data?.contents, cursor.value, formSet]);
 
 	const [errors, errorsSet] = useState<Array<unknown>>([]);
 
@@ -57,9 +59,9 @@ export function Main(props: MainProps) {
 
 	return (
 		<ErrorBoundary>
-			<button onChange={cursor.clear}>New</button>
-			<button onChange={cursor.decrement}>Previous</button>
-			<button onChange={cursor.increment}>Next</button>
+			<button onClick={cursor.clear}>New</button>
+			<button onClick={cursor.decrement}>Previous</button>
+			<button onClick={cursor.increment}>Next</button>
 			<form
 				onSubmit={(event) => {
 					event.preventDefault();
