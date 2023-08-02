@@ -6,7 +6,7 @@ import {
 import { JsonForms } from '@jsonforms/react';
 import { App, TFile } from 'obsidian';
 import * as React from 'react';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useCursor, useFile } from 'src/hooks';
 
 export interface MainProps {
@@ -22,26 +22,26 @@ export interface UseQueryFileReturn {
 	contents: Array<unknown>;
 }
 
-// should we autosave? when the use hasn't typed for n seconds save.
-//
-// just do one form for now.
 export function Main(props: MainProps) {
 	const file = useFile(props.app, props.fileName);
-	const cursor = useCursor(
-		(file.query.data?.contents?.length ?? Infinity) - 1,
+	const max = useMemo(
+		() =>
+			file.query.data?.contents?.length
+				? file.query.data.contents.length - 1
+				: null,
+		[file.query.data?.contents.length],
 	);
+
+	const cursor = useCursor(max);
 
 	const [form, formSet] = useState<unknown>({});
 
-	useEffect(
-		() =>
-			formSet(
-				cursor.value !== null
-					? file.query.data?.contents?.[cursor.value] ?? {}
-					: {},
-			),
-		[file.query.data?.contents, cursor.value, formSet],
-	);
+	useEffect(() => {
+		const form = cursor.value
+			? file.query.data?.contents?.[cursor.value]
+			: null;
+		form && formSet(form);
+	}, [file.query.data?.contents, cursor.value, form, formSet]);
 
 	const [errors, errorsSet] = useState<Array<unknown>>([]);
 
@@ -85,9 +85,10 @@ export function Main(props: MainProps) {
 				<code>
 					{JSON.stringify(
 						{
-							contents: file.query.data?.contents,
-							form,
+							max,
 							cursor: cursor.value,
+							form,
+							contents: file.query.data?.contents,
 						},
 						null,
 						2,
