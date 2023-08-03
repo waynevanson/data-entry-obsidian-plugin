@@ -20,6 +20,9 @@ dependencies:
   dayjs:
     specifier: ^1.10.7
     version: 1.11.9
+  fp-ts:
+    specifier: ^2.16.1
+    version: 2.16.1
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -3763,6 +3766,10 @@ packages:
       combined-stream: 1.0.8
       mime-types: 2.1.35
     dev: true
+
+  /fp-ts@2.16.1:
+    resolution: {integrity: sha512-by7U5W8dkIzcvDofUcO42yl9JbnHTEDBrzu3pt5fKT+Z4Oy85I21K80EYJYdjQGC2qum4Vo55Ag57iiIK4FYuA==}
+    dev: false
 
   /fs-readdir-recursive@1.1.0:
     resolution: {integrity: sha512-GNanXlVr2pf02+sPN40XN8HG+ePaNcvM0q5mZBd668Obwb0yD5GiUbZOFgwn8kGMY6I3mdyDJzieUy3PTYyTRA==}

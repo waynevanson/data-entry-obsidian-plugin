@@ -50,6 +50,11 @@ export const Pagination = (props: PaginationProps) => {
 		</nav>
 	);
 };
+const StyledButton = styled.button<{ active?: boolean }>`
+	background-color: var(
+		--interactive-${(props) => (props.active ? 'accent' : 'normal')}
+	) !important;
+`;
 
 const PaginationItem = (props: {
 	page: number;
@@ -57,8 +62,8 @@ const PaginationItem = (props: {
 	onClick: (page: number) => void;
 }) => (
 	<li>
-		<button
-			style={{ color: props.current ? 'pink' : 'initial' }}
+		<StyledButton
+			active={props.current}
 			onClick={() => props.onClick(props.page)}
 			aria-label={`${props.current ? `Current page, ` : ''}Page ${
 				props.page
@@ -66,6 +71,6 @@ const PaginationItem = (props: {
 			aria-current={props.current}
 		>
 			{props.page}
-		</button>
+		</StyledButton>
 	</li>
 );

@@ -54,7 +54,7 @@ export function Main(props: MainProps) {
 		} else {
 			array[cursor.value] = form;
 		}
-		file.mutation.mutateAsync(array);
+		file.mutation.mutate(array);
 	};
 
 	return (
@@ -62,6 +62,7 @@ export function Main(props: MainProps) {
 			<button onClick={cursor.clear} disabled={cursor.value == null}>
 				New
 			</button>
+			{/* if null, set cursor to 1 beyond last to show we create new item */}
 			<Pagination
 				max={max ?? 0}
 				onChange={cursor.valueSet}
