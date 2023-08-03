@@ -25,6 +25,8 @@ export interface UseQueryFileReturn {
 const useMax = (fa: Array<unknown> | undefined) =>
 	useMemo(() => (fa?.length != null ? fa.length - 1 : null), [fa?.length]);
 
+// create new, back to modify
+// state: one form is for the new, one form
 export function Main(props: MainProps) {
 	const file = useFile(props.app, props.fileName);
 	const max = useMax(file.query.data?.contents);
@@ -59,12 +61,11 @@ export function Main(props: MainProps) {
 			<button onClick={cursor.clear} disabled={cursor.value == null}>
 				New
 			</button>
-			<button onClick={cursor.decrement} disabled={cursor.value == null}>
-				Previous
-			</button>
-			<button onClick={cursor.increment} disabled={cursor.value == null}>
-				Next
-			</button>
+			<Pagination
+				max={max ?? 0}
+				onChange={cursor.valueSet}
+				value={cursor.value}
+			/>
 			<form
 				onSubmit={(event) => {
 					event.preventDefault();
@@ -103,6 +104,65 @@ export function Main(props: MainProps) {
 		</ErrorBoundary>
 	);
 }
+
+// add pagination buttons
+// show 5 in each direction,
+// cursor + 1 = 9 in
+// |< 0 | 6 7 8 (9) 10 11 12 | 20 30 40 >|
+
+export interface PaginationProps {
+	value: number | null;
+	max: number;
+	onChange: (count: number) => void;
+}
+
+const PaginationItem = (props: {
+	page: number;
+	higlight: boolean;
+	onClick: (page: number) => void;
+}) => (
+	<li>
+		<button
+			style={{ color: props.higlight ? 'pink' : 'initial' }}
+			onClick={() => props.onClick(props.page)}
+		>
+			{props.page}
+		</button>
+	</li>
+);
+
+export const Pagination = (props: PaginationProps) => {
+	const current = props.value;
+	const start = 0;
+	const end = props.max;
+	const nexts = [1, 2, 3]
+		.map((count) => (current ?? start) + count)
+		.filter((next) => next < end);
+	const prevs = [3, 2, 1]
+		.map((count) => (current ?? start) - count)
+		.filter((next) => next > start);
+	const all = [
+		start,
+		...prevs,
+		current === start || current === end ? null : current,
+		...nexts,
+		end,
+	].filter((nullable): nullable is number => nullable != null);
+
+	return (
+		<nav>
+			<ol>
+				{all.map((number) => (
+					<PaginationItem
+						onClick={props.onChange}
+						page={number}
+						higlight={current == number}
+					/>
+				))}
+			</ol>
+		</nav>
+	);
+};
 
 class ErrorBoundary extends React.Component<
 	{ children?: ReactNode },

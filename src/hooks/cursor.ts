@@ -27,6 +27,8 @@ export const useCursor = (max: number | null) => {
 	const decrementBy = (count: number) => incrementBy(-count);
 	const decrement = () => decrementBy(1);
 	const clear = () => valueSet(null);
+	const end = () => valueSet(max);
+	const start = () => valueSet(0);
 
 	return {
 		value,
@@ -36,5 +38,7 @@ export const useCursor = (max: number | null) => {
 		decrementBy,
 		incrementBy,
 		clear,
+		start,
+		end,
 	};
 };
