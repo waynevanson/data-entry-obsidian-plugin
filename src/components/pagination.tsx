@@ -1,3 +1,4 @@
+import { prependOnceListener } from 'process';
 import * as React from 'react';
 import styled from 'styled-components';
 
@@ -51,9 +52,10 @@ export const Pagination = (props: PaginationProps) => {
 	);
 };
 const StyledButton = styled.button<{ active?: boolean }>`
-	background-color: var(
-		--interactive-${(props) => (props.active ? 'accent' : 'normal')}
-	) !important;
+	background-color: ${(props) =>
+		props.active
+			? props.theme.color.semantic.background.modifier.hover.normal
+			: props.theme.color.semantic.background.primary.above} !important;
 `;
 
 const PaginationItem = (props: {

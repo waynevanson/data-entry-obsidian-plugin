@@ -163,9 +163,9 @@ declare module 'styled-components' {
 			mono: ColorMono;
 			semantic: {
 				background: {
-					modifer: {
+					modifier: {
 						hover: Record<'active' | 'normal', string>;
-						border: Record<'normal' | 'focus', string>;
+						border: Record<'normal' | 'focus' | 'hover', string>;
 						error: Record<'rgb' | 'hex' | 'hover', string>;
 						success: Record<'rgb' | 'hex', string>;
 					} & Record<'message' | 'formField', string>;
