@@ -6,13 +6,12 @@ import {
 import { JsonForms } from '@jsonforms/react';
 import { App, TFile } from 'obsidian';
 import * as React from 'react';
-import { ReactNode, useMemo, useRef, useState } from 'react';
-import { Form, useCursor, useFile, useForm } from 'src/hooks';
-import { Pagination } from './pagination';
+import { ReactNode, useState } from 'react';
+import { Form, useCursor, useFile, useForm, useMax } from 'src/hooks';
 import { useForms } from 'src/hooks';
 import { createDefaultValue } from '@jsonforms/core';
-import { dequal } from 'dequal';
 import { styled } from 'styled-components';
+import { Pagination } from '@mui/material';
 
 export interface MainProps {
 	app: App;
@@ -26,12 +25,6 @@ export interface UseQueryFileReturn {
 	file: TFile;
 	contents: Array<unknown>;
 }
-
-const useMax = (array: Array<unknown> | undefined) =>
-	useMemo(
-		() => (array?.length != null ? array.length - 1 : null),
-		[array?.length],
-	);
 
 const ButtonPanel = styled.div`
 	display: flex;
@@ -89,9 +82,10 @@ export function Main(props: MainProps) {
 				</ButtonPanel>
 				{/* if null, set cursor to 1 beyond last to show we create new item */}
 				<Pagination
-					max={max ?? 0}
-					onChange={cursor.valueSet}
-					value={cursor.value}
+					showFirstButton
+					showLastButton
+					count={max ?? 0}
+					onChange={(_event, page) => cursor.valueSet(page)}
 				/>
 			</ControlPanel>
 			<form
@@ -111,6 +105,7 @@ export function Main(props: MainProps) {
 						errorsSet(errors);
 					}}
 				/>
+
 				<button type="submit" disabled={errors.length > 0}>
 					{props.submit ?? 'Submit'}
 				</button>
