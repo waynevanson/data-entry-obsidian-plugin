@@ -6,9 +6,20 @@ import {
 import { JsonForms } from '@jsonforms/react';
 import { App, TFile } from 'obsidian';
 import * as React from 'react';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import {
+	Dispatch,
+	ReactNode,
+	SetStateAction,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 import { useCursor, useFile } from 'src/hooks';
 import { Pagination } from './pagination';
+import { Endomorphism } from 'fp-ts/lib/Endomorphism';
+import { readonlyArray, readonlyRecord } from 'fp-ts';
+import { pipe } from 'fp-ts/lib/function';
 
 export interface MainProps {
 	app: App;
@@ -26,6 +37,56 @@ export interface UseQueryFileReturn {
 const useMax = (fa: Array<unknown> | undefined) =>
 	useMemo(() => (fa?.length != null ? fa.length - 1 : null), [fa?.length]);
 
+function useInvariant<A, B>(
+	usedState: [value: A, setValue: Dispatch<SetStateAction<A>>],
+	covariant: (a: A) => B,
+	contravariant: (b: B) => A,
+) {
+	const [state, stateSet] = usedState;
+
+	const next = useMemo(() => covariant(state), [state, covariant]);
+	const nextSet = useCallback(
+		(fa: SetStateAction<B>) =>
+			typeof fa === 'function'
+				? stateSet((a) =>
+						contravariant((fa as Endomorphism<B>)(covariant(a))),
+				  )
+				: stateSet(contravariant(fa)),
+		[covariant, contravariant, stateSet],
+	);
+
+	return [next, nextSet] as const;
+}
+
+type UsedState<A> = [A, Dispatch<SetStateAction<A>>];
+
+function useForm({
+	cursor,
+	created: [created, createdSet],
+	forms: [forms, formsSet],
+}: {
+	cursor: number | null;
+	created: UsedState<unknown>;
+	forms: UsedState<Record<string, unknown>>;
+}) {
+	const form = useMemo(
+		() => (cursor == null ? created : forms[cursor]),
+		[cursor, forms],
+	);
+	const formSet = useCallback(
+		(form: unknown) =>
+			cursor == null
+				? createdSet(value)
+				: formsSet((forms) => ({
+						...forms,
+						[(cursor as number).toString()]: form,
+				  })),
+		[cursor],
+	);
+
+	return [form, formSet] as const;
+}
+
 // create new, back to modify
 // state: one form is for the new, one form
 export function Main(props: MainProps) {
@@ -34,16 +95,30 @@ export function Main(props: MainProps) {
 
 	const cursor = useCursor(max);
 
-	const [form, formSet] = useState<unknown>({});
+	const [created, createdSet] = useState<unknown>({});
+	const [forms, formsSet] = useState<Record<string, unknown>>({});
+	const [form, formSet] = useForm({
+		cursor: cursor.value,
+		created: [created, createdSet],
+		forms: [forms, formsSet],
+	});
 
+	// reset forms cache when the file contents updates
 	useEffect(() => {
-		const form =
-			cursor.value != null
-				? file.query.data?.contents?.[cursor.value]
-				: null;
+		const contents = file.query.data?.contents;
+		if (contents == null) return;
 
-		formSet(form ?? {});
-	}, [file.query.data?.contents, cursor.value, formSet]);
+		const form = pipe(
+			contents,
+			readonlyArray.fromArray,
+			readonlyArray.mapWithIndex(
+				(index, form) => [index.toString(), form] as const,
+			),
+			readonlyRecord.fromEntries,
+		);
+
+		formsSet(form);
+	}, [file.query.data?.contents]);
 
 	const [errors, errorsSet] = useState<Array<unknown>>([]);
 
@@ -60,7 +135,7 @@ export function Main(props: MainProps) {
 	return (
 		<ErrorBoundary>
 			<button onClick={cursor.clear} disabled={cursor.value == null}>
-				New
+				{cursor.value != null ? 'Create' : 'Continue'}
 			</button>
 			{/* if null, set cursor to 1 beyond last to show we create new item */}
 			<Pagination
@@ -96,6 +171,7 @@ export function Main(props: MainProps) {
 							max,
 							cursor: cursor.value,
 							form,
+							forms,
 							contents: file.query.data?.contents,
 						},
 						null,
