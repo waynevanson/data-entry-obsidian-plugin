@@ -8,6 +8,7 @@ import { App, TFile } from 'obsidian';
 import * as React from 'react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useCursor, useFile } from 'src/hooks';
+import { Pagination } from './pagination';
 
 export interface MainProps {
 	app: App;
@@ -104,69 +105,6 @@ export function Main(props: MainProps) {
 		</ErrorBoundary>
 	);
 }
-
-// add pagination buttons
-// show 5 in each direction,
-// cursor + 1 = 9 in
-// |< 0 | 6 7 8 (9) 10 11 12 | 20 30 40 >|
-
-export interface PaginationProps {
-	value: number | null;
-	max: number;
-	onChange: (count: number) => void;
-}
-
-const PaginationItem = (props: {
-	page: number;
-	current: boolean;
-	onClick: (page: number) => void;
-}) => (
-	<li>
-		<button
-			style={{ color: props.current ? 'pink' : 'initial' }}
-			onClick={() => props.onClick(props.page)}
-			aria-label={`${props.current ? `Current page, ` : ''}Page ${
-				props.page
-			}`}
-			aria-current={props.current}
-		>
-			{props.page}
-		</button>
-	</li>
-);
-
-export const Pagination = (props: PaginationProps) => {
-	const current = props.value;
-	const start = 0;
-	const end = props.max;
-	const nexts = [1, 2, 3]
-		.map((count) => (current ?? start) + count)
-		.filter((next) => next < end);
-	const prevs = [3, 2, 1]
-		.map((count) => (current ?? start) - count)
-		.filter((next) => next > start);
-	const all = [
-		start,
-		...prevs,
-		current === start || current === end ? null : current,
-		...nexts,
-		end,
-	].filter((nullable): nullable is number => nullable != null);
-
-	return (
-		<nav role="navigation">
-			<ol>
-				{all.map((number) => (
-					<PaginationItem
-						onClick={props.onChange}
-						page={number}
-						current={current == number}
-					/>
-				))}
-			</ol>
-		</nav>
-	);
-};
 
 class ErrorBoundary extends React.Component<
 	{ children?: ReactNode },
