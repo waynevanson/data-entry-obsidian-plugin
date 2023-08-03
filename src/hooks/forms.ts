@@ -11,21 +11,25 @@ import {
 
 type UsedState<A> = [A, Dispatch<SetStateAction<A>>];
 
+export type Form = Record<string, unknown>;
+export type Forms = Record<string, Form>;
+
 export function useForm({
 	cursor,
 	created: [created, createdSet],
 	forms: [forms, formsSet],
 }: {
 	cursor: number | null;
-	created: UsedState<unknown>;
-	forms: UsedState<Record<string, unknown>>;
+	created: UsedState<Form>;
+	forms: UsedState<Forms>;
 }) {
 	const form = useMemo(
 		() => (cursor == null ? created : forms[cursor]),
 		[cursor, forms],
 	);
+
 	const formSet = useCallback(
-		(form: unknown) =>
+		(form: Form) =>
 			cursor == null
 				? createdSet(form)
 				: formsSet((forms) => ({
@@ -38,8 +42,8 @@ export function useForm({
 	return [form, formSet] as const;
 }
 
-export function useForms<A>(contents: Array<A> | null | undefined) {
-	const [forms, formsSet] = useState<Record<string, A>>({});
+export function useForms(contents: Array<Form> | null | undefined) {
+	const [forms, formsSet] = useState<Forms>({});
 
 	// reset forms cache when the file contents updates
 	useEffect(() => {

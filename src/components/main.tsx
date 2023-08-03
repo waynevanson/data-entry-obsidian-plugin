@@ -6,11 +6,13 @@ import {
 import { JsonForms } from '@jsonforms/react';
 import { App, TFile } from 'obsidian';
 import * as React from 'react';
-import { ReactNode, useMemo, useState } from 'react';
-import { useCursor, useFile, useForm } from 'src/hooks';
+import { ReactNode, useMemo, useRef, useState } from 'react';
+import { Form, useCursor, useFile, useForm } from 'src/hooks';
 import { Pagination } from './pagination';
 import { useForms } from 'src/hooks';
-import { readonlyRecord } from 'fp-ts';
+import { createDefaultValue } from '@jsonforms/core';
+import { dequal } from 'dequal';
+import { styled } from 'styled-components';
 
 export interface MainProps {
 	app: App;
@@ -25,8 +27,21 @@ export interface UseQueryFileReturn {
 	contents: Array<unknown>;
 }
 
-const useMax = (fa: Array<unknown> | undefined) =>
-	useMemo(() => (fa?.length != null ? fa.length - 1 : null), [fa?.length]);
+const useMax = (array: Array<unknown> | undefined) =>
+	useMemo(
+		() => (array?.length != null ? array.length - 1 : null),
+		[array?.length],
+	);
+
+const ButtonPanel = styled.div`
+	display: flex;
+	gap: 1rem;
+`;
+
+const ControlPanel = styled.div`
+	display: flex;
+	justify-content: space-between;
+`;
 
 // create new, back to modify
 // state: one form is for the new, one form
@@ -34,8 +49,11 @@ export function Main(props: MainProps) {
 	const file = useFile(props.app, props.fileName);
 	const max = useMax(file.query.data?.contents);
 	const cursor = useCursor(max);
-	const [created, createdSet] = useState<unknown>({});
-	const [forms, formsSet] = useForms(file.query.data?.contents);
+	const [defaultForm] = useState(
+		() => createDefaultValue(props.schema) as Form,
+	);
+	const [created, createdSet] = useState<Form>(defaultForm);
+	const [forms, formsSet] = useForms(file.query.data?.contents as never);
 	const [form, formSet] = useForm({
 		cursor: cursor.value,
 		created: [created, createdSet],
@@ -56,28 +74,26 @@ export function Main(props: MainProps) {
 
 	return (
 		<ErrorBoundary>
-			<button
-				onClick={() => {
-					cursor.value != null
-						? cursor.store()
-						: readonlyRecord.size(created as never) === 0
-						? cursor.fetch()
-						: createdSet({});
-				}}
-				disabled={cursor.value == null}
-			>
-				{cursor.value != null
-					? 'Create'
-					: readonlyRecord.size(created as never) === 0
-					? 'Continue'
-					: 'Reset'}
-			</button>
-			{/* if null, set cursor to 1 beyond last to show we create new item */}
-			<Pagination
-				max={max ?? 0}
-				onChange={cursor.valueSet}
-				value={cursor.value}
-			/>
+			<ControlPanel>
+				<ButtonPanel>
+					<button
+						onClick={() => {
+							cursor.value != null
+								? cursor.store()
+								: cursor.fetch();
+						}}
+					>
+						{cursor.value != null ? 'Create' : 'Back to item'}
+					</button>
+					<button onClick={() => formSet(defaultForm)}>Clear</button>
+				</ButtonPanel>
+				{/* if null, set cursor to 1 beyond last to show we create new item */}
+				<Pagination
+					max={max ?? 0}
+					onChange={cursor.valueSet}
+					value={cursor.value}
+				/>
+			</ControlPanel>
 			<form
 				onSubmit={(event) => {
 					event.preventDefault();
@@ -105,6 +121,8 @@ export function Main(props: MainProps) {
 						{
 							max,
 							cursor: cursor.value,
+							defaultForm,
+							created,
 							form,
 							forms,
 							contents: file.query.data?.contents,
