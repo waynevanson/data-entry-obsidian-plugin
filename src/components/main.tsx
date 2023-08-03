@@ -1,17 +1,14 @@
-import { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import {
-	materialCells,
-	materialRenderers,
-} from '@jsonforms/material-renderers';
-import { JsonForms } from '@jsonforms/react';
+	JsonSchema,
+	UISchemaElement,
+	createDefaultValue,
+} from '@jsonforms/core';
 import { App, TFile } from 'obsidian';
 import * as React from 'react';
 import { ReactNode, useState } from 'react';
-import { Form, useCursor, useFile, useForm, useMax } from 'src/hooks';
-import { useForms } from 'src/hooks';
-import { createDefaultValue } from '@jsonforms/core';
-import { styled } from 'styled-components';
-import { Pagination } from '@mui/material';
+import { Form, useCursor, useFile, useForm, useForms, useMax } from 'src/hooks';
+import { ControlPanel } from './control-panel';
+import { Formed } from './form';
 
 export interface MainProps {
 	app: App;
@@ -26,21 +23,10 @@ export interface UseQueryFileReturn {
 	contents: Array<unknown>;
 }
 
-const ButtonPanel = styled.div`
-	display: flex;
-	gap: 1rem;
-`;
-
-const ControlPanel = styled.div`
-	display: flex;
-	justify-content: space-between;
-`;
-
-// create new, back to modify
-// state: one form is for the new, one form
 export function Main(props: MainProps) {
 	const file = useFile(props.app, props.fileName);
-	const max = useMax(file.query.data?.contents);
+	const max = useMax(file.query.data?.contents) ?? 0;
+	const [newMode, newModeSet] = useState(true);
 	const cursor = useCursor(max);
 	const [defaultForm] = useState(
 		() => createDefaultValue(props.schema) as Form,
@@ -67,49 +53,32 @@ export function Main(props: MainProps) {
 
 	return (
 		<ErrorBoundary>
-			<ControlPanel>
-				<ButtonPanel>
-					<button
-						onClick={() => {
-							cursor.value != null
-								? cursor.store()
-								: cursor.fetch();
-						}}
-					>
-						{cursor.value != null ? 'Create' : 'Back to item'}
-					</button>
-					<button onClick={() => formSet(defaultForm)}>Clear</button>
-				</ButtonPanel>
-				{/* if null, set cursor to 1 beyond last to show we create new item */}
-				<Pagination
-					showFirstButton
-					showLastButton
-					count={max ?? 0}
-					onChange={(_event, page) => cursor.valueSet(page)}
-				/>
-			</ControlPanel>
-			<form
-				onSubmit={(event) => {
-					event.preventDefault();
-					handleSubmit();
+			<ControlPanel
+				newMode={newMode}
+				onClear={() => formSet(defaultForm)}
+				onToggleMode={(newMode) => {
+					newModeSet(newMode);
+					newMode ? cursor.store() : cursor.fetch();
 				}}
-			>
-				<JsonForms
-					data={form}
-					cells={materialCells}
+				count={max}
+				page={cursor.value ?? undefined}
+			/>
+			{cursor.value != null ? (
+				<Formed
+					errors={errors as never}
+					onSubmit={handleSubmit}
+					submitLabel={props.submit}
 					schema={props.schema ?? undefined}
 					uischema={props.uischema ?? undefined}
-					renderers={materialRenderers}
+					data={form}
 					onChange={({ data, errors: _errors }) => {
 						formSet(data);
 						errorsSet(errors);
 					}}
 				/>
-
-				<button type="submit" disabled={errors.length > 0}>
-					{props.submit ?? 'Submit'}
-				</button>
-			</form>
+			) : (
+				'There are no items to display from the datasource. Please create new.'
+			)}
 			<pre>
 				<code>
 					{JSON.stringify(
