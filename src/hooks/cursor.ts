@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
  */
 export const useCursor = (max: number | null) => {
 	const [providedOnMount, providedOnMountSet] = useState(false);
+	const [cache, cacheSet] = useState<number | null>(null);
 	const [value, valueSet] = useState<number | null>(null);
 
 	// Only set the cursor as the max value once.
@@ -29,10 +30,20 @@ export const useCursor = (max: number | null) => {
 	const clear = () => valueSet(null);
 	const end = () => valueSet(max);
 	const start = () => valueSet(0);
+	const store = () => {
+		cacheSet(value);
+		valueSet(null);
+	};
+	const fetch = () => {
+		valueSet(cache);
+		cacheSet(null);
+	};
 
 	return {
 		value,
 		valueSet,
+		cache,
+		cacheSet,
 		increment,
 		decrement,
 		decrementBy,
@@ -40,5 +51,7 @@ export const useCursor = (max: number | null) => {
 		clear,
 		start,
 		end,
+		store,
+		fetch,
 	};
 };
