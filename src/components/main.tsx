@@ -118,13 +118,17 @@ export interface PaginationProps {
 
 const PaginationItem = (props: {
 	page: number;
-	higlight: boolean;
+	current: boolean;
 	onClick: (page: number) => void;
 }) => (
 	<li>
 		<button
-			style={{ color: props.higlight ? 'pink' : 'initial' }}
+			style={{ color: props.current ? 'pink' : 'initial' }}
 			onClick={() => props.onClick(props.page)}
+			aria-label={`${props.current ? `Current page, ` : ''}Page ${
+				props.page
+			}`}
+			aria-current={props.current}
 		>
 			{props.page}
 		</button>
@@ -150,13 +154,13 @@ export const Pagination = (props: PaginationProps) => {
 	].filter((nullable): nullable is number => nullable != null);
 
 	return (
-		<nav>
+		<nav role="navigation">
 			<ol>
 				{all.map((number) => (
 					<PaginationItem
 						onClick={props.onChange}
 						page={number}
-						higlight={current == number}
+						current={current == number}
 					/>
 				))}
 			</ol>
