@@ -1,12 +1,10 @@
 import { readonlyArray, readonlyRecord } from 'fp-ts';
-import { fromSet } from 'fp-ts/lib/ReadonlySet';
 import { pipe } from 'fp-ts/lib/function';
 import {
 	Dispatch,
 	SetStateAction,
 	useCallback,
 	useEffect,
-	useMemo,
 	useState,
 } from 'react';
 
@@ -59,7 +57,7 @@ export function useForms(contents: Array<Form> | null | undefined) {
 		);
 
 		formsSet(form);
-	}, [contents, fromSet]);
+	}, [contents, formsSet]);
 
 	return [forms, formsSet] as const;
 }

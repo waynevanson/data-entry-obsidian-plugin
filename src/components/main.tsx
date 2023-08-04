@@ -5,7 +5,7 @@ import {
 } from '@jsonforms/core';
 import { App, TFile } from 'obsidian';
 import * as React from 'react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { Form, useCursor, useFile, useForm, useForms } from 'src/hooks';
 import { ControlPanel } from './control-panel';
 import { Formed } from './form';
@@ -36,6 +36,8 @@ export function Main(props: MainProps) {
 	const [forms, formsSet] = useForms(file.query.data?.contents as never);
 	const max =
 		file.query.data?.contents != null ? readonlyRecord.size(forms) : null;
+
+	// currently an index of positive numbers
 	const cursor = useCursor(0, max);
 	const [form, formSet] = useForm({
 		newMode,
@@ -48,22 +50,25 @@ export function Main(props: MainProps) {
 
 	const handleSubmit = () => {
 		const array = file.query.data?.contents ?? [];
-		if (cursor.value === null) {
+		if (newMode != null) {
 			array.push(form);
-		} else {
+		} else if (cursor.value !== null) {
 			array[cursor.value] = form;
 		}
 		file.mutation.mutate(array);
 	};
 
+	const count = max != null ? max : 0;
+	const page = newMode ? 0 : cursor.value != null ? cursor.value + 1 : 0;
 	return (
 		<ErrorBoundary>
 			<ControlPanel
 				newMode={newMode}
 				onClear={() => formSet(defaultForm)}
 				onToggleMode={newModeToggle}
-				count={max ?? 0}
-				page={cursor.value ?? undefined}
+				count={count}
+				page={page}
+				onPageChange={(_, page) => cursor.valueSet(page - 1)}
 			/>
 			{form != null ? (
 				<Formed
@@ -85,11 +90,14 @@ export function Main(props: MainProps) {
 				<code>
 					{JSON.stringify(
 						{
-							max,
-							cursor: cursor.value,
-							defaultForm,
-							created,
+							newMode,
+							pagination: { count, page: page ?? null },
+							cursed: {
+								max,
+								cursor: cursor.value,
+							},
 							form,
+							created,
 							forms,
 							contents: file.query.data?.contents,
 						},

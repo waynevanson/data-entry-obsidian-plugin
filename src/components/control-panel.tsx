@@ -10,6 +10,7 @@ const StyledButtons = styled.div`
 const StyledContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 `;
 
 export interface ControlPanelProps {
