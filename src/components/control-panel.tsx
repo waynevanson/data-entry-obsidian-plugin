@@ -43,6 +43,7 @@ export const ControlPanel = ({
 				showLastButton
 				count={count}
 				page={page}
+				disabled={newMode}
 				onChange={onPageChange}
 			/>
 		</StyledContainer>

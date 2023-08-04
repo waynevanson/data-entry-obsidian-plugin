@@ -50,7 +50,7 @@ export function Main(props: MainProps) {
 
 	const handleSubmit = () => {
 		const array = file.query.data?.contents ?? [];
-		if (newMode != null) {
+		if (newMode) {
 			array.push(form);
 		} else if (cursor.value !== null) {
 			array[cursor.value] = form;
@@ -59,7 +59,7 @@ export function Main(props: MainProps) {
 	};
 
 	const count = max != null ? max : 0;
-	const page = newMode ? 0 : cursor.value != null ? cursor.value + 1 : 0;
+	const page = cursor.value != null ? cursor.value + 1 : 0;
 	return (
 		<ErrorBoundary>
 			<ControlPanel
