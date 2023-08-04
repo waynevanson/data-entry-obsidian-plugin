@@ -28,7 +28,7 @@ export const useMutationFile = (app: App, file: TFile | undefined) =>
 			if (!file) {
 				throw new Error(`File for mutation does not exist`);
 			}
-			const stringified = JSON.stringify(contents);
+			const stringified = JSON.stringify(contents, null, 2);
 			await app.vault.modify(file, stringified);
 		},
 		onSuccess: () => {
