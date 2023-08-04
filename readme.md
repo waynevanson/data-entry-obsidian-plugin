@@ -4,7 +4,7 @@ Create beautiful forms for use in data entry contexts.
 
 ## WIP
 
-This is a work in progress.
+This is a work in progress. Releases are put through there paces in the hopes that things don't break.
 
 You can use it if you want, but there are no guarentees.
 
