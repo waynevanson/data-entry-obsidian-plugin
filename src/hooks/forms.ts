@@ -1,4 +1,5 @@
 import { readonlyArray, readonlyRecord } from 'fp-ts';
+import { fromSet } from 'fp-ts/lib/ReadonlySet';
 import { pipe } from 'fp-ts/lib/function';
 import {
 	Dispatch,
@@ -15,28 +16,27 @@ export type Form = Record<string, unknown>;
 export type Forms = Record<string, Form>;
 
 export function useForm({
+	newMode,
 	cursor,
 	created: [created, createdSet],
 	forms: [forms, formsSet],
 }: {
+	newMode: boolean;
 	cursor: number | null;
 	created: UsedState<Form>;
 	forms: UsedState<Forms>;
 }) {
-	const form = useMemo(
-		() => (cursor == null ? created : forms[cursor]),
-		[cursor, forms],
-	);
+	const form = newMode ? created : cursor != null ? forms[cursor] : null;
 
 	const formSet = useCallback(
 		(form: Form) =>
-			cursor == null
+			newMode
 				? createdSet(form)
 				: formsSet((forms) => ({
 						...forms,
-						[(cursor as number).toString()]: form,
+						[cursor!.toString()]: form,
 				  })),
-		[cursor],
+		[newMode, createdSet, formsSet, cursor],
 	);
 
 	return [form, formSet] as const;
@@ -59,7 +59,7 @@ export function useForms(contents: Array<Form> | null | undefined) {
 		);
 
 		formsSet(form);
-	}, [contents]);
+	}, [contents, fromSet]);
 
 	return [forms, formsSet] as const;
 }

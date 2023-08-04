@@ -14,8 +14,8 @@ const StyledContainer = styled.div`
 
 export interface ControlPanelProps {
 	newMode: boolean;
-	count: number;
-	onToggleMode?: (newMode: boolean) => void;
+	count: number | undefined;
+	onToggleMode?: () => void;
 	onClear?: () => void;
 	onPageChange?: (event: React.ChangeEvent<unknown>, page: number) => void;
 	page: number | undefined;
@@ -32,7 +32,7 @@ export const ControlPanel = ({
 	return (
 		<StyledContainer>
 			<StyledButtons>
-				<button onClick={() => onToggleMode?.(!newMode)}>
+				<button onClick={() => onToggleMode?.()}>
 					{!newMode ? 'Create' : 'Back to item'}
 				</button>
 				<button onClick={() => onClear?.()}>Clear</button>

@@ -3,17 +3,22 @@ import { useEffect, useState } from 'react';
 /**
  * @summary
  * Provides operations for the cursor.
- * @returns
+ * Cursor is optional because it may be operating on an empty list.
  */
-export const useCursor = (max: number | null) => {
-	const [cache, cacheSet] = useState<number | null>(null);
+export const useCursor = (min = 0, max: number | null) => {
 	const [value, valueSet] = useState<number | null>(null);
+
+	// update cursor when max changes and the cursor is null
+	useEffect(() => {
+		if (value != null || max == null) return;
+		valueSet(max);
+	}, [max, value]);
 
 	const incrementBy = (count: number) =>
 		valueSet((cursor) => {
 			if (cursor === null) return null;
 			const next = cursor + count;
-			return next > max! ? max! : next <= 0 ? 0 : next;
+			return next > max! ? max! : next <= min ? min : next;
 		});
 
 	const increment = () => incrementBy(1);
@@ -21,21 +26,11 @@ export const useCursor = (max: number | null) => {
 	const decrement = () => decrementBy(1);
 	const clear = () => valueSet(null);
 	const end = () => valueSet(max);
-	const start = () => valueSet(0);
-	const store = () => {
-		cacheSet(value);
-		valueSet(null);
-	};
-	const fetch = () => {
-		valueSet(cache);
-		cacheSet(null);
-	};
+	const start = () => valueSet(min);
 
 	return {
 		value,
 		valueSet,
-		cache,
-		cacheSet,
 		increment,
 		decrement,
 		decrementBy,
@@ -43,7 +38,6 @@ export const useCursor = (max: number | null) => {
 		clear,
 		start,
 		end,
-		store,
 		fetch,
 	};
 };

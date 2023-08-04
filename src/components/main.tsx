@@ -6,9 +6,12 @@ import {
 import { App, TFile } from 'obsidian';
 import * as React from 'react';
 import { ReactNode, useState } from 'react';
-import { Form, useCursor, useFile, useForm, useForms, useMax } from 'src/hooks';
+import { Form, useCursor, useFile, useForm, useForms } from 'src/hooks';
 import { ControlPanel } from './control-panel';
 import { Formed } from './form';
+import { Alert } from '@mui/material';
+import { useToggle } from 'src/hooks/toggle';
+import { readonlyRecord } from 'fp-ts';
 
 export interface MainProps {
 	app: App;
@@ -25,15 +28,17 @@ export interface UseQueryFileReturn {
 
 export function Main(props: MainProps) {
 	const file = useFile(props.app, props.fileName);
-	const max = useMax(file.query.data?.contents) ?? 0;
-	const [newMode, newModeSet] = useState(true);
-	const cursor = useCursor(max);
+	const [newMode, newModeToggle] = useToggle(true);
 	const [defaultForm] = useState(
 		() => createDefaultValue(props.schema) as Form,
 	);
 	const [created, createdSet] = useState<Form>(defaultForm);
 	const [forms, formsSet] = useForms(file.query.data?.contents as never);
+	const max =
+		file.query.data?.contents != null ? readonlyRecord.size(forms) : null;
+	const cursor = useCursor(0, max);
 	const [form, formSet] = useForm({
+		newMode,
 		cursor: cursor.value,
 		created: [created, createdSet],
 		forms: [forms, formsSet],
@@ -56,14 +61,11 @@ export function Main(props: MainProps) {
 			<ControlPanel
 				newMode={newMode}
 				onClear={() => formSet(defaultForm)}
-				onToggleMode={(newMode) => {
-					newModeSet(newMode);
-					newMode ? cursor.store() : cursor.fetch();
-				}}
-				count={max}
+				onToggleMode={newModeToggle}
+				count={max ?? 0}
 				page={cursor.value ?? undefined}
 			/>
-			{cursor.value != null ? (
+			{form != null ? (
 				<Formed
 					errors={errors as never}
 					onSubmit={handleSubmit}
@@ -77,7 +79,7 @@ export function Main(props: MainProps) {
 					}}
 				/>
 			) : (
-				'There are no items to display from the datasource. Please create new.'
+				<Alert severity="info">There are no items to display.</Alert>
 			)}
 			<pre>
 				<code>
