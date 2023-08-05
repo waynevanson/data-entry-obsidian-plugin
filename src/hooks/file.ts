@@ -3,6 +3,7 @@ import { App, Notice, TFile } from 'obsidian';
 
 export const useQueryFile = (app: App, fileName: string) =>
 	useQuery({
+		queryKey: [fileName],
 		queryFn: async () => {
 			const files = app.vault.getFiles();
 			const file = files.find((file) => file.path === fileName);
@@ -16,6 +17,7 @@ export const useQueryFile = (app: App, fileName: string) =>
 			const contents: Array<unknown> = JSON.parse(
 				await app.vault.read(file),
 			);
+
 			return { file, contents };
 		},
 		refetchOnWindowFocus: 'always',

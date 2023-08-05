@@ -5,7 +5,7 @@ import {
 } from '@jsonforms/core';
 import { App, TFile } from 'obsidian';
 import * as React from 'react';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Form, useCursor, useFile, useForm, useForms } from 'src/hooks';
 import { ControlPanel } from './control-panel';
 import { Formed } from './form';

@@ -4,18 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "4fa90bc5c02742ef",
+        "id": "82789025b7eee2b9",
         "type": "tabs",
         "children": [
           {
-            "id": "f58f9fdb75046aec",
+            "id": "dd9be63a6bd01c04",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "Yello world.md",
+                "mode": "preview",
+                "source": true
+              }
+            }
+          },
+          {
+            "id": "3a24e5f4248fcb92",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Yello world.md",
+                "mode": "source",
+                "source": true
+              }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -65,7 +82,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 205.5
   },
   "right": {
     "id": "a27e698cb4329fb7",
@@ -81,6 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Yello world.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Yello world.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +137,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "Yello world.md"
+              }
             }
           }
         ],
@@ -126,7 +147,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -138,13 +160,14 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f58f9fdb75046aec",
+  "active": "3a24e5f4248fcb92",
   "lastOpenFiles": [
-    "data.md",
+    "Untitled.md",
+    "Untitled 1.md",
     "Yello world.md",
+    "data.md",
     "data.ms",
     "data.json.md",
-    "data.json",
-    "Untitled 1.md"
+    "data.json"
   ]
 }

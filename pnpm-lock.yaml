@@ -32,6 +32,9 @@ dependencies:
   fp-ts:
     specifier: ^2.16.1
     version: 2.16.1
+  fp-ts-react-stable-hooks:
+    specifier: ^1.5.0
+    version: 1.5.0(fp-ts@2.16.1)(react@18.2.0)
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -76,6 +79,9 @@ devDependencies:
   esbuild:
     specifier: 0.17.3
     version: 0.17.3
+  eslint-config-prettier:
+    specifier: ^8.10.0
+    version: 8.10.0(eslint@8.46.0)
   eslint-plugin-react:
     specifier: ^7.33.1
     version: 7.33.1(eslint@8.46.0)
@@ -3688,6 +3694,15 @@ packages:
       source-map: 0.6.1
     dev: true
 
+  /eslint-config-prettier@8.10.0(eslint@8.46.0):
+    resolution: {integrity: sha512-SM8AMJdeQqRYT9O9zguiruQZaN7+z+E4eAP9oiLNGKMtomwaB1E9dcgUD6ZAn/eQAb52USbvezbiljfZUhbJcg==}
+    hasBin: true
+    peerDependencies:
+      eslint: '>=7.0.0'
+    dependencies:
+      eslint: 8.46.0
+    dev: true
+
   /eslint-plugin-react-hooks@4.6.0(eslint@8.46.0):
     resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
     engines: {node: '>=10'}
@@ -3971,6 +3986,16 @@ packages:
       combined-stream: 1.0.8
       mime-types: 2.1.35
     dev: true
+
+  /fp-ts-react-stable-hooks@1.5.0(fp-ts@2.16.1)(react@18.2.0):
+    resolution: {integrity: sha512-EKcXNB7JQXAKUhH9ciFdotC7rqcSMTI5BO8UOIphzbea1NmAivm98VkAl/fRlLGksJrHuJAN9cULDUXhphn/hA==}
+    peerDependencies:
+      fp-ts: '>= 2.0.0'
+      react: '>= 16.8.0'
+    dependencies:
+      fp-ts: 2.16.1
+      react: 18.2.0
+    dev: false
 
   /fp-ts@2.16.1:
     resolution: {integrity: sha512-by7U5W8dkIzcvDofUcO42yl9JbnHTEDBrzu3pt5fKT+Z4Oy85I21K80EYJYdjQGC2qum4Vo55Ag57iiIK4FYuA==}
