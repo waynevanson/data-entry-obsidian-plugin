@@ -5,13 +5,14 @@ export const useQueryFile = (app: App, fileName: string) =>
 	useQuery({
 		queryKey: [fileName],
 		queryFn: async () => {
-			const files = app.vault.getFiles();
-			const file = files.find((file) => file.path === fileName);
+			const file = app.vault.getAbstractFileByPath(fileName);
 
 			if (file == null) {
 				throw new Error(
 					`Could not find the file with name "${fileName}"`,
 				);
+			} else if (!(file instanceof TFile)) {
+				throw new Error(`File is not an instance of 'TFile'`);
 			}
 
 			const contents: Array<unknown> = JSON.parse(
