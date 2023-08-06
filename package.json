@@ -1,5 +1,5 @@
 {
-	"name": "obsidian-plugin-data-entry",
+	"name": "@waynevanson/obsidian-plugin-data-entry",
 	"version": "1.2.0",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
