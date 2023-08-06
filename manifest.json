@@ -6,6 +6,8 @@
 	"description": "Create forms that save data simply; the data view of data entry",
 	"author": "Wayne Van Son",
 	"authorUrl": "https://github.com/waynevanson",
-	"fundingUrl": "",
+	"fundingUrl": {
+		"GitHub Sponsors": "https://github.com/sponsors/waynevanson"
+	},
 	"isDesktopOnly": false
 }
