@@ -9,7 +9,7 @@ import { ReactNode, useState } from 'react';
 import { Form, useCursor, useFile, useForm, useForms } from 'src/hooks';
 import { ControlPanel } from './control-panel';
 import { Formed } from './form';
-import { Alert, Button } from '@mui/material';
+import { Alert, Button, CircularProgress } from '@mui/material';
 import { useToggle } from 'src/hooks/toggle';
 import { readonlyRecord } from 'fp-ts';
 
@@ -61,7 +61,11 @@ export function Main(props: MainProps) {
 	const count = max != null ? max : 0;
 	const page = cursor.value != null ? cursor.value + 1 : 0;
 	if (file.read.isLoading)
-		return <Alert>`Loading file ${props.fileName}`</Alert>;
+		return (
+			<Alert action={<CircularProgress color="inherit" />}>
+				Loading file {props.fileName}
+			</Alert>
+		);
 
 	if (file.read.isError) {
 		//@ts-expect-error
