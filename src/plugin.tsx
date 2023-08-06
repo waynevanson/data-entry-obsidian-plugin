@@ -20,6 +20,7 @@ export class MainPlugin extends Plugin {
 	}
 
 	// todo - apply cleanup
+	// todo - create DIY code block processor that allows ```lang plugin-name
 	registerMarkdownCodeBlockProcessors(this: this) {
 		const yamls = ['yaml', 'yml'];
 		const jsons = ['json', 'jsn', 'jsonc'];
@@ -27,7 +28,6 @@ export class MainPlugin extends Plugin {
 		const name = 'data-entry';
 
 		files.forEach((extension) =>
-			// todo - create DIY code block processor that allows ```lang plugin-name
 			this.registerMarkdownCodeBlockProcessor(
 				`${extension}-${name}`,
 				this.handleCodeBlockProcessor(extension, yamls),
