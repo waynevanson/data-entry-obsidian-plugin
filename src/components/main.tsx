@@ -9,7 +9,7 @@ import { ReactNode, useState } from 'react';
 import { Form, useCursor, useFile, useForm, useForms } from 'src/hooks';
 import { ControlPanel } from './control-panel';
 import { Formed } from './form';
-import { Alert } from '@mui/material';
+import { Alert, Button } from '@mui/material';
 import { useToggle } from 'src/hooks/toggle';
 import { readonlyRecord } from 'fp-ts';
 
@@ -33,11 +33,11 @@ export function Main(props: MainProps) {
 		() => createDefaultValue(props.schema) as Form,
 	);
 	const [created, createdSet] = useState<Form>(defaultForm);
-	const [forms, formsSet] = useForms(file.query.data?.contents as never);
+	const [forms, formsSet] = useForms(file.read.data?.contents as never);
 	const max =
-		file.query.data?.contents != null ? readonlyRecord.size(forms) : null;
+		file.read.data?.contents != null ? readonlyRecord.size(forms) : null;
 
-	// currently an index of positive numbers
+	// todo - rename to index
 	const cursor = useCursor(0, max);
 	const [form, formSet] = useForm({
 		newMode,
@@ -49,17 +49,44 @@ export function Main(props: MainProps) {
 	const [errors, errorsSet] = useState<Array<unknown>>([]);
 
 	const handleSubmit = () => {
-		const array = file.query.data?.contents ?? [];
+		const array = file.read.data?.contents ?? [];
 		if (newMode) {
 			array.push(form);
 		} else if (cursor.value !== null) {
 			array[cursor.value] = form;
 		}
-		file.mutation.mutate(array);
+		file.write.mutate(array);
 	};
 
 	const count = max != null ? max : 0;
 	const page = cursor.value != null ? cursor.value + 1 : 0;
+	if (file.read.isLoading) return `Loading file ${props.fileName}`;
+
+	if (file.read.isError) {
+		//@ts-expect-error
+		return <Alert severity="error">{file.read.error.message}</Alert>;
+	}
+
+	if (file.read.data == null) {
+		return (
+			<Alert
+				severity="warning"
+				action={
+					<Button
+						color="inherit"
+						onClick={() => {
+							file.create.mutate([]);
+						}}
+					>
+						Create File
+					</Button>
+				}
+			>
+				File does not exist. Would you like to create it?
+			</Alert>
+		);
+	}
+
 	return (
 		<ErrorBoundary>
 			<ControlPanel
@@ -99,7 +126,7 @@ export function Main(props: MainProps) {
 							form,
 							created,
 							forms,
-							contents: file.query.data?.contents,
+							contents: file.read.data?.contents,
 						},
 						null,
 						2,
