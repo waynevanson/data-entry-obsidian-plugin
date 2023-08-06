@@ -19,7 +19,25 @@ The easiest way to install the plugin is using the `BRAT` plugin.
     - The GitHub URL for this repository is "https://github.com/waynevanson/obsidian-plugin-data-entry".
 4. Refresh the plugin list and enable the plugin "Data Entry".
 
+Here is an example entry point.
+
+<pre>
+```yaml-data-entry
+datasource:
+    file: data.md
+forms:
+  schema:
+    properties:
+      name:
+        type: string
+      age:
+        type: integer
+```
+</pre>
+
 ## Usage
+
+### Quick Start
 
 -   Go to a new file and go to source mode
 -   Add code block with `yaml-data-entry` or `json-data-entry` in the format section.
