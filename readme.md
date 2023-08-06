@@ -35,6 +35,8 @@ forms:
 ```
 </pre>
 
+Going to the read mode shows the form.
+
 ## Usage
 
 ### Quick Start
