@@ -60,7 +60,8 @@ export function Main(props: MainProps) {
 
 	const count = max != null ? max : 0;
 	const page = cursor.value != null ? cursor.value + 1 : 0;
-	if (file.read.isLoading) return `Loading file ${props.fileName}`;
+	if (file.read.isLoading)
+		return <Alert>`Loading file ${props.fileName}`</Alert>;
 
 	if (file.read.isError) {
 		//@ts-expect-error
