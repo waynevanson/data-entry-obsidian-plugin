@@ -9,6 +9,13 @@
 		"format": "prettier -w '!.vault' .",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "ssh://git@github.com/waynevanson/obsidian-plugin-data-entry.git"
+	},
 	"keywords": [],
 	"author": "",
 	"license": "MIT",
