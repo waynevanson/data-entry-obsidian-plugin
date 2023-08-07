@@ -4,15 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "ca46528baf8e890c",
+        "id": "eae5826a8db61f7f",
         "type": "tabs",
         "children": [
           {
-            "id": "fa3750fbe6422b7a",
+            "id": "313a41aa524b5a8b",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "NonObject.md",
+                "mode": "preview",
+                "source": true
+              }
             }
           }
         ]
@@ -81,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "NonObject.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "NonObject.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "NonObject.md"
+              }
             }
           }
         ],
@@ -139,12 +147,12 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "fa3750fbe6422b7a",
+  "active": "313a41aa524b5a8b",
   "lastOpenFiles": [
+    "NonObject.md",
     "Yello world.md",
     "data.md",
     "Untitled 1.md",
-    "Untitled.md",
     "data.ms",
     "data.json.md",
     "data.json"

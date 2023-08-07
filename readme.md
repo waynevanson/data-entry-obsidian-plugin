@@ -39,6 +39,14 @@ Going to the read mode shows the form.
 
 ## Usage
 
+In order to get a large benefit using this tool, you will need to understand the following technologies:
+
+-   YAML/JSON
+-   JSONSCHEMA
+-   JSONFORMS
+
+We are looking into ways to decrease this entry point, by making a GUI editor for JSONSCHEMA and maybe JSONFORMS.
+
 ### Quick Start
 
 -   Go to a new file and go to source mode
@@ -52,3 +60,26 @@ Going to the read mode shows the form.
 -   Use the GUI to create and save data to you file!
 
 Check out the _Schema_, _UI Schema_ and _Data_ sections for additional understanding.
+
+### Configuration
+
+The configuration is always used when creating a form. Without it, there is no form to fill in and no data to fill it with.
+
+#### Datasource
+
+| Property          | Type     | Description                                                | Resources |
+| :---------------- | :------- | :--------------------------------------------------------- | :-------- |
+| `datasource.file` | `string` | The file path where data is saved to, relative to the root |           |
+
+#### Forms
+
+The configuration passed to JsonForms that is used for validation and presenting the form
+
+| Property         | Type         | Description | Resources |
+| :--------------- | :----------- | :---------- | :-------- |
+| `forms.schema`   | `JsonSchema` |             |           |
+| `forms.uischema` | `UiSchema`   |             |           |
+
+> todo
+>
+> -   rename `forms` to `form`
