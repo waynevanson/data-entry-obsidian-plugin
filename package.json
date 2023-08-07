@@ -52,6 +52,16 @@
 		"react-dom": "^18.2.0",
 		"styled-components": "^6.0.5"
 	},
+	"lint-staged": {
+		"*.[tj]sx?": [
+			"eslint --fix",
+			"prettier -w",
+			"jest -o"
+		],
+		"*.{ya?ml,jso?n,.?css}": [
+			"prettier -w"
+		]
+	},
 	"engines": {
 		"node": "^18",
 		"pnpm": "^8"

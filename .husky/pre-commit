@@ -1,1 +1,1 @@
-pnpm exec jest -o
+pnpm exec lint-staged
