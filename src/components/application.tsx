@@ -6,10 +6,10 @@ import { Providers } from './providers';
 import { theme } from './styled';
 
 export const Application = (props: MainProps) => {
-	const [queryClient] = useState(new QueryClient());
-	return (
-		<Providers query={queryClient} theme={theme}>
-			<Main {...props} />
-		</Providers>
-	);
+  const [queryClient] = useState(new QueryClient());
+  return (
+    <Providers query={queryClient} theme={theme}>
+      <Main {...props} />
+    </Providers>
+  );
 };

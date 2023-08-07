@@ -1,6 +1,1 @@
-[
-  "hot-reload",
-  "sample-plugin",
-  "obsidian-plugin-prettier",
-  "data-entry"
-]
+["hot-reload", "sample-plugin", "obsidian-plugin-prettier", "data-entry"]
