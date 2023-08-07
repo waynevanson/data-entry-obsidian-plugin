@@ -22,19 +22,3 @@ jobs:
                   node-version: 18
                   cache: pnpm
             - run: pnpm install --frozen-lockfile
-
-            - name: Create .npmrc
-              run: |
-                  cat << EOF > "$HOME/.npmrc"
-                    //npm.pkg.github.com/:_authToken=$NPM_TOKEN
-                  EOF
-              env:
-                  NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            - id: changesets
-              uses: changesets/action@v1
-              with:
-                  publish: pnpm run release
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
