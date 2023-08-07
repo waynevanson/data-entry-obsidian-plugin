@@ -15,6 +15,10 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
+    "@semantic-release/commit-analyzer": "^10.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.0.4",
+    "@semantic-release/release-notes-generator": "^11.0.4",
     "@testing-library/dom": "^9.3.1",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.3",
@@ -34,6 +38,7 @@
     "lint-staged": "^13.2.3",
     "obsidian": "latest",
     "prettier": "^3.0.0",
+    "semantic-release": "^21.0.7",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "tslib": "2.4.0",
@@ -52,6 +57,11 @@
     "react-dom": "^18.2.0",
     "styled-components": "^6.0.5"
   },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
   "lint-staged": {
     "*.m?[tj]sx?,!\\.vault": [
       "eslint --fix",
@@ -62,9 +72,34 @@
       "prettier -w"
     ]
   },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "repositoryUrl": "https://github.com/waynevanson/obsidian-plugin-data-entry",
+    "tagFormat": "${version}",
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            "main.js",
+            "manifest.js"
+          ]
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "CHANGELOG.md"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n$){nextRelease.notes}"
+        }
+      ]
     ]
   },
   "engines": {
@@ -76,6 +111,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/waynevanson/obsidian-plugin-data-entry.git"
+    "url": "https://github.com/waynevanson/obsidian-plugin-data-entry"
   }
 }
