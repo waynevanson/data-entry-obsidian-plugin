@@ -9,7 +9,6 @@
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "format": "prettier -w '!.vault' .",
     "version": "node version-bump.mjs && git add manifest.json versions.json",
-    "release": "pnpm run build && changeset publish",
     "postinstall": "husky install"
   },
   "devDependencies": {
@@ -86,7 +85,7 @@
         {
           "assets": [
             "main.js",
-            "manifest.js"
+            "manifest.json"
           ]
         }
       ],
