@@ -118,26 +118,6 @@ export function Main(props: MainProps) {
       ) : (
         <Alert severity="info">There are no items to display.</Alert>
       )}
-      <pre>
-        <code>
-          {JSON.stringify(
-            {
-              newMode,
-              pagination: { count, page: page ?? null },
-              cursed: {
-                max,
-                cursor: cursor.value,
-              },
-              form,
-              created,
-              forms,
-              contents: file.read.data?.contents,
-            },
-            null,
-            2,
-          )}
-        </code>
-      </pre>
     </ErrorBoundary>
   );
 }
