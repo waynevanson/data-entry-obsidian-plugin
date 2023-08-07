@@ -49,15 +49,14 @@ We are looking into ways to decrease this entry point, by making a GUI editor fo
 
 ### Quick Start
 
-- Go to a new file and go to source mode
-- Add code block with `yaml-data-entry` or `json-data-entry` in the format section.
-- Within the code block add
-  - Add `datasource.file` with `.md` extension on it that you would like to save the data to.
-    - Create this file if it does not exist already.
-  - Add your schema within `form.schema`.
-  - All properties within `form` are passed to `jsonforms`.
-- Go to reading mode
-- Use the GUI to create and save data to you file!
+1. Go to a new file and go to source mode
+2. Add code block with `yaml-data-entry` or `json-data-entry` in the format section.
+3. Within the code block add:
+   1. Add `datasource.file` with `.md` extension on it that you would like to save the data to (ie. `path/to/my-file.md`)
+   2. Add your schema within `form.schema`.
+   3. All properties within `form` are passed to `jsonforms`.
+4. Go to reading mode
+5. Use the GUI to create and save data to you file!
 
 Check out the _Schema_, _UI Schema_ and _Data_ sections for additional understanding.
 
@@ -69,16 +68,16 @@ The configuration is always used when creating a form. Without it, there is no f
 
 | Property          | Type     | Description                                                | Resources |
 | :---------------- | :------- | :--------------------------------------------------------- | :-------- |
-| `datasource.file` | `string` | The file path where data is saved to, relative to the root |           |
+| `datasource.file` | `string` | The file path where data is saved to, relative to the root | -         |
 
 #### Forms
 
 The configuration passed to JsonForms that is used for validation and presenting the form
 
-| Property         | Type         | Description | Resources |
-| :--------------- | :----------- | :---------- | :-------- |
-| `forms.schema`   | `JsonSchema` |             |           |
-| `forms.uischema` | `UiSchema`   |             |           |
+| Property         | Type         | Description                           | Resources                                                                          |
+| :--------------- | :----------- | :------------------------------------ | :--------------------------------------------------------------------------------- |
+| `forms.schema`   | `JsonSchema` | Describes the shape of the forms data | [Getting Started](https://json-schema.org/learn/getting-started-step-by-step.html) |
+| `forms.uischema` | `UiSchema`   | Describes the shape of the forms UI   | [Examples](https://jsonforms.io/examples/)                                         |
 
 > todo
 >
