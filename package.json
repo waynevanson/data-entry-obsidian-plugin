@@ -77,7 +77,7 @@
     ]
   },
   "lint-staged": {
-    "*.m?[tj]sx?,!\\.vault": [
+    "*.m?(t|j)sx?,!\\.vault": [
       "eslint --fix",
       "prettier -w",
       "jest -o"
