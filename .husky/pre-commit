@@ -1,1 +1,2 @@
+pnpm exec commitlint ${1}
 pnpm exec lint-staged --concurrent false
