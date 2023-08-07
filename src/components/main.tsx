@@ -38,10 +38,10 @@ export function Main(props: MainProps) {
     file.read.data?.contents != null ? readonlyRecord.size(forms) : null;
 
   // todo - rename to index
-  const cursor = useCursor(0, max);
+  const index = useCursor(0, max);
   const [form, formSet] = useForm({
     newMode,
-    cursor: cursor.value,
+    cursor: index.value,
     created: [created, createdSet],
     forms: [forms, formsSet],
   });
@@ -52,14 +52,14 @@ export function Main(props: MainProps) {
     const array = file.read.data?.contents ?? [];
     if (newMode) {
       array.push(form);
-    } else if (cursor.value !== null) {
-      array[cursor.value] = form;
+    } else if (index.value !== null) {
+      array[index.value] = form;
     }
     file.write.mutate(array);
   };
 
   const count = max != null ? max : 0;
-  const page = cursor.value != null ? cursor.value + 1 : 0;
+  const page = index.value != null ? index.value + 1 : 0;
   if (file.read.isLoading)
     return (
       <Alert action={<CircularProgress color="inherit" />}>
@@ -100,7 +100,7 @@ export function Main(props: MainProps) {
         onToggleMode={newModeToggle}
         count={count}
         page={page}
-        onPageChange={(_, page) => cursor.valueSet(page - 1)}
+        onPageChange={(_, page) => index.valueSet(page - 1)}
       />
       {form != null ? (
         <Formed
