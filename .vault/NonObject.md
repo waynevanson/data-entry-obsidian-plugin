@@ -1,6 +1,6 @@
 ```yaml-data-entry
 datasource:
-  file: data.md
+  file: d.md
 forms:
   schema:
     type: array
