@@ -5,11 +5,11 @@ import {
 } from '@jsonforms/core';
 import type { TFile, Vault } from 'obsidian';
 import * as React from 'react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import {
   Form,
   useCursor,
-  useFile,
+  useFileObsidian,
   useForm,
   useForms,
   useToggle,
@@ -33,15 +33,18 @@ export interface UseQueryFileReturn {
 }
 
 export function Main(props: MainProps) {
-  const file = useFile(props.vault, props.fileName);
+  const file = useFileObsidian(props.vault, props.fileName);
   const [newMode, newModeToggle] = useToggle(true);
   const [defaultForm] = useState(
     () => createDefaultValue(props.schema) as Form,
   );
   const [created, createdSet] = useState<Form>(defaultForm);
-  const [forms, formsSet] = useForms(file.read.data?.contents as never);
-  const max =
-    file.read.data?.contents != null ? readonlyRecord.size(forms) : null;
+  const jsoned = useMemo(
+    () => JSON.parse(file.data as never) as Array<Form> | null,
+    [file.data],
+  );
+  const [forms, formsSet] = useForms(jsoned);
+  const max = file.data != null ? readonlyRecord.size(forms) : null;
 
   // todo - rename to index
   const index = useCursor(0, max);
@@ -55,30 +58,30 @@ export function Main(props: MainProps) {
   const [errors, errorsSet] = useState<Array<unknown>>([]);
 
   const handleSubmit = () => {
-    const array = file.read.data?.contents ?? [];
+    const array: Array<Form | null> = jsoned ?? [];
     if (newMode) {
       array.push(form);
     } else if (index.value !== null) {
       array[index.value] = form;
     }
-    file.write.mutate(array);
+    file.modify(JSON.stringify(array, null, 2));
   };
 
   const count = max != null ? max : 0;
   const page = index.value != null ? index.value + 1 : 0;
-  if (file.read.isLoading)
+  if (file.loading)
     return (
       <Alert action={<CircularProgress color="inherit" />}>
         Loading file {props.fileName}
       </Alert>
     );
 
-  if (file.read.isError) {
+  if (file.error) {
     //@ts-expect-error
     return <Alert severity="error">{file.read.error.message}</Alert>;
   }
 
-  if (file.read.data == null) {
+  if (file.data == null) {
     return (
       <Alert
         severity="warning"
@@ -86,7 +89,7 @@ export function Main(props: MainProps) {
           <Button
             color="inherit"
             onClick={() => {
-              file.create.mutate([]);
+              file.modify(JSON.stringify('[]', null, 2));
             }}
           >
             Create File

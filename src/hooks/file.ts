@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { Notice, TAbstractFile, TFile, Vault } from 'obsidian';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -110,9 +109,13 @@ export const useFileObsidian = (
       [create, delete_, modify, rename].forEach((ref) => vault.offref(ref));
   }, [vault, filePath, read]);
 
+  // todo - error handle
   const modify = useCallback(
     (contents: string) => {
-      file != null && vault.modify(file, contents);
+      if (file == null) return;
+      vault
+        .modify(file, contents)
+        .then(() => new Notice('File as been saved!'));
     },
     [vault, file],
   );
@@ -122,57 +125,3 @@ export const useFileObsidian = (
 
 // todo - add listeners when files are modified
 // todo - e2e https://www.electronjs.org/docs/latest/tutorial/testing-on-headless-ci
-export const useQueryFile = (vault: Vault, fileName: string) =>
-  useQuery({
-    retryDelay: 500,
-    queryKey: [fileName],
-    queryFn: async () => {
-      const file = vault.getAbstractFileByPath(fileName);
-
-      if (file == null) {
-        return null;
-      } else if (!(file instanceof TFile)) {
-        throw new Error(`File is not an instance of 'TFile'`);
-      }
-
-      const contents: Array<unknown> = JSON.parse(await vault.read(file));
-
-      return { file, contents };
-    },
-    refetchOnWindowFocus: 'always',
-  });
-
-export const useQueryFileSave = (
-  vault: Vault,
-  fileName: string,
-  onSuccess: () => void,
-) =>
-  useMutation({
-    mutationKey: [fileName],
-    mutationFn: (json: unknown) =>
-      vault.create(fileName, JSON.stringify(json, null, 2)),
-    onSuccess,
-  });
-
-export const useMutationFile = (vault: Vault, file: TFile | undefined) =>
-  useMutation({
-    mutationKey: ['file', file?.path],
-    mutationFn: async (contents: Array<unknown>) => {
-      if (!file) {
-        throw new Error(`File for mutation does not exist`);
-      }
-      const stringified = JSON.stringify(contents, null, 2);
-      await vault.modify(file, stringified);
-    },
-    onSuccess: () => {
-      new Notice('File has been saved!');
-    },
-  });
-
-export const useFile = (vault: Vault, fileName: string) => {
-  const read = useQueryFile(vault, fileName);
-  const create = useQueryFileSave(vault, fileName, () => read.refetch());
-  const write = useMutationFile(vault, read.data?.file);
-
-  return { read, write, create };
-};

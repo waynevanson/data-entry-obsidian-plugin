@@ -49,7 +49,7 @@ export class MainPlugin extends Plugin {
       const application = (
         <StrictMode>
           <Application
-            fileName={json.datasource.file}
+            fileName={(json.datasource as Record<string, string>).file}
             vault={this.app.vault}
             schema={json.forms.schema}
             uischema={json.forms.uischema}
