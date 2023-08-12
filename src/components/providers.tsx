@@ -1,22 +1,30 @@
 import { ThemeProvider as MaterialThemeProvider } from '@mui/material';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as React from 'react';
-import { ReactNode } from 'react';
-import { ThemeProvider as StyledThemeProvider } from 'styled-components';
+import { ReactNode, useState } from 'react';
 import { useTheme } from './material';
+import { Theme } from '@mui/system';
 
 export interface ProviderProps {
-  query: QueryClient;
-  styledTheme: Parameters<typeof StyledThemeProvider>[0]['theme'];
+  queryClient: QueryClient;
+  materialTheme: Partial<Theme>;
   children: ReactNode;
 }
 
 export const Providers = (props: ProviderProps) => (
-  <QueryClientProvider client={props.query}>
-    <StyledThemeProvider theme={props.styledTheme}>
-      <MaterialThemeProvider theme={useTheme()}>
-        {props.children}
-      </MaterialThemeProvider>
-    </StyledThemeProvider>
+  <QueryClientProvider client={props.queryClient}>
+    <MaterialThemeProvider theme={props.materialTheme}>
+      {props.children}
+    </MaterialThemeProvider>
   </QueryClientProvider>
 );
+
+export const MainProvider = ({ children }: { children: ReactNode }) => {
+  const theme = useTheme();
+  const [client] = useState(() => new QueryClient());
+  return (
+    <Providers materialTheme={theme} queryClient={client}>
+      {children}
+    </Providers>
+  );
+};

@@ -50,7 +50,7 @@ export class MainPlugin extends Plugin {
         <StrictMode>
           <Application
             fileName={json.datasource.file}
-            app={this.app}
+            vault={this.app.vault}
             schema={json.forms.schema}
             uischema={json.forms.uischema}
             submit={json.submit}

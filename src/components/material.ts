@@ -1,6 +1,5 @@
 import { Theme, ThemeOptions, createTheme } from '@mui/material';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { useConsole } from 'src/hooks';
 
 const color = (variable: string) =>
   getComputedStyle(document.body).getPropertyValue(variable).trim();
@@ -21,6 +20,9 @@ const createObsidianThemeOptions = (): ThemeOptions => ({
       main: color('--color-red'),
     },
     divider: color('--divider-color'),
+    primary: {
+      main: color('--interactive-accent'),
+    },
   },
 });
 
@@ -47,11 +49,10 @@ export const useTheme = () => {
   const [theme, themeSet] = useState<Theme>(createTheme({}));
   const [mode] = useColorScheme();
 
-  useConsole({ mode, theme });
-
   useLayoutEffect(() => {
     const obsidianThemeOptions = createObsidianThemeOptions();
-    const themeNext = createTheme(obsidianThemeOptions, { palette: { mode } });
+    const overrides: ThemeOptions = { palette: { mode } };
+    const themeNext = createTheme(obsidianThemeOptions, overrides);
     themeSet(themeNext);
   }, [mode, themeSet]);
 

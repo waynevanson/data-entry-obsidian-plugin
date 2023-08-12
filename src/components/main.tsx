@@ -3,18 +3,24 @@ import {
   UISchemaElement,
   createDefaultValue,
 } from '@jsonforms/core';
-import { App, TFile } from 'obsidian';
+import type { TFile, Vault } from 'obsidian';
 import * as React from 'react';
 import { ReactNode, useState } from 'react';
-import { Form, useCursor, useFile, useForm, useForms } from 'src/hooks';
+import {
+  Form,
+  useCursor,
+  useFile,
+  useForm,
+  useForms,
+  useToggle,
+} from '../hooks';
 import { ControlPanel } from './control-panel';
 import { Formed } from './form';
 import { Alert, Button, CircularProgress } from '@mui/material';
-import { useToggle } from 'src/hooks/toggle';
 import { readonlyRecord } from 'fp-ts';
 
 export interface MainProps {
-  app: App;
+  vault: Vault;
   schema: JsonSchema;
   uischema?: UISchemaElement;
   submit?: string;
@@ -27,7 +33,7 @@ export interface UseQueryFileReturn {
 }
 
 export function Main(props: MainProps) {
-  const file = useFile(props.app, props.fileName);
+  const file = useFile(props.vault, props.fileName);
   const [newMode, newModeToggle] = useToggle(true);
   const [defaultForm] = useState(
     () => createDefaultValue(props.schema) as Form,

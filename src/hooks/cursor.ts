@@ -38,6 +38,5 @@ export const useCursor = (min = 0, max: number | null) => {
     clear,
     start,
     end,
-    fetch,
   };
 };
