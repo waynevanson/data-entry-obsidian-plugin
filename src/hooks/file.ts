@@ -1,27 +1,52 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { App, Notice, TAbstractFile, TFile, Vault } from 'obsidian';
+import { Notice, TAbstractFile, TFile, Vault } from 'obsidian';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-type DataEntryErrorName = 'FileNotFound';
-
-export class DataEntryError<K extends DataEntryErrorName> extends Error {
-  private constructor(name: K) {
-    const messageByName: Record<DataEntryErrorName, string> = {
-      FileNotFound: '',
-    };
-    const message = messageByName[name];
+export class FileNotFoundError extends Error {
+  constructor(filePath: string) {
+    const message = `Unable to find file at path "${filePath}".`;
     super(message);
-  }
-
-  static create<K extends DataEntryErrorName>(name: K): DataEntryError<K> {
-    return new DataEntryError(name);
+    this.name = this.constructor.name;
   }
 }
 
-export const useFileObsidian = (app: App, filePath: string, lazy = false) => {
+export class FileNotTFileError extends Error {
+  constructor(filePath: string) {
+    const message = `Cannot read contents of "${filePath}" as it is not a file.`;
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+export class FileNotReadError extends Error {
+  constructor(filePath: string) {
+    const message = `Cannot read contents of "${filePath}" as it is not a file.`;
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+export class FileRenamedError extends Error {
+  constructor(oldFilePath: string, newFilePath: string) {
+    const message = `"${oldFilePath}" has been renamed to "${newFilePath}"`;
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+export type FileError =
+  | FileNotTFileError
+  | FileNotFoundError
+  | FileRenamedError;
+
+export const useFileObsidian = (
+  vault: Vault,
+  filePath: string,
+  lazy = false,
+) => {
   const [data, dataSet] = useState<string | null>(null);
   const [loading, loadingSet] = useState(false);
-  const [error, errorSet] = useState<string | null>(null);
+  const [error, errorSet] = useState<FileError | null>(null);
 
   const read = useCallback(
     async (file: TAbstractFile) => {
@@ -34,46 +59,40 @@ export const useFileObsidian = (app: App, filePath: string, lazy = false) => {
       file.vault
         .read(file)
         .then((contents) => dataSet(contents))
-        .catch((error) => errorSet(String(error)))
+        .catch((error) => errorSet(error as never))
         .finally(() => loadingSet(false));
     },
     [filePath],
   );
 
   const file = useMemo(() => {
-    const file = app.vault.getAbstractFileByPath(filePath);
+    const file = vault.getAbstractFileByPath(filePath);
 
     if (file == null) {
-      errorSet(`Unable to find file at path "${filePath}".`);
+      errorSet(new FileNotFoundError(filePath));
     } else if (!(file instanceof TFile)) {
-      errorSet(`Cannot read contents of "${filePath}" as it is not a file.`);
+      errorSet(new FileNotTFileError(filePath));
     } else {
       return file;
     }
 
     return null;
-  }, [app.vault, filePath]);
+  }, [vault, filePath]);
 
   const fetch = useCallback(() => {
-    if (file == null) {
-      errorSet(`Unable to find file at path "${filePath}".`);
-    } else if (!(file instanceof TFile)) {
-      errorSet(`Cannot read contents of "${filePath}" as it is not a file.`);
-    } else if (file.path === filePath) {
-      read(file);
-    }
-  }, [file, filePath, read]);
+    file != null && read(file);
+  }, [file, read]);
 
   // load initial value
   useEffect(() => {
     if (lazy) return;
     else fetch();
-  }, [app.vault, fetch, filePath, lazy, read]);
+  }, [fetch, lazy]);
 
   useEffect(() => {
-    const create = app.vault.on('create', read);
+    const create = vault.on('create', read);
 
-    const delete_ = app.vault.on('delete', async (file) => {
+    const delete_ = vault.on('delete', async (file) => {
       if (!(file instanceof TFile)) return;
       if (file.path !== filePath) return;
 
@@ -81,21 +100,21 @@ export const useFileObsidian = (app: App, filePath: string, lazy = false) => {
       errorSet(null);
     });
 
-    const modify = app.vault.on('modify', read);
-    const rename = app.vault.on('rename', (file, oldPath) => {
+    const modify = vault.on('modify', read);
+    const rename = vault.on('rename', (file, oldPath) => {
       if (oldPath !== filePath) return;
-      errorSet(`"${filePath}" has been renamed to "${file.path}"`);
+      errorSet(new FileRenamedError(filePath, file.path));
     });
 
     return () =>
-      [create, delete_, modify, rename].forEach((ref) => app.vault.offref(ref));
-  }, [app.vault, filePath, read]);
+      [create, delete_, modify, rename].forEach((ref) => vault.offref(ref));
+  }, [vault, filePath, read]);
 
   const modify = useCallback(
     (contents: string) => {
-      file != null && app.vault.modify(file, contents);
+      file != null && vault.modify(file, contents);
     },
-    [app.vault, file],
+    [vault, file],
   );
 
   return { data, loading, error, fetch, modify };
