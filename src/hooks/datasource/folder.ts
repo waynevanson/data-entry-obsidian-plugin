@@ -1,7 +1,6 @@
 import { TFile, TFolder, Vault } from 'obsidian';
-import { Datasource } from '../common';
-import { FileNotTFileError, useFileObsidian } from './file';
 import { useMemo, useState } from 'react';
+import { FileNotTFileError } from './file';
 
 export class FolderNotFoundError extends Error {
   constructor(folderPath: string) {
@@ -19,7 +18,7 @@ export class FolderNotTFolderError extends Error {
   }
 }
 
-export class FileRenamedError extends Error {
+export class FolderRenamedError extends Error {
   constructor(oldFolderPath: string, newFolderPath: string) {
     const message = `"${oldFolderPath}" has been renamed to "${newFolderPath}"`;
     super(message);
@@ -30,9 +29,9 @@ export class FileRenamedError extends Error {
 export type FolderError =
   | FolderNotFoundError
   | FileNotTFileError
-  | FileRenamedError;
+  | FolderRenamedError;
 
-export function useFolderObsidian(vault: Vault, folderPath: string | null) {
+export function useFolder(vault: Vault, folderPath: string | null) {
   const [error, errorSet] = useState<FolderError | null>(null);
 
   const folder = useMemo(() => {
@@ -61,27 +60,4 @@ export function useFolderObsidian(vault: Vault, folderPath: string | null) {
   );
 
   return { filePaths, error };
-}
-
-export function useDatasource(
-  vault: Vault,
-  datasource: Datasource,
-  index: number,
-) {
-  const folderPath = 'folder' in datasource ? datasource.folder : null;
-  const folder = useFolderObsidian(vault, folderPath);
-
-  const filePath =
-    'file' in datasource ? datasource.file : folder.filePaths[index];
-
-  const file = useFileObsidian(vault, filePath);
-  const error = folder.error ?? file.error;
-  // todo - error handle parse
-  const json: unknown = JSON.parse(file as never);
-  const data =
-    'folder' in datasource
-      ? (json as unknown)
-      : (json as Array<unknown>)[index] ?? null;
-
-  return { data, error, loading: file.loading };
 }

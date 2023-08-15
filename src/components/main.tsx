@@ -9,7 +9,7 @@ import { ReactNode, useMemo, useState } from 'react';
 import {
   Form,
   useCursor,
-  useFileObsidian,
+  useFile,
   useForm,
   useForms,
   useToggle,
@@ -33,7 +33,7 @@ export interface UseQueryFileReturn {
 }
 
 export function Main(props: MainProps) {
-  const file = useFileObsidian(props.vault, props.fileName);
+  const file = useFile(props.vault, props.fileName);
   const [newMode, newModeToggle] = useToggle(true);
   const [defaultForm] = useState(
     () => createDefaultValue(props.schema) as Form,
