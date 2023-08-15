@@ -92,6 +92,9 @@
     ],
     "*.{ya?ml,jso?n,.?css},!\\.vault": [
       "prettier -w"
+    ],
+    "*,!\\.vault": [
+      "pnpm run build"
     ]
   },
   "release": {
