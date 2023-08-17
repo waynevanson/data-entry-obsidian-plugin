@@ -1,11 +1,4 @@
-import type { FileStats, EventRef } from 'obsidian';
-
-declare module 'obsidian' {
-  export interface EventRef {
-    name: string;
-    callback: (...data: Array<unknown>) => void;
-  }
-}
+import { EventRef } from 'obsidian';
 
 export class Events {
   constructor(
