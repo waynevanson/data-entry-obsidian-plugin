@@ -2,7 +2,7 @@ export * from '@testing-library/react';
 import * as rtl from '@testing-library/react';
 import React from 'react';
 import { ApplicationProvider } from '../components';
-import { MockOptions, MockResult } from './mocks';
+import { MockOptions, MockResult, createMocks } from './mocks';
 import { ThemeProvider, createTheme } from '@mui/material';
 import deepmerge from 'deepmerge';
 
@@ -42,7 +42,12 @@ export function render<
   options?: RenderOptions<Q, Container, BaseElement>,
 ): RenderResult<Q, Container, BaseElement> {
   const theme = createTheme();
-  const application = deepmerge({} as never, options?.application ?? {});
+  const { vault: vaultOptions, ...most } = deepmerge(
+    {} as never,
+    options?.application ?? {},
+  );
+  const mocks = createMocks({ vault: options?.application?.vault ?? {} });
+  const application = { ...most, vault: mocks.vault };
 
   const wrapper: React.JSXElementConstructor<{
     children: React.ReactElement;
@@ -51,7 +56,6 @@ export function render<
       <ApplicationProvider value={application}>{children}</ApplicationProvider>
     </ThemeProvider>
   );
-  const mocks = {};
 
   const rendered = rtl.render(app, { ...options, wrapper });
 

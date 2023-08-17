@@ -1,7 +1,11 @@
 import { Notice, TAbstractFile, TFile, Vault } from 'obsidian';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export const useFile = (vault: Vault, filePath: string, lazy = false) => {
+export const useFile = (
+  vault: Pick<Vault, 'modify' | 'getAbstractFileByPath' | 'on' | 'offref'>,
+  filePath: string,
+  lazy = false,
+) => {
   const [data, dataSet] = useState<string | null>(null);
   const [loading, loadingSet] = useState(false);
   const [error, errorSet] = useState<FileError | null>(null);

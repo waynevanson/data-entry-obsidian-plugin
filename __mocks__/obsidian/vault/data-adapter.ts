@@ -7,7 +7,9 @@ export type Item = FileConstructorParams | Directory;
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Directory extends Record<string, Item> {}
 
-export function createDataAdapter(system: Directory): DataAdapter {
+export function createDataAdapter(
+  system: Directory,
+): DataAdapter & { existsSync: (path: string) => boolean } {
   const cache: Record<string, string> = {};
   const split: Array<string> = [];
 
@@ -37,6 +39,7 @@ export function createDataAdapter(system: Directory): DataAdapter {
       cache[path] += data;
     },
     exists: async (path) => path in cache,
+    existsSync: (path: string) => path in cache,
     read: async (path) => {
       if (path in cache) return cache[path];
       else throw new Error(`${path} does not exist in the cache`);

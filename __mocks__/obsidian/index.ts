@@ -1,2 +1,2 @@
-export { Events } from './events';
-export { Vault } from './vault';
+export * from './events';
+export * from './vault';
