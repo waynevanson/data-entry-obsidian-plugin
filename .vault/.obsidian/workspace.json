@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "5c34741d519b3faa",
+        "id": "9b032881c23ac230",
         "type": "tabs",
         "children": [
           {
-            "id": "06afedec1b6a80ed",
+            "id": "31444c54d66f2924",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -139,10 +139,12 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "06afedec1b6a80ed",
+  "active": "31444c54d66f2924",
   "lastOpenFiles": [
     "Yello world.md",
+    "ss/NonObject.md",
     "NonObject.md",
+    "ss",
     "data.md",
     "d.md",
     "Untitled 1.md",

@@ -1,4 +1,3 @@
 export * from './application';
-export * from './providers';
-export * from './main';
+export * from './context';
 export * from './control-panel';

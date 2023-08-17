@@ -10,7 +10,10 @@ import * as React from 'react';
 import { StrictMode } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import { Configuration } from './common';
+import { ThemeProvider } from '@mui/material';
+import { ApplicationProvider } from './components/context';
 import { Application } from './components';
+import { useTheme } from './components/material';
 
 type Handler = Parameters<Plugin['registerMarkdownCodeBlockProcessor']>[1];
 
@@ -46,20 +49,26 @@ export class MainPlugin extends Plugin {
       );
       const json = jsonify(source) as Configuration;
 
-      const application = (
+      const Component = () => (
         <StrictMode>
-          <Application
-            fileName={(json.datasource as Record<string, string>).file}
-            vault={this.app.vault}
-            schema={json.forms.schema}
-            uischema={json.forms.uischema}
-            submit={json.submit}
-          />
+          <ThemeProvider theme={useTheme()}>
+            <ApplicationProvider
+              value={{
+                fileName: (json.datasource as Record<string, string>).file,
+                vault: this.app.vault,
+                schema: json.forms.schema,
+                uischema: json.forms.uischema,
+                submit: json.submit,
+              }}
+            >
+              <Application />
+            </ApplicationProvider>
+          </ThemeProvider>
         </StrictMode>
       );
 
       const container = element.createEl('div');
-      const renderer = new ReactMarkdownRenderChild(application, container);
+      const renderer = new ReactMarkdownRenderChild(<Component />, container);
       context.addChild(renderer);
     };
   }
