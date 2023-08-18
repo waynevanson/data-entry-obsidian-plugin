@@ -1,7 +1,9 @@
 {
   "scripts": {
     "postinstall": "husky install",
-    "dev": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' run dev"
+    "dev": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' run dev",
+    "build": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' run build",
+    "release": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' exec semantic-release"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.7",
