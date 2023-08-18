@@ -3,6 +3,7 @@
     "postinstall": "husky install",
     "dev": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' run dev",
     "build": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' run build",
+    "version": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' run version",
     "release": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' exec semantic-release"
   },
   "devDependencies": {
