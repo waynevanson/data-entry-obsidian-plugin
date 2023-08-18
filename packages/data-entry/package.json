@@ -57,7 +57,6 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "jsdom",
-    "passWithNoTests": true,
     "setupFilesAfterEnv": [
       "<rootDir>/.config/setup-jest.ts"
     ]

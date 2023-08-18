@@ -4,18 +4,19 @@
     "dev": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' run dev"
   },
   "devDependencies": {
-    "husky": "^8.0.3",
+    "@commitlint/cli": "^17.6.7",
+    "@commitlint/config-conventional": "^17.6.7",
+    "@types/node": "^18.17.3",
+    "@typescript-eslint/eslint-plugin": "5.29.0",
+    "@typescript-eslint/parser": "5.29.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-react": "^7.33.1",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "semantic-release": "^21.0.7",
-    "@types/node": "^18.17.3",
-    "@commitlint/cli": "^17.6.7",
-    "@commitlint/config-conventional": "^17.6.7",
+    "husky": "^8.0.3",
+    "jest": "^29.6.2",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.1",
-    "@typescript-eslint/eslint-plugin": "5.29.0",
-    "@typescript-eslint/parser": "5.29.0"
+    "semantic-release": "^21.0.7"
   },
   "commitlint": {
     "extends": [
@@ -28,6 +29,13 @@
     "arrowParens": "always",
     "tabWidth": 2,
     "useTabs": false
+  },
+  "jest": {
+    "projects": [
+      "packages/data-entry",
+      "packages/obsidian-mocks"
+    ],
+    "passWithNoTests": true
   },
   "lint-staged": {
     "*.m?(t|j)sx?,!\\.vault": [

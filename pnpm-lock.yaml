@@ -35,6 +35,9 @@ importers:
       husky:
         specifier: ^8.0.3
         version: 8.0.3
+      jest:
+        specifier: ^29.6.2
+        version: 29.6.2(@types/node@18.17.3)(ts-node@10.9.1)
       lint-staged:
         specifier: ^13.2.3
         version: 13.2.3
