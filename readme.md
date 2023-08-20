@@ -1,5 +1,14 @@
 # Data Entry - Obsidian Plugin
 
+Create forms that modify data in existing notes; the `dataview` plugin for data entry.
+
+## Preview
+
+## Goals
+
+- [x] Create forms using static configuration that modify data in existing notes.
+- [ ] Create the schema for forms using a GUI.
+
 ## Packages
 
 This repository contains multiple packages to ensure concerns are clearly separated.
