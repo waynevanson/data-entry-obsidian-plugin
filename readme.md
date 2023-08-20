@@ -5,9 +5,9 @@ Create forms that modify data in existing notes; the `dataview` plugin for data 
 ## Preview
 
 <details>
-<summary>
-</summary>
+<summary>Click to open</summary>
 
+![](./assets/mobile-data.png)
 ![](./assets/mobile.png)
 ![](./assets/tablet.png)
 ![](./assets/desktop.png)
