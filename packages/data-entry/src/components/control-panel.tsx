@@ -1,16 +1,10 @@
-import { Pagination } from '@mui/material';
+import { Pagination, Unstable_Grid2 as Grid } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
 
 const StyledButtons = styled.div`
   display: flex;
   gap: 1rem;
-`;
-
-const StyledContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 export interface ControlPanelProps {
@@ -31,21 +25,25 @@ export const ControlPanel = ({
   onPageChange,
 }: ControlPanelProps) => {
   return (
-    <StyledContainer>
-      <StyledButtons>
-        <button onClick={() => onToggleMode?.()}>
-          {!newMode ? 'Create ->' : '<- Back to item'}
-        </button>
-        <button onClick={() => onClear?.()}>Clear</button>
-      </StyledButtons>
-      <Pagination
-        siblingCount={0}
-        boundaryCount={0}
-        count={count}
-        page={page}
-        disabled={newMode}
-        onChange={onPageChange}
-      />
-    </StyledContainer>
+    <Grid container>
+      <Grid>
+        <StyledButtons>
+          <button onClick={() => onToggleMode?.()}>
+            {!newMode ? 'Create ->' : '<- Back to item'}
+          </button>
+          <button onClick={() => onClear?.()}>Clear</button>
+        </StyledButtons>
+      </Grid>
+      <Grid>
+        <Pagination
+          siblingCount={0}
+          boundaryCount={0}
+          count={count}
+          page={page}
+          disabled={newMode}
+          onChange={onPageChange}
+        />
+      </Grid>
+    </Grid>
   );
 };

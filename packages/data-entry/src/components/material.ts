@@ -1,6 +1,6 @@
-import { Theme, ThemeOptions, createTheme } from '@mui/material';
+import { Theme, ThemeOptions, createTheme, css } from '@mui/material';
 import deepmerge from 'deepmerge';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const color = (variable: string) =>
   getComputedStyle(document.body).getPropertyValue(variable).trim();
