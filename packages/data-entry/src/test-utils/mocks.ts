@@ -1,22 +1,20 @@
 import { Theme } from '@mui/material';
 import { MainProps as ApplicationContext } from '../components';
-import { Vault } from 'obsidian';
-import { Directory } from '../../__mocks__/obsidian/vault/data-adapter';
+import { MockVaultParams, Vault, createVaultMock } from 'obsidian';
+import { Directory } from '@waynevanson/obsidian-mocks/dist/vault/data-adapter';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MockOptions {
   application?: Partial<Omit<ApplicationContext, 'vault'>> & {
     vault: Directory;
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MockResult {
   vault: Vault;
 }
 
 export interface MockContextOptions {
-  vault: Directory;
+  vault?: MockVaultParams;
 }
 
 export interface MockContextResult {
@@ -25,6 +23,5 @@ export interface MockContextResult {
 }
 
 export const createMocks = (options?: MockContextOptions): MockResult => ({
-  //@ts-expect-error
-  vault: new Vault(options?.vault),
+  vault: createVaultMock(options?.vault ?? { root: {} }),
 });

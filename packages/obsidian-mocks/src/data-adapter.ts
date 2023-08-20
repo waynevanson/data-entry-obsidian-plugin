@@ -1,4 +1,4 @@
-import { DataAdapter } from 'obsidian';
+import type { DataAdapter } from 'obsidian';
 
 export type FileConstructorParams = string;
 
@@ -10,6 +10,8 @@ export interface Directory extends Record<string, Item> {}
 export function createDataAdapter(
   system: Directory,
 ): DataAdapter & { existsSync: (path: string) => boolean } {
+  // todo - add time
+  const now = Date.now();
   const cache: Record<string, string> = {};
   const split: Array<string> = [];
 

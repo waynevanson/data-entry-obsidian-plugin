@@ -13,7 +13,7 @@ export class Events {
     callback: (...data: Array<unknown>) => void,
     ctx?: unknown,
   ): EventRef {
-    const ref: EventRef = { name, callback };
+    const ref: EventRef = { mockName: name, mockCallback: callback };
 
     const handlers = this.handlersByName.has(name)
       ? this.handlersByName.get(name)!
@@ -34,7 +34,7 @@ export class Events {
   }
 
   offref(ref: EventRef): void {
-    this.off(ref.name, ref.callback);
+    this.off(ref.mockName, ref.mockCallback);
   }
 
   trigger(name: string, ...data: Array<unknown>): void {

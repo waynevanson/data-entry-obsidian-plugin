@@ -6,6 +6,7 @@ import { MockOptions, MockResult, createMocks } from './mocks';
 import { ThemeProvider, createTheme } from '@mui/material';
 import deepmerge from 'deepmerge';
 
+//todo-add types here
 export interface RenderOptions<
   Q extends rtl.Queries = typeof rtl.queries,
   Container extends Element | DocumentFragment = HTMLElement,
@@ -46,7 +47,7 @@ export function render<
     {} as never,
     options?.application ?? {},
   );
-  const mocks = createMocks({ vault: options?.application?.vault ?? {} });
+  const mocks = createMocks({ vault: { root: vaultOptions } });
   const application = { ...most, vault: mocks.vault };
 
   const wrapper: React.JSXElementConstructor<{

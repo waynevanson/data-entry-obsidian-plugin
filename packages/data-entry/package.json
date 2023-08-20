@@ -34,6 +34,7 @@
     "jest-environment-jsdom": "^29.6.2",
     "jest-image-snapshot": "^6.2.0",
     "obsidian": "latest",
+    "@waynevanson/obsidian-mocks": "workspace:../obsidian-mocks",
     "semantic-release": "^21.0.7",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",

@@ -11,7 +11,9 @@ describe(useFile, () => {
     };
     const mocks = createMocks({
       vault: {
-        [file.path]: file.contents,
+        root: {
+          [file.path]: file.contents,
+        },
       },
     });
     const hooked = rtl.renderHook(() => useFile(mocks.vault, file.path));

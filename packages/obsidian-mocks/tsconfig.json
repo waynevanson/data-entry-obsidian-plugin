@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es6",
+    "strictNullChecks": true,
+    "outDir": "dist",
+    "declaration": true,
+    "esModuleInterop": true
+  },
+  "include": ["src"]
+}
