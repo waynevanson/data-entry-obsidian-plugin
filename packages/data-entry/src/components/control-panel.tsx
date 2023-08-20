@@ -39,8 +39,8 @@ export const ControlPanel = ({
         <button onClick={() => onClear?.()}>Clear</button>
       </StyledButtons>
       <Pagination
-        showFirstButton
-        showLastButton
+        siblingCount={0}
+        boundaryCount={0}
         count={count}
         page={page}
         disabled={newMode}
