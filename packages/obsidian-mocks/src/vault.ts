@@ -14,7 +14,7 @@ export class Vault extends Events {
     this.adapter = createDataAdapter(params.root);
   }
 
-  getAbstractFileByPath(this: this, path: string): TAbstractFile | null {
+  getAbstractFileByPath(path: string): TAbstractFile | null {
     const exists = this.adapter.existsSync(path);
     if (!exists) return null;
     else {
@@ -27,7 +27,7 @@ export class Vault extends Events {
     }
   }
 
-  async read(this: this, file: TFile) {
+  async read(file: TFile) {
     return this.adapter.read(file.path);
   }
 }

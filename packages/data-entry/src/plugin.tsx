@@ -24,7 +24,7 @@ export class MainPlugin extends Plugin {
 
   // todo - apply cleanup
   // todo - create DIY code block processor that allows ```lang plugin-name
-  registerMarkdownCodeBlockProcessors(this: this) {
+  registerMarkdownCodeBlockProcessors() {
     const yamls = ['yaml', 'yml'];
     const jsons = ['json', 'jsn', 'jsonc'];
     const files = yamls.concat(...jsons);
@@ -39,7 +39,6 @@ export class MainPlugin extends Plugin {
   }
 
   handleCodeBlockProcessor(
-    this: this,
     extension: string,
     yamls: ReadonlyArray<string>,
   ): Handler {
