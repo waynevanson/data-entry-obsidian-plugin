@@ -71,6 +71,7 @@ export function createDataAdapter(
       else throw new Error(`${path} does not exist in the cache`);
     },
     write: async (path, data, _options) => {
+      // todo - keep ctime/contents and modify mtime
       cache[path].contents = data;
     },
     stat: async (path) => {
@@ -88,6 +89,14 @@ export function createDataAdapter(
       const next = f(contents);
       cache[path].contents = next;
       return next;
+    },
+    copy: async (current, next) => {
+      if (next in cache) throw new Error(`"${next}" already exists as a file.`);
+      // todo - keep ctime/contents and modify mtime
+      cache[next] = cache[current];
+    },
+    remove: async (path) => {
+      path in cache && delete cache[path];
     },
   };
 }
