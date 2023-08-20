@@ -73,5 +73,21 @@ export function createDataAdapter(
     write: async (path, data, _options) => {
       cache[path].contents = data;
     },
+    stat: async (path) => {
+      const item = cache[path];
+      return {
+        ctime: item.ctime,
+        mtime: item.mtime,
+        size: item.contents.length * 2,
+        type: 'file',
+      };
+    },
+    list: async () => ({ files: Object.keys(cache), folders: folders() }),
+    process: async (path, f, _options) => {
+      const contents = cache[path].contents;
+      const next = f(contents);
+      cache[path].contents = next;
+      return next;
+    },
   };
 }
