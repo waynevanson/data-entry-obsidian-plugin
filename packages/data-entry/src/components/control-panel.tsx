@@ -34,7 +34,7 @@ export const ControlPanel = ({
     <StyledContainer>
       <StyledButtons>
         <button onClick={() => onToggleMode?.()}>
-          {!newMode ? 'Create' : 'Back to item'}
+          {!newMode ? 'Create ->' : '<- Back to item'}
         </button>
         <button onClick={() => onClear?.()}>Clear</button>
       </StyledButtons>

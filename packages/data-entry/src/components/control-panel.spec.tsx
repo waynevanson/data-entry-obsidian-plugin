@@ -13,7 +13,7 @@ describe(ControlPanel, () => {
       <ControlPanel count={1} newMode={false} page={1} />,
     );
 
-    const button = rendered.getByRole('button', { name: 'Create' });
+    const button = rendered.getByRole('button', { name: 'Create ->' });
     expect(button).toBeInTheDocument();
   });
 
@@ -22,13 +22,13 @@ describe(ControlPanel, () => {
       <ControlPanel count={1} newMode={true} page={1} />,
     );
 
-    const button = rendered.getByRole('button', { name: 'Back to item' });
+    const button = rendered.getByRole('button', { name: '<- Back to item' });
     expect(button).toBeInTheDocument();
   });
 
   it.each([
-    [false, 'Create'],
-    [true, 'Back to item'],
+    [false, 'Create ->'],
+    [true, '<- Back to item'],
   ])(
     'should call the "onToggleMode" callback when the button "%s" is called',
     (newMode, name) => {
