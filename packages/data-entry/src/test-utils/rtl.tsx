@@ -47,7 +47,7 @@ export function render<
     {} as never,
     options?.application ?? {},
   );
-  const mocks = createMocks({ vault: { root: vaultOptions } });
+  const mocks = createMocks({ vault: vaultOptions });
   const application = { ...most, vault: mocks.vault };
 
   const wrapper: React.JSXElementConstructor<{
