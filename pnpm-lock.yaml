@@ -77,12 +77,9 @@ importers:
       fp-ts:
         specifier: ^2.16.1
         version: 2.16.1
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
+      preact:
+        specifier: ^10.17.1
+        version: 10.17.1
       styled-components:
         specifier: ^6.0.7
         version: 6.0.7(react-dom@18.2.0)(react@18.2.0)
@@ -159,6 +156,12 @@ importers:
       obsidian:
         specifier: latest
         version: 1.4.0(@codemirror/state@6.2.1)(@codemirror/view@6.16.0)
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
       semantic-release:
         specifier: ^21.0.7
         version: 21.0.7
@@ -7133,6 +7136,10 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: false
+
+  /preact@10.17.1:
+    resolution: {integrity: sha512-X9BODrvQ4Ekwv9GURm9AKAGaomqXmip7NQTZgY7gcNmr7XE83adOMJvd3N42id1tMFU7ojiynRsYnY6/BRFxLA==}
     dev: false
 
   /prelude-ls@1.2.1:
