@@ -1,32 +1,46 @@
 import type { DataAdapter } from 'obsidian';
 
-export type FileConstructorParams = string;
+export type FileConstructorParams = string | Partial<CacheItem>;
 
 export type Item = FileConstructorParams | Directory;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Directory extends Record<string, Item> {}
 
+export interface CacheItem {
+  contents: string;
+  ctime: number;
+  mtime: number;
+}
+
 export function createDataAdapter(
   system: Directory,
 ): DataAdapter & { existsSync: (path: string) => boolean } {
   // todo - add time
   const now = Date.now();
-  const cache: Record<string, string> = {};
+  const cache: Record<string, CacheItem> = {};
   const split: Array<string> = [];
 
+  const keys = ['contents', 'ctime', 'mtime'];
   const fn = (system: Directory) => {
     for (const property in system) {
       const path = ('/' + property).replace(/\/+/g, '/').slice(1);
       split.push(path);
 
-      const value = system[property];
+      const contents = system[property];
 
-      if (typeof value === 'string') {
-        const key = split.join('/');
-        cache[key] = value;
+      const key = split.join('/');
+      if (typeof contents === 'string') {
+        cache[key] = { contents, ctime: now, mtime: now };
+      } else if (
+        typeof contents === 'object' &&
+        Object.keys(contents).some((key) => keys.includes(key))
+      ) {
+        // todo - fix the key so that we can name a file as "contents"
+        cache[key] = { contents: '', ctime: now, mtime: now, ...contents };
       } else {
-        fn(value);
+        // directory
+        fn(contents as Directory);
       }
 
       split.pop();
@@ -35,19 +49,29 @@ export function createDataAdapter(
 
   fn(system);
 
+  const folders = (): Array<string> =>
+    Object.keys(cache)
+      .filter((path) => path.search('/') >= 0)
+      .map((path) => {
+        const index = path.lastIndexOf('/');
+        return path.slice(0, index);
+      })
+      .concat('/');
+
   //@ts-expect-error
   return {
     append: async (path, data, _options) => {
-      cache[path] += data;
+      cache[path].contents += data;
     },
+    trashSystem: async () => false,
     exists: async (path) => path in cache,
     existsSync: (path: string) => path in cache,
     read: async (path) => {
-      if (path in cache) return cache[path];
+      if (path in cache) return cache[path].contents;
       else throw new Error(`${path} does not exist in the cache`);
     },
     write: async (path, data, _options) => {
-      cache[path] = data;
+      cache[path].contents = data;
     },
   };
 }
