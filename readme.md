@@ -4,6 +4,16 @@ Create forms that modify data in existing notes; the `dataview` plugin for data 
 
 ## Preview
 
+<details>
+<summary>
+</summary>
+
+![](./assets/mobile.png)
+![](./assets/tablet.png)
+![](./assets/desktop.png)
+
+</details>
+
 ## Goals
 
 - [x] Create forms using static configuration that modify data in existing notes.
