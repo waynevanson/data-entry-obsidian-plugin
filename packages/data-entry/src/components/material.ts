@@ -1,4 +1,5 @@
 import { Theme, ThemeOptions, createTheme } from '@mui/material';
+import deepmerge from 'deepmerge';
 import { useEffect, useLayoutEffect, useState } from 'react';
 
 const color = (variable: string) =>
@@ -49,11 +50,12 @@ export const useTheme = () => {
   const [theme, themeSet] = useState<Theme>(createTheme({}));
   const [mode] = useColorScheme();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const obsidianThemeOptions = createObsidianThemeOptions();
     const overrides: ThemeOptions = { palette: { mode } };
-    const themeNext = createTheme(obsidianThemeOptions, overrides);
-    themeSet(themeNext);
+    const themeOptions = deepmerge(obsidianThemeOptions, overrides);
+    const theme = createTheme(themeOptions);
+    themeSet(theme);
   }, [mode, themeSet]);
 
   return theme;
