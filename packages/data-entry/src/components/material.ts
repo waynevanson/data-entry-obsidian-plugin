@@ -24,6 +24,10 @@ const createObsidianThemeOptions = (): ThemeOptions => ({
     primary: {
       main: color('--interactive-accent'),
     },
+    action: {
+      selected: color('--interactive-accent'),
+      hover: color('--interactive-hover'),
+    },
   },
 });
 

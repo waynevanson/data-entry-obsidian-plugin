@@ -25,7 +25,12 @@ export const ControlPanel = ({
   onPageChange,
 }: ControlPanelProps) => {
   return (
-    <Grid container>
+    <Grid
+      container
+      justifyContent="space-between"
+      alignItems="center"
+      justifyItems="stretch"
+    >
       <Grid>
         <StyledButtons>
           <button onClick={() => onToggleMode?.()}>
@@ -36,6 +41,7 @@ export const ControlPanel = ({
       </Grid>
       <Grid>
         <Pagination
+          sx={{ ul: { paddingLeft: 0 }, button: { borderRadius: '8px' } }}
           siblingCount={0}
           boundaryCount={0}
           count={count}
