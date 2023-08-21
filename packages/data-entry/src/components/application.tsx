@@ -2,7 +2,7 @@ import { createDefaultValue } from '@jsonforms/core';
 import { Alert, Button, CircularProgress } from '@mui/material';
 import { readonlyRecord } from 'fp-ts';
 import * as React from 'react';
-import { ReactNode, useMemo, useState } from 'react';
+import { MouseEventHandler, ReactNode, useMemo, useState } from 'react';
 import {
   Form,
   useCursor,
@@ -14,6 +14,23 @@ import {
 import { useApplication } from './context';
 import { ControlPanel } from './control-panel';
 import { Formed } from './form';
+
+const CallbackCreateNewFile = ({
+  onClick,
+}: {
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}) => (
+  <Alert
+    severity="warning"
+    action={
+      <Button color="inherit" onClick={onClick}>
+        Create File
+      </Button>
+    }
+  >
+    File does not exist. Would you like to create it?
+  </Alert>
+);
 
 export function Application() {
   const application = useApplication();
@@ -67,21 +84,9 @@ export function Application() {
 
   if (file.data == null) {
     return (
-      <Alert
-        severity="warning"
-        action={
-          <Button
-            color="inherit"
-            onClick={() => {
-              file.modify(JSON.stringify('[]', null, 2));
-            }}
-          >
-            Create File
-          </Button>
-        }
-      >
-        File does not exist. Would you like to create it?
-      </Alert>
+      <CallbackCreateNewFile
+        onClick={() => file.modify(JSON.stringify('[]', null, 2))}
+      />
     );
   }
 
