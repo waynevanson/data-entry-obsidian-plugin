@@ -13,11 +13,11 @@ export interface FormedProps
   > {
   onSubmit?: () => void;
   errors: NonNullable<JsonFormsCore['errors']>;
-  submitLabel?: string;
+  submit: string;
 }
 
 export const Formed = ({
-  submitLabel,
+  submit,
   onSubmit,
   errors,
   ...jsonForms
@@ -35,7 +35,7 @@ export const Formed = ({
     />
 
     <button type="submit" disabled={errors.length > 0}>
-      {submitLabel ?? 'Submit'}
+      {submit}
     </button>
   </form>
 );

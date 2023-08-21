@@ -103,7 +103,7 @@ export function Application() {
         <Formed
           errors={errors as never}
           onSubmit={handleSubmit}
-          submitLabel={application.submit}
+          submit={newMode ? 'Save as new' : 'Save existing'}
           schema={application.schema ?? undefined}
           uischema={application.uischema ?? undefined}
           data={form}

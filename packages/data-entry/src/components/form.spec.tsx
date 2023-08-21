@@ -6,11 +6,18 @@ import user from '@testing-library/user-event';
 describe(Formed, () => {
   it('should call "onSubmit" when the button "Submit" is clicked', () => {
     const onSubmit = jest.fn();
+    const name = 'Submit';
     const { rendered } = rtl.render(
-      <Formed data={{}} schema={{}} errors={[]} onSubmit={onSubmit} />,
+      <Formed
+        data={{}}
+        schema={{}}
+        errors={[]}
+        onSubmit={onSubmit}
+        submit={name}
+      />,
     );
 
-    const button = rendered.getByRole('button', { name: 'Submit' });
+    const button = rendered.getByRole('button', { name });
     button.click();
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
@@ -22,6 +29,7 @@ describe(Formed, () => {
     const onChange = jest.fn();
     const { rendered } = rtl.render(
       <Formed
+        submit="Submit"
         data={{ name: '' }}
         schema={{ properties: { name: { type: 'string' } } }}
         errors={[]}
