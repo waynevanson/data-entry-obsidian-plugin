@@ -35,7 +35,7 @@ const CallbackCreateNewFile = ({
 export function Application() {
   const application = useApplication();
   const file = useFile(application.vault, application.fileName);
-  const [newMode, newModeToggle] = useToggle(true);
+  const [newMode, newModeToggle] = useToggle(false);
   const [defaultForm] = useState(
     () => createDefaultValue(application.schema) as Form,
   );
