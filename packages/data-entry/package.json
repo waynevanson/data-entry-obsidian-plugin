@@ -61,6 +61,10 @@
     "testEnvironment": "jsdom",
     "setupFilesAfterEnv": [
       "<rootDir>/.config/setup-jest.ts"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.tsx?",
+      "!**/*.d.tsx?"
     ]
   },
   "release": {
