@@ -49,4 +49,17 @@ describe(ControlPanel, () => {
       expect(onToggleMode).toHaveBeenCalledTimes(1);
     },
   );
+
+  it('should call the "onClear" callback when the button "Clear" is called', () => {
+    const onClear = jest.fn();
+    const rendered = rtl.render(
+      <ControlPanel count={1} page={1} newMode={false} onClear={onClear} />,
+    );
+
+    const button = rendered.getByRole('button', { name: 'Clear' });
+
+    button.click();
+
+    expect(onClear).toHaveBeenCalledTimes(1);
+  });
 });
