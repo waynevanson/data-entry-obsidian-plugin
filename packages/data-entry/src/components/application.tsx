@@ -78,8 +78,7 @@ export function Application() {
     );
 
   if (file.error) {
-    //@ts-expect-error
-    return <Alert severity="error">{file.read.error.message}</Alert>;
+    return <Alert severity="error">{file.error.message}</Alert>;
   }
 
   if (file.data == null) {
