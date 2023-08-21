@@ -14,6 +14,7 @@ export interface ControlPanelProps {
   onClear?: () => void;
   onPageChange?: (event: React.ChangeEvent<unknown>, page: number) => void;
   page: number | undefined;
+  onRemove?: () => void;
 }
 
 export const ControlPanel = ({
@@ -23,6 +24,7 @@ export const ControlPanel = ({
   page,
   count,
   onPageChange,
+  onRemove,
 }: ControlPanelProps) => {
   return (
     <Grid
@@ -37,6 +39,7 @@ export const ControlPanel = ({
             {!newMode ? 'Create ->' : '<- Back to item'}
           </button>
           <button onClick={() => onClear?.()}>Clear</button>
+          {newMode || <button onClick={() => onRemove?.()}>Remove</button>}
         </StyledButtons>
       </Grid>
       {!newMode && (

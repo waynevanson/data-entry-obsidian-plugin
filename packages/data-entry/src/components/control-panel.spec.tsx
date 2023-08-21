@@ -17,7 +17,7 @@ describe(ControlPanel, () => {
     expect(button).toBeInTheDocument();
   });
 
-  it('should show the button "Back to item" when new mode is off', () => {
+  it('should show the button "Back to item" when new mode is on', () => {
     const rendered = rtl.render(
       <ControlPanel count={1} newMode={true} page={1} />,
     );
@@ -26,11 +26,42 @@ describe(ControlPanel, () => {
     expect(button).toBeInTheDocument();
   });
 
+  it('should show the button "Remove" when new mode is off', () => {
+    const rendered = rtl.render(
+      <ControlPanel count={1} newMode={false} page={1} />,
+    );
+
+    const button = rendered.getByRole('button', { name: 'Remove' });
+    expect(button).toBeInTheDocument();
+  });
+
+  it('should hide the button "Remove" when new mode is on', () => {
+    const rendered = rtl.render(
+      <ControlPanel count={1} newMode={true} page={1} />,
+    );
+
+    const button = rendered.queryByRole('button', { name: 'Remove' });
+    expect(button).not.toBeInTheDocument();
+  });
+
+  it('should show call the "onRemove" callback when the button "Remove" is clicked', () => {
+    const remove = jest.fn();
+    const rendered = rtl.render(
+      <ControlPanel count={1} newMode={false} page={1} onRemove={remove} />,
+    );
+
+    const button = rendered.getByRole('button', { name: 'Remove' });
+
+    button.click();
+
+    expect(remove).toHaveBeenNthCalledWith(1);
+  });
+
   it.each([
     [false, 'Create ->'],
     [true, '<- Back to item'],
   ])(
-    'should call the "onToggleMode" callback when the button "%s" is called',
+    'should call the "onToggleMode" callback when the button "%s" is clicked',
     (newMode, name) => {
       const onToggleMode = jest.fn();
       const rendered = rtl.render(

@@ -98,6 +98,12 @@ export function Application() {
         count={count}
         page={page}
         onPageChange={(_, page) => index.valueSet(page - 1)}
+        onRemove={() => {
+          if (index.value == null) return;
+          const array: Array<Form | null> = jsoned ?? [];
+          array.splice(index.value, 1);
+          file.modify(JSON.stringify(array, null, 2));
+        }}
       />
       {form != null ? (
         <Formed
