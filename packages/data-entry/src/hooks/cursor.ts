@@ -21,22 +21,9 @@ export const useCursor = (min = 0, max: number | null) => {
       return next > max! ? max! : next <= min ? min : next;
     });
 
-  const increment = () => incrementBy(1);
-  const decrementBy = (count: number) => incrementBy(-count);
-  const decrement = () => decrementBy(1);
-  const clear = () => valueSet(null);
-  const end = () => valueSet(max);
-  const start = () => valueSet(min);
-
   return {
     value,
     valueSet,
-    increment,
-    decrement,
-    decrementBy,
     incrementBy,
-    clear,
-    start,
-    end,
   };
 };
