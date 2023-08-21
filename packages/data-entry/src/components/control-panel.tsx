@@ -42,7 +42,11 @@ export const ControlPanel = ({
       {!newMode && (
         <Grid>
           <Pagination
-            sx={{ ul: { paddingLeft: 0 }, button: { borderRadius: '8px' } }}
+            sx={{
+              ul: { paddingLeft: '0 !important' },
+              button: { borderRadius: '8px' },
+              ':root': { margin: '0 auto' },
+            }}
             siblingCount={0}
             boundaryCount={0}
             count={count}
