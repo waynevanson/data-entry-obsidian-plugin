@@ -39,17 +39,19 @@ export const ControlPanel = ({
           <button onClick={() => onClear?.()}>Clear</button>
         </StyledButtons>
       </Grid>
-      <Grid>
-        <Pagination
-          sx={{ ul: { paddingLeft: 0 }, button: { borderRadius: '8px' } }}
-          siblingCount={0}
-          boundaryCount={0}
-          count={count}
-          page={page}
-          disabled={newMode}
-          onChange={onPageChange}
-        />
-      </Grid>
+      {!newMode && (
+        <Grid>
+          <Pagination
+            sx={{ ul: { paddingLeft: 0 }, button: { borderRadius: '8px' } }}
+            siblingCount={0}
+            boundaryCount={0}
+            count={count}
+            page={page}
+            disabled={newMode}
+            onChange={onPageChange}
+          />
+        </Grid>
+      )}
     </Grid>
   );
 };
