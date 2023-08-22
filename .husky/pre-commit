@@ -2,8 +2,3 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 pnpm exec lint-staged --concurrent false
-
-# Copy manifest.json because BRAT doesn't follow symlinks
-cp packages/data-entry/manifest.json manifest.json
-git add manifest.json
-git commit --amend --no-verify --no-edit --allow-empty
