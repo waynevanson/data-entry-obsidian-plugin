@@ -85,7 +85,7 @@
       [
         "@semantic-release/exec",
         {
-          "prepareCmd": "pnpm run version"
+          "prepareCmd": "pnpm run version && cp manifest.json ../../manifest.json"
         }
       ],
       [
@@ -104,7 +104,8 @@
             "package.json",
             "CHANGELOG.md",
             "versions.json",
-            "manifest.json"
+            "manifest.json",
+            "../../manifest.json"
           ],
           "message": "chore(release): ${nextRelease.version} [skip ci]"
         }
