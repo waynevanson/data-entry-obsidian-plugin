@@ -85,7 +85,13 @@
       [
         "@semantic-release/exec",
         {
-          "prepareCmd": "pnpm run version && cp manifest.json ../../manifest.json"
+          "prepareCmd": "pnpm run version"
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "prepareCmd": "cp ./manifest.json ../../manifest.json"
         }
       ],
       [
