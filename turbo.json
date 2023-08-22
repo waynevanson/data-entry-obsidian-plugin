@@ -13,7 +13,7 @@
       "dependsOn": ["^format"]
     },
     "lint": {
-      "dependsOn": ["format", "^lint"]
+      "dependsOn": ["format"]
     },
     "build": {
       "dependsOn": ["format", "lint", "^build"],
@@ -24,7 +24,8 @@
       "inputs": ["**/src/**.tsx?", "package.json", "packages/*/package.json"]
     },
     "deploy": {
-      "dependsOn": ["build", "test", "^release"]
+      "dependsOn": ["build", "test", "^deploy"],
+      "outputMode": "new-only"
     }
   }
 }
