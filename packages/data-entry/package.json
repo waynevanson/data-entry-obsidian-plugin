@@ -6,6 +6,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "node esbuild.config.mjs",
+    "test": "jest",
+    "watch": "jest --watch",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "format": "prettier -w '!.vault' .",
     "version": "node version-bump.mjs"
@@ -92,7 +94,7 @@
         "@semantic-release/github",
         {
           "assets": [
-            "main.js",
+            "dist/main.js",
             "manifest.json"
           ]
         }

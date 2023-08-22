@@ -1,0 +1,30 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "format": {
+      "dependsOn": ["^format"]
+    },
+    "lint": {
+      "dependsOn": ["format", "^lint"]
+    },
+    "build": {
+      "dependsOn": ["format", "lint", "^build"],
+      "outputs": ["dist/**"]
+    },
+    "test": {
+      "dependsOn": ["format", "lint", "^test"],
+      "inputs": ["**/src/**.tsx?", "package.json", "packages/*/package.json"]
+    },
+    "deploy": {
+      "dependsOn": ["build", "test", "^release"]
+    }
+  }
+}
