@@ -1,13 +1,13 @@
 {
-	"id": "data-entry",
-	"name": "Data Entry",
-	"version": "4.7.1",
-	"minAppVersion": "0.15.0",
-	"description": "Create forms that save data simply; the data view of data entry",
-	"author": "Wayne Van Son",
-	"authorUrl": "https://github.com/waynevanson",
-	"fundingUrl": {
-		"GitHub Sponsors": "https://github.com/sponsors/waynevanson"
-	},
-	"isDesktopOnly": false
+  "id": "data-entry",
+  "name": "Data Entry",
+  "version": "4.7.3",
+  "minAppVersion": "0.15.0",
+  "description": "Create forms that save data simply; the data view of data entry",
+  "author": "Wayne Van Son",
+  "authorUrl": "https://github.com/waynevanson",
+  "fundingUrl": {
+    "GitHub Sponsors": "https://github.com/sponsors/waynevanson"
+  },
+  "isDesktopOnly": false
 }
