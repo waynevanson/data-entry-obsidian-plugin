@@ -20,7 +20,7 @@
       "outputs": ["dist/**"]
     },
     "test": {
-      "dependsOn": ["format", "lint", "^test"],
+      "dependsOn": ["format", "lint", "build"],
       "inputs": ["**/src/**.tsx?", "package.json", "packages/*/package.json"]
     },
     "deploy": {
