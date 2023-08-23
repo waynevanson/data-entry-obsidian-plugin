@@ -22,7 +22,7 @@
       "inputs": ["**/src/**.tsx?", "package.json", "packages/*/package.json"]
     },
     "deploy": {
-      "dependsOn": ["build", "test"],
+      "dependsOn": ["^build", "^test"],
       "outputMode": "new-only"
     }
   }
