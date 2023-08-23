@@ -22,10 +22,8 @@ jobs:
           node-version: 18
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm turbo run build
-      - run: pnpm run version
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm exec turbo deploy
+        run: pnpm exec turbo build deploy
