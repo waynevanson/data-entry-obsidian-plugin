@@ -9,22 +9,20 @@
       "cache": false,
       "persistent": true
     },
-    "format": {
+    "format": {},
+    "lint": {
       "dependsOn": ["^format"]
     },
-    "lint": {
-      "dependsOn": ["format"]
-    },
     "build": {
-      "dependsOn": ["format", "lint", "^build"],
+      "dependsOn": ["^format", "^lint"],
       "outputs": ["dist/**"]
     },
     "test": {
-      "dependsOn": ["format", "lint", "build"],
+      "dependsOn": ["^format", "^lint", "^build"],
       "inputs": ["**/src/**.tsx?", "package.json", "packages/*/package.json"]
     },
     "deploy": {
-      "dependsOn": ["build", "test", "^deploy"],
+      "dependsOn": ["build", "test"],
       "outputMode": "new-only"
     }
   }

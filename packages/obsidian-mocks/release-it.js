@@ -24,6 +24,7 @@ module.exports = {
   },
   npm: {
     publish: false,
+    skipChecks: true,
   },
   github: {
     release: true,
