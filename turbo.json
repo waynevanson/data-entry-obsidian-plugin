@@ -14,7 +14,7 @@
       "dependsOn": ["^format"]
     },
     "build": {
-      "dependsOn": ["^format", "^lint"],
+      "dependsOn": ["^format", "^lint", "^build"],
       "outputs": ["dist/**"]
     },
     "test": {
