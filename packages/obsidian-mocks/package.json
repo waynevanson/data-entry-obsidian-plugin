@@ -5,7 +5,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "deploy": "release-it -c release-it.js --ci --dry-run"
+    "deploy": "release-it -c release-it.js --ci"
   },
   "devDependencies": {
     "@types/jest": "^29.5.3",
