@@ -31,6 +31,6 @@ module.exports = {
     releaseName: `${packageName}-${version}`,
   },
   hooks: {
-    'before:git:release': ['pnpm run version', 'git add --all'],
+    'before:git:release': ['git add --all'],
   },
 };
