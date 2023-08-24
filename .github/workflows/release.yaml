@@ -52,6 +52,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Set NPM registry
+        run: npm config set //npm.pkg.github/:_authToken $NPM_TOKEN
+        env:
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
