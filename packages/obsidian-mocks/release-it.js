@@ -15,7 +15,7 @@ module.exports = {
   },
   git: {
     push: true,
-    tagName: `${packageName}-${version}`,
+    tagName: `${scope}-${version}`,
     pushRepo: 'git@github.com:waynevanson/data-entry-obsidian-plugin.git',
     commitsPath: '.',
     commitMessage: `feat(${scope}): released version ${version} [no ci]`,
@@ -28,7 +28,7 @@ module.exports = {
   },
   github: {
     release: true,
-    releaseName: `${packageName}-${version}`,
+    releaseName: `${scope}-${version}`,
   },
   hooks: {
     'before:git:release': ['git add --all'],
