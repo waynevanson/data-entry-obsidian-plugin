@@ -1,5 +1,7 @@
 
 
+## [0.1.1](https://github.com/waynevanson/data-entry-obsidian-plugin/compare/obsidian-mocks-0.1.0...obsidian-mocks-0.1.1) (2023-08-25)
+
 ## 0.1.0 (2023-08-25)
 
 
