@@ -23,6 +23,7 @@ module.exports = {
     requireCommitsFail: false,
   },
   npm: {
+    publish: false,
     skipChecks: true,
   },
   github: {
