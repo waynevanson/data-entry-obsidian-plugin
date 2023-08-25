@@ -18,7 +18,7 @@ module.exports = {
     tagName: `${scope}-${version}`,
     pushRepo: 'git@github.com:waynevanson/data-entry-obsidian-plugin.git',
     commitsPath: '.',
-    commitMessage: `feat(${scope}): released version ${version} [no ci]`,
+    commitMessage: `chore(${scope}): released version ${version} [no ci]`,
     requireCommits: true,
     requireCommitsFail: false,
   },
