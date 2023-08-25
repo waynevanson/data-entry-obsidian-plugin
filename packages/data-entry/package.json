@@ -10,6 +10,7 @@
     "watch": "jest --watch",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "format": "prettier -w '!.vault' .",
+    "deploy": "release-it -c release-it.js --ci",
     "version": "node version-bump.mjs"
   },
   "devDependencies": {
