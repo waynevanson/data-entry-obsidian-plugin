@@ -1,5 +1,7 @@
 import { Theme } from '@mui/material';
 import { MainProps as ApplicationContext } from '../components';
+import '@waynevanson/obsidian-mocks';
+//@ts-expect-error
 import { MockVaultParams, Vault, createVaultMock } from 'obsidian';
 
 export interface MockOptions {

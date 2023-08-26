@@ -67,7 +67,7 @@ export class MainPlugin extends Plugin {
           <ThemeProvider theme={useTheme()}>
             <ApplicationProvider
               value={{
-                fileName: json.datasource.file,
+                fileName: (json.datasource as Record<'file', string>).file,
                 vault: this.app.vault,
                 schema: json.forms.schema,
                 uischema: json.forms.uischema as never,

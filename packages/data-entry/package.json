@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "node esbuild.config.mjs",
-    "test": "jest",
+    "test": "jest --ci",
     "watch": "jest --watch",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "format": "prettier -w '!.vault' .",

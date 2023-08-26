@@ -10,6 +10,7 @@ import { Encoder } from 'io-ts/Encoder';
 
 export type Datasource = Sum<{
   file: string;
+  folder: string;
 }>;
 
 export interface Configuration {
@@ -77,7 +78,7 @@ const sum = <P extends Record<string, Codec<unknown, unknown, unknown>>>(
 /// schema
 
 export const configuration = codec.struct({
-  datasource: sum({ file: codec.string }),
+  datasource: sum({ file: codec.string, folder: codec.string }),
   forms: pipe(
     codec.struct({ schema: codec.UnknownRecord }),
     codec.intersect(codec.partial({ uischema: codec.UnknownRecord })),
