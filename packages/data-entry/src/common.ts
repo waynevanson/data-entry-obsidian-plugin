@@ -7,10 +7,6 @@ import { Decoder } from 'io-ts/Decoder';
 
 type GetSet<A> = Record<'get' | 'set', A>;
 
-//
-//
-//
-// make frontmatter get/set paths implicit: schema and data respectively.
 // remove the whole writing to a file thing, gross
 // also allow loading icon to happen somewhere without removing the form.
 export type Datasource = Sum<{
@@ -23,8 +19,8 @@ export type Datasource = Sum<{
 
 export interface Configuration {
   datasource: Datasource;
-  schema: JsonSchema; //register definitions behind "data-entry" or "vault" key
-  uischema?: UISchemaElement; // get set
+  schema: Sum<{ inline: JsonSchema }>; //register definitions behind "data-entry" or "vault" key
+  uischema?: Sum<{ inline: UISchemaElement }>; // get set
 }
 
 export type Sum<T extends Record<string, unknown>> = keyof T extends never
@@ -64,18 +60,20 @@ const sum = <P extends Record<string, Decoder<unknown, unknown>>>(
 
 /// schema
 const datasource = sum({
-  file: decoder.struct({ path: decoder.string }),
+  file: decoder.struct({
+    path: decoder.string,
+  }),
   folder: decoder.string,
 });
 
 export const configuration = pipe(
   decoder.struct({
     datasource,
-    schema: decoder.UnknownRecord,
+    schema: decoder.struct({ inline: decoder.UnknownRecord }),
   }),
   decoder.intersect(
     decoder.partial({
-      uischema: decoder.UnknownRecord,
+      uischema: decoder.struct({ inline: decoder.UnknownRecord }),
     }),
   ),
 );

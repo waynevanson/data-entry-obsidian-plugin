@@ -70,8 +70,8 @@ export class MainPlugin extends Plugin {
                 fileName: (json.datasource as Record<'file', { path: string }>)
                   .file.path,
                 vault: this.app.vault,
-                schema: json.schema,
-                uischema: json.uischema as never,
+                schema: json.schema.inline,
+                uischema: json.uischema?.inline as never,
               }}
             >
               <Application />

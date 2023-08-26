@@ -19,7 +19,7 @@
     },
     "test": {
       "dependsOn": ["^format", "^lint", "^build"],
-      "inputs": ["**/src/**.tsx?", "package.json", "packages/*/package.json"]
+      "inputs": ["**/src/**.tsx?"]
     },
     "deploy": {
       "dependsOn": ["build", "test"],
