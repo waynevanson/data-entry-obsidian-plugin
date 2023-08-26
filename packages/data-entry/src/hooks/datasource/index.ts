@@ -15,7 +15,7 @@ export function useDatasource(
   const folder = useFolder(vault, folderPath);
 
   const filePath =
-    'file' in datasource ? datasource.file : folder.filePaths[index];
+    'file' in datasource ? datasource.file.path : folder.filePaths[index];
 
   const file = useFile(vault, filePath);
   const error = folder.error ?? file.error;

@@ -5,17 +5,26 @@ import { pipe } from 'fp-ts/lib/function';
 import * as decoder from 'io-ts/Decoder';
 import { Decoder } from 'io-ts/Decoder';
 
+type GetSet<A> = Record<'get' | 'set', A>;
+
+//
+//
+//
+// make frontmatter get/set paths implicit: schema and data respectively.
+// remove the whole writing to a file thing, gross
+// also allow loading icon to happen somewhere without removing the form.
 export type Datasource = Sum<{
-  file: string;
+  file: {
+    path: string;
+    // frontmatter: GetSet<string>;
+  };
   folder: string;
 }>;
 
 export interface Configuration {
   datasource: Datasource;
-  forms: {
-    schema: JsonSchema;
-    uischema?: UISchemaElement;
-  };
+  schema: JsonSchema; //register definitions behind "data-entry" or "vault" key
+  uischema?: UISchemaElement; // get set
 }
 
 export type Sum<T extends Record<string, unknown>> = keyof T extends never
@@ -35,7 +44,7 @@ const decoderSumMonoid = <P>() =>
     { [K in keyof P]: Record<K, decoder.TypeOf<P[K]>> }[keyof P]
   >('Sum');
 
-// fix this then all good right?
+// todo - intersect decoder with one key only
 const sum = <P extends Record<string, Decoder<unknown, unknown>>>(
   properties: keyof P extends never ? never : P,
 ): Decoder<
@@ -54,12 +63,19 @@ const sum = <P extends Record<string, Decoder<unknown, unknown>>>(
   );
 
 /// schema
-const datasource = sum({ file: decoder.string, folder: decoder.string });
-
-export const configuration = decoder.struct({
-  datasource,
-  forms: pipe(
-    decoder.struct({ schema: decoder.UnknownRecord }),
-    decoder.intersect(decoder.partial({ uischema: decoder.UnknownRecord })),
-  ),
+const datasource = sum({
+  file: decoder.struct({ path: decoder.string }),
+  folder: decoder.string,
 });
+
+export const configuration = pipe(
+  decoder.struct({
+    datasource,
+    schema: decoder.UnknownRecord,
+  }),
+  decoder.intersect(
+    decoder.partial({
+      uischema: decoder.UnknownRecord,
+    }),
+  ),
+);
