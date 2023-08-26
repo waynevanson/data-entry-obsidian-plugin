@@ -2,6 +2,12 @@
 
 Create forms that modify data in existing notes; the `dataview` plugin for data entry.
 
+Although this plugin exists in the obsidian store, it's still a work in progress.
+
+It does what it says on the tin but doesn't do what it could do.
+
+Feel free to submit issues and discussions with your desires.
+
 ## Preview
 
 <details>
