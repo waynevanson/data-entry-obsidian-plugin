@@ -1,5 +1,16 @@
 
 
+## [6.0.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/5.0.0...6.0.0) (2023-08-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* replace schema inputs with `inline` keyword
+
+### Features
+
+* replace schema inputs with `inline` keyword ([681ab55](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/681ab55e1ab9a5c7fa3e698f02bf3ce37e39b73a))
+
 ## [5.0.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/4.8.0...5.0.0) (2023-08-26)
 
 
