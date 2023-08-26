@@ -1,5 +1,16 @@
 
 
+## [5.0.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/4.8.0...5.0.0) (2023-08-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* flatten config and make file path prop
+
+### Features
+
+* flatten config and make file path prop ([6c04feb](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/6c04febd7e89f5f9db7638591d00f8500e374d7a))
+
 ## [4.8.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/obsidian-mocks-0.1.2...4.8.0) (2023-08-26)
 
 
