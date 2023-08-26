@@ -6,7 +6,6 @@ export interface MainProps {
   vault: Vault;
   schema: JsonSchema;
   uischema?: UISchemaElement;
-  submit?: string;
   fileName: string;
 }
 
