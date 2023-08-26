@@ -1,1 +1,1 @@
-/home/wayne/code/obsidian-plugin-data-entry/packages/data-entry/main.js
+../../../../packages/data-entry/dist/main.js
