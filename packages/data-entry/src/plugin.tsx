@@ -14,7 +14,7 @@ import {
 import * as React from 'react';
 import { StrictMode } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import { configuration } from './common';
+import { configuration, match } from './common';
 import { Application } from './components';
 import { ApplicationProvider } from './components/context';
 import { useTheme } from './components/material';
@@ -78,32 +78,29 @@ export class MainPlugin extends Plugin {
         ),
         either.bindW('schema', ({ config }) =>
           pipe(
-            'inline' in config.schema
-              ? either.right(config.schema.inline)
-              : pipe(
-                  getFrontmatterByPath(config.schema.file.path),
-                  either.map(
-                    (json) =>
-                      //@ts-expect-error
-                      json[config.schema.file.frontmatter] as never,
-                  ),
+            config.schema,
+            match({
+              inline: (inline) => either.right(inline),
+              file: ({ path, frontmatter }) =>
+                pipe(
+                  getFrontmatterByPath(path),
+                  either.map((json) => json[frontmatter] as never),
                 ),
+            }),
           ),
         ),
         either.bindW('uischema', ({ config }) =>
           pipe(
             option.fromNullable(config?.uischema),
-            option.traverse(either.Applicative)((uischema) =>
-              'inline' in uischema
-                ? either.right(uischema.inline)
-                : pipe(
-                    getFrontmatterByPath(uischema.file.path),
-                    either.map(
-                      (json) =>
-                        //@ts-expect-error
-                        json[config.uischema.file.frontmatter] as never,
-                    ),
+            option.traverse(either.Applicative)(
+              match({
+                inline: (inline) => either.right(inline),
+                file: ({ frontmatter, path }) =>
+                  pipe(
+                    getFrontmatterByPath(path),
+                    either.map((json) => json[frontmatter] as never),
                   ),
+              }),
             ),
             either.map(option.toNullable),
           ),

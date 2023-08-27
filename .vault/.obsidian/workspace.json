@@ -4,19 +4,15 @@
     "type": "split",
     "children": [
       {
-        "id": "783a819f9359185b",
+        "id": "a69a62ec0b11ace7",
         "type": "tabs",
         "children": [
           {
-            "id": "07a69522aff335a3",
+            "id": "87c79401221f8db2",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Sample 02.md",
-                "mode": "source",
-                "source": true
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -85,7 +81,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Sample 02.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +97,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Sample 02.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -124,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "Sample 02.md"
-              }
+              "state": {}
             }
           }
         ],
@@ -147,11 +139,11 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "07a69522aff335a3",
+  "active": "87c79401221f8db2",
   "lastOpenFiles": [
+    "Sample 02.md",
     "data.md",
     "Sample 01.md",
-    "Sample 02.md",
     "d.md",
     "NonObject.md",
     "Yello world.md",
