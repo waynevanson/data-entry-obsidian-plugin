@@ -1,5 +1,16 @@
 
 
+## [7.0.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/6.0.0...7.0.0) (2023-08-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove raw datasource and use frontmatter
+
+### Features
+
+* remove raw datasource and use frontmatter ([46cb24a](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/46cb24aa72618213ffea06cf2d89e96810b8e756))
+
 ## [6.0.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/5.0.0...6.0.0) (2023-08-26)
 
 
