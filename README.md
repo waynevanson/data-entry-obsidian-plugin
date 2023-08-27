@@ -8,6 +8,8 @@ It does what it says on the tin but doesn't do what it could do.
 
 Feel free to submit issues and discussions with your desires.
 
+Instructions coming soon, check back next week!
+
 ## Preview
 
 <details>

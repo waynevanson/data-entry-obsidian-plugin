@@ -5,22 +5,32 @@ import { pipe } from 'fp-ts/lib/function';
 import * as decoder from 'io-ts/Decoder';
 import { Decoder } from 'io-ts/Decoder';
 
-type GetSet<A> = Record<'get' | 'set', A>;
-
 // remove the whole writing to a file thing, gross
 // also allow loading icon to happen somewhere without removing the form.
 export type Datasource = Sum<{
   file: {
     path: string;
-    // frontmatter: GetSet<string>;
+    frontmatter: string; // defaults to 'data'
   };
-  folder: string;
 }>;
 
 export interface Configuration {
   datasource: Datasource;
-  schema: Sum<{ inline: JsonSchema }>; //register definitions behind "data-entry" or "vault" key
-  uischema?: Sum<{ inline: UISchemaElement }>; // get set
+  // todo - register definitions behind "data-entry" or "vault" key
+  schema: Sum<{
+    inline: JsonSchema;
+    file: {
+      path: string;
+      frontmatter: string;
+    }; // defaults to 'schema'
+  }>;
+  uischema?: Sum<{
+    inline: UISchemaElement;
+    file: {
+      path: string;
+      frontmatter: string;
+    }; // defaults to 'uischema'
+  }>;
 }
 
 export type Sum<T extends Record<string, unknown>> = keyof T extends never
@@ -58,22 +68,27 @@ const sum = <P extends Record<string, Decoder<unknown, unknown>>>(
     ),
   );
 
-/// schema
-const datasource = sum({
-  file: decoder.struct({
-    path: decoder.string,
-  }),
-  folder: decoder.string,
+const file = decoder.struct({
+  path: decoder.string,
+  frontmatter: decoder.string,
 });
+/// schema
+const datasource = sum({ file });
 
 export const configuration = pipe(
   decoder.struct({
     datasource,
-    schema: decoder.struct({ inline: decoder.UnknownRecord }),
+    schema: sum({
+      inline: decoder.UnknownRecord,
+      file,
+    }),
   }),
   decoder.intersect(
     decoder.partial({
-      uischema: decoder.struct({ inline: decoder.UnknownRecord }),
+      uischema: sum({
+        inline: decoder.UnknownRecord,
+        file,
+      }),
     }),
   ),
 );

@@ -1,27 +1,38 @@
+import { ThemeProvider } from '@mui/material';
+import { either, option, boolean } from 'fp-ts';
+import { flow, pipe } from 'fp-ts/lib/function';
+import * as decoder from 'io-ts/Decoder';
 import {
   App,
   Command,
   MarkdownRenderChild,
   Notice,
   Plugin,
+  YamlParseError,
   parseYaml,
 } from 'obsidian';
 import * as React from 'react';
 import { StrictMode } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import { configuration, Configuration } from './common';
-import * as decoder from 'io-ts/Decoder';
-import { ThemeProvider } from '@mui/material';
-import { ApplicationProvider } from './components/context';
+import { configuration } from './common';
 import { Application } from './components';
+import { ApplicationProvider } from './components/context';
 import { useTheme } from './components/material';
-import { either } from 'fp-ts';
-import { flow, pipe } from 'fp-ts/lib/function';
+import { tfile } from './lib';
+import { Either } from 'fp-ts/lib/Either';
+import { Json } from 'fp-ts/lib/Json';
 
 type Handler = Parameters<Plugin['registerMarkdownCodeBlockProcessor']>[1];
 
+const createJsonify = (
+  yaml: boolean,
+): ((
+  string: string,
+) => Either<YamlParseError | TypeError | SyntaxError, Json>) =>
+  either.tryCatchK(yaml ? parseYaml : JSON.parse, (error) => error as never);
+
 const notify = (error: any) => {
-  new Notice(error);
+  new Notice(error, 0);
   return error as never;
 };
 
@@ -51,14 +62,52 @@ export class MainPlugin extends Plugin {
     yamls: ReadonlyArray<string>,
   ): Handler {
     return async (source, element, context) => {
-      const jsonify = either.tryCatchK(
-        yamls.includes(extension) ? parseYaml : JSON.parse,
-        (error) => error,
-      );
+      const contents = createJsonify(yamls.includes(extension))(source);
+      const getFrontmatterByPath = tfile.createGetFrontmatterByPath(this.app);
 
-      const json = pipe(
-        jsonify(source),
-        either.chain(flow(configuration.decode, either.mapLeft(decoder.draw))),
+      const application = pipe(
+        either.Do,
+        either.apS(
+          'config',
+          pipe(
+            contents,
+            either.chainW(
+              flow(configuration.decode, either.mapLeft(decoder.draw)),
+            ),
+          ),
+        ),
+        either.bindW('schema', ({ config }) =>
+          pipe(
+            'inline' in config.schema
+              ? either.right(config.schema.inline)
+              : pipe(
+                  getFrontmatterByPath(config.schema.file.path),
+                  either.map(
+                    (json) =>
+                      //@ts-expect-error
+                      json[config.schema.file.frontmatter] as never,
+                  ),
+                ),
+          ),
+        ),
+        either.bindW('uischema', ({ config }) =>
+          pipe(
+            option.fromNullable(config?.uischema),
+            option.traverse(either.Applicative)((uischema) =>
+              'inline' in uischema
+                ? either.right(uischema.inline)
+                : pipe(
+                    getFrontmatterByPath(uischema.file.path),
+                    either.map(
+                      (json) =>
+                        //@ts-expect-error
+                        json[config.uischema.file.frontmatter] as never,
+                    ),
+                  ),
+            ),
+            either.map(option.toNullable),
+          ),
+        ),
         either.getOrElseW(notify),
       );
 
@@ -67,11 +116,10 @@ export class MainPlugin extends Plugin {
           <ThemeProvider theme={useTheme()}>
             <ApplicationProvider
               value={{
-                fileName: (json.datasource as Record<'file', { path: string }>)
-                  .file.path,
-                vault: this.app.vault,
-                schema: json.schema.inline,
-                uischema: json.uischema?.inline as never,
+                fileName: application.config.datasource.file.path,
+                app: this.app,
+                schema: application.schema,
+                uischema: application.uischema as never,
               }}
             >
               <Application />

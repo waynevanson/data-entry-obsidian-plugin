@@ -5,4 +5,6 @@ declare module 'obsidian' {
     emulateMobile(boolean: boolean): void;
     isMobile: boolean;
   }
+
+  export class YamlParseError extends Error {}
 }

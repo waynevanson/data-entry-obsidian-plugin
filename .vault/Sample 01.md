@@ -2,10 +2,12 @@
 datasource:
   file:
     path: data.md
+    frontmatter: data
 schema:
-  properties:
-    name:
-      type: string
-    age:
-      type: integer
+  inline:
+    properties:
+      name:
+        type: string
+      age:
+        type: integer
 ```

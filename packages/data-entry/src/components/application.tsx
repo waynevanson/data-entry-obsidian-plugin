@@ -1,126 +1,44 @@
 import { createDefaultValue } from '@jsonforms/core';
-import { Alert, Button, CircularProgress } from '@mui/material';
-import { readonlyRecord } from 'fp-ts';
+import { Alert } from '@mui/material';
 import * as React from 'react';
-import { MouseEventHandler, ReactNode, useMemo, useState } from 'react';
-import {
-  Form,
-  useCursor,
-  useFile,
-  useForm,
-  useForms,
-  useToggle,
-} from '../hooks';
+import { ReactNode, useCallback, useState } from 'react';
+import { Form } from '../hooks';
+import { useFrontmatter } from '../hooks/frontmatter';
 import { useApplication } from './context';
-import { ControlPanel } from './control-panel';
 import { Formed } from './form';
-
-const CallbackCreateNewFile = ({
-  onClick,
-}: {
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-}) => (
-  <Alert
-    severity="warning"
-    action={
-      <Button color="inherit" onClick={onClick}>
-        Create File
-      </Button>
-    }
-  >
-    File does not exist. Would you like to create it?
-  </Alert>
-);
 
 export function Application() {
   const application = useApplication();
-  const file = useFile(application.vault, application.fileName);
-  const [newMode, newModeToggle] = useToggle(false);
+  const frontmatter = useFrontmatter(application.app, application.fileName);
   const [defaultForm] = useState(
     () => createDefaultValue(application.schema) as Form,
   );
-  const [created, createdSet] = useState<Form>(defaultForm);
-  const jsoned = useMemo(
-    () => JSON.parse(file.data as never) as Array<Form> | null,
-    [file.data],
-  );
-  const [forms, formsSet] = useForms(jsoned);
-  const max = file.data != null ? readonlyRecord.size(forms) : null;
-
-  // todo - rename to index
-  const index = useCursor(0, max);
-  const [form, formSet] = useForm({
-    newMode,
-    cursor: index.value,
-    created: [created, createdSet],
-    forms: [forms, formsSet],
-  });
+  const [form, formSet] = useState<Form>(defaultForm);
+  // todo - update form contents when the file changes
 
   const [errors, errorsSet] = useState<Array<unknown>>([]);
 
-  const handleSubmit = () => {
-    const array: Array<Form | null> = jsoned ?? [];
-    if (newMode) {
-      array.push(form);
-    } else if (index.value !== null) {
-      array[index.value] = form;
-    }
-    file.modify(JSON.stringify(array, null, 2));
-  };
-
-  const count = max != null ? max : 0;
-  const page = index.value != null ? index.value + 1 : 0;
-  if (file.loading)
-    return (
-      <Alert action={<CircularProgress color="inherit" />}>
-        Loading file {application.fileName}
-      </Alert>
-    );
-
-  if (file.error) {
-    return <Alert severity="error">{file.error.message}</Alert>;
-  }
-
-  if (file.data == null) {
-    return (
-      <CallbackCreateNewFile
-        onClick={() => file.modify(JSON.stringify('[]', null, 2))}
-      />
-    );
-  }
+  const handleSubmit = useCallback(() => {
+    frontmatter.modify((json) => ({ ...json, data: form as never }));
+  }, [form, frontmatter]);
 
   return (
     <ErrorBoundary>
-      <ControlPanel
-        newMode={newMode}
-        onClear={() => formSet(defaultForm)}
-        onToggleMode={newModeToggle}
-        count={count}
-        page={page}
-        onPageChange={(_, page) => index.valueSet(page - 1)}
-        onRemove={() => {
-          if (index.value == null) return;
-          const array: Array<Form | null> = jsoned ?? [];
-          array.splice(index.value, 1);
-          file.modify(JSON.stringify(array, null, 2));
+      {frontmatter.error && (
+        <Alert severity="error">{frontmatter.error.message}</Alert>
+      )}
+      <Formed
+        errors={errors as never}
+        onSubmit={handleSubmit}
+        submit="Update"
+        schema={application.schema ?? undefined}
+        uischema={application.uischema ?? undefined}
+        data={form}
+        onChange={({ data, errors }) => {
+          formSet(data);
+          errorsSet(errors ?? []);
         }}
       />
-      {form != null ? (
-        <Formed
-          errors={errors as never}
-          onSubmit={handleSubmit}
-          submit={newMode ? 'Save as new' : 'Save existing'}
-          schema={application.schema ?? undefined}
-          uischema={application.uischema ?? undefined}
-          data={form}
-          onChange={({ data, errors: _errors }) => {
-            formSet(data);
-            errorsSet(errors);
-          }}
-        />
-      ) : (
-        <Alert severity="info">There are no items to display.</Alert>
-      )}
     </ErrorBoundary>
   );
 }

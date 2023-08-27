@@ -1,17 +1,18 @@
-import { Notice, TAbstractFile, TFile, Vault } from 'obsidian';
+import { Endomorphism } from 'fp-ts/lib/Endomorphism';
+import { Json, JsonRecord } from 'fp-ts/lib/Json';
+import { FileManager, MetadataCache, TFile, Vault } from 'obsidian';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export const useFile = (
-  vault: Pick<Vault, 'modify' | 'getAbstractFileByPath' | 'on' | 'offref'>,
+export function useFrontmatter(
+  app: {
+    vault: Pick<Vault, 'modify' | 'getAbstractFileByPath' | 'on' | 'offref'>;
+    metadataCache: Pick<MetadataCache, 'getFileCache'>;
+    fileManager: Pick<FileManager, 'processFrontMatter'>;
+  },
   filePath: string,
-  lazy = false,
-) => {
-  const [data, dataSet] = useState<string | null>(null);
-  const [loading, loadingSet] = useState(false);
-  const [error, errorSet] = useState<FileError | null>(null);
-
+) {
   const file = useMemo(() => {
-    const file = vault.getAbstractFileByPath(filePath);
+    const file = app.vault.getAbstractFileByPath(filePath);
 
     if (file == null) {
       errorSet(new FileNotFoundError(filePath));
@@ -22,51 +23,30 @@ export const useFile = (
     }
 
     return null;
-  }, [vault, filePath]);
+  }, [app.vault, filePath]);
 
-  const modify = useCallback(
-    (contents: string) => {
-      if (file == null) return;
-      vault
-        .modify(file, contents)
-        .then(() => new Notice('File as been saved!'))
-        .catch(() => errorSet(new FileModifiedError(file.path)));
-    },
-    [vault, file],
-  );
+  const getData = useCallback(() => {
+    if (file == null) return null;
+    const data = app.metadataCache.getFileCache(file)?.frontmatter ?? null;
+    return data;
+  }, [app.metadataCache, file]);
+
+  const [data, dataSet] = useState<Json | null>(getData);
+  const [error, errorSet] = useState<FileError | null>(null);
 
   const read = useCallback(
-    async (file: TAbstractFile) => {
-      if (!(file instanceof TFile)) return;
-      if (file.path !== filePath) return;
-
-      loadingSet(true);
-      errorSet(null);
-
-      file.vault
-        .read(file)
-        .then((contents) => dataSet(contents))
-        .catch((error) => errorSet(error as never))
-        .finally(() => loadingSet(false));
+    (file: TFile) => {
+      const data = app.metadataCache.getFileCache(file)?.frontmatter ?? null;
+      dataSet(data);
     },
-    [filePath],
+    [app.metadataCache],
   );
-
-  const fetch = useCallback(() => {
-    file != null && read(file);
-  }, [file, read]);
-
-  // load initial value
-  useEffect(() => {
-    if (lazy) return;
-    else fetch();
-  }, [fetch, lazy]);
 
   // listen to changes on file when it changes.
   useEffect(() => {
-    const create = vault.on('create', read);
+    const create = app.vault.on('create', read);
 
-    const delete_ = vault.on('delete', async (file) => {
+    const delete_ = app.vault.on('delete', async (file) => {
       if (!(file instanceof TFile)) return;
       if (file.path !== filePath) return;
 
@@ -74,21 +54,35 @@ export const useFile = (
       errorSet(null);
     });
 
-    const modify = vault.on('modify', read);
-    const rename = vault.on('rename', (file, oldPath) => {
+    const modify = app.vault.on('modify', read);
+    const rename = app.vault.on('rename', (file, oldPath) => {
       if (oldPath !== filePath) return;
       errorSet(new FileRenamedError(filePath, file.path));
     });
 
     return () =>
-      [create, delete_, modify, rename].forEach((ref) => vault.offref(ref));
-  }, [vault, filePath, read]);
+      [create, delete_, modify, rename].forEach((ref) => app.vault.offref(ref));
+  }, [app.vault, filePath, read]);
 
-  return { data, loading, error, fetch, modify };
-};
+  const modify = useCallback(
+    (f: Endomorphism<JsonRecord>) => {
+      if (file == null) return;
+      //todo - add async loading
+      app.fileManager
+        .processFrontMatter(file, (data) => {
+          const cache = { ...data };
+          Object.keys(data).forEach((key) => {
+            delete data[key];
+          });
+          Object.assign(data, f(cache));
+        })
+        .catch(() => errorSet(new FileModifiedError(file.path)));
+    },
+    [app.fileManager, file],
+  );
 
-// todo - add listeners when files are modified
-// todo - e2e https://www.electronjs.org/docs/latest/tutorial/testing-on-headless-ci
+  return { data, error, modify };
+}
 
 export class FileNotFoundError extends Error {
   constructor(filePath: string) {

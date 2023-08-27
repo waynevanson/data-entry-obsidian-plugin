@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "7ad1d46ce8a5b7ef",
+        "id": "783a819f9359185b",
         "type": "tabs",
         "children": [
           {
-            "id": "840752223d316a9b",
+            "id": "07a69522aff335a3",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sample 01.md",
-                "mode": "preview",
+                "file": "Sample 02.md",
+                "mode": "source",
                 "source": true
               }
             }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Sample 01.md",
+                "file": "Sample 02.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Sample 01.md",
+                "file": "Sample 02.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Sample 01.md"
+                "file": "Sample 02.md"
               }
             }
           }
@@ -147,14 +147,16 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "840752223d316a9b",
+  "active": "07a69522aff335a3",
   "lastOpenFiles": [
+    "data.md",
+    "Sample 01.md",
+    "Sample 02.md",
+    "d.md",
+    "NonObject.md",
     "Yello world.md",
     "ss/NonObject.md",
-    "NonObject.md",
     "ss",
-    "data.md",
-    "d.md",
     "Untitled 1.md",
     "data.ms",
     "data.json.md",

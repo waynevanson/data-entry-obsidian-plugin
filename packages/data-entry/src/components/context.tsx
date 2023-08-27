@@ -1,9 +1,9 @@
 import { JsonSchema, UISchemaElement } from '@jsonforms/core';
-import { Vault } from 'obsidian';
+import { App } from 'obsidian';
 import { createContext, useContext } from 'react';
 
 export interface MainProps {
-  vault: Vault;
+  app: App;
   schema: JsonSchema;
   uischema?: UISchemaElement;
   fileName: string;
