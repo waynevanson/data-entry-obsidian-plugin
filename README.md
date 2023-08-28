@@ -31,19 +31,16 @@ schema:
       type: array
       items:
         type: string
-data:
 ---
 
 ```yaml-data-entry
 datasource:
   file:
-    path: .
-    frontmatter: data
 schema:
   file:
-    path: .
-    frontmatter: schema
 ```
+
+
 
 </code></pre>
 

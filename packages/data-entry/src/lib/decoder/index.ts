@@ -43,5 +43,6 @@ export const configurable = <A extends Record<string, unknown>>(
         readonlyRecord.filter((a): a is NonNullable<typeof a> => a != null),
       ),
     ),
+    decoder.nullable,
     decoder.map((partials) => ({ ...defaults, ...partials })),
   );

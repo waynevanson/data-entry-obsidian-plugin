@@ -16,7 +16,7 @@ import {
 import * as React from 'react';
 import { StrictMode } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import { configuration } from './common';
+import { configuration } from './config';
 import { Application } from './components';
 import { ApplicationProvider } from './components/context';
 import { useTheme } from './components/material';
@@ -72,9 +72,9 @@ export class MainPlugin extends Plugin {
         either.chainW(
           flow(
             configuration({
-              datasource: { path },
-              schema: { path },
-              uischema: { path },
+              datasource: { path, frontmatter: 'data' }, // todo - change to `datasource`
+              schema: { path, frontmatter: 'schema' },
+              uischema: { path, frontmatter: 'uischema' },
             }).decode,
             either.mapLeft(decoder.draw),
           ),
