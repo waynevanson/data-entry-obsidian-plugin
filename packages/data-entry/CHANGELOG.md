@@ -1,5 +1,17 @@
 
 
+## [8.1.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.0.1...8.1.0) (2023-08-28)
+
+
+### Features
+
+* omitting `file.path` assumes current file ([6007c34](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/6007c34882131a05b9c649d8e5ce7fcd6e2022db))
+
+
+### Bug Fixes
+
+* modifying one file does not return all files ([790a14e](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/790a14e9b24ea0e8267f03a94b05a10fba8f87dd))
+
 ## [8.0.1](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.0.0...8.0.1) (2023-08-28)
 
 

@@ -1,7 +1,7 @@
 {
 	"id": "data-entry",
 	"name": "Data Entry",
-	"version": "8.0.1",
+	"version": "8.1.0",
 	"minAppVersion": "0.15.0",
 	"description": "Create forms that save data simply; the data view of data entry",
 	"author": "Wayne Van Son",
