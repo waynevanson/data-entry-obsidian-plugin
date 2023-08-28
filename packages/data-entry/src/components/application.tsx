@@ -3,7 +3,7 @@ import { Alert } from '@mui/material';
 import { option, readonlyRecord } from 'fp-ts';
 import { pipe } from 'fp-ts/lib/function';
 import * as React from 'react';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { match } from '../common';
 import { useFrontmatter } from '../hooks/frontmatter';
 import { useApplication } from './context';
@@ -62,10 +62,6 @@ export function Application() {
   const [form, formSet] = useState<unknown>(
     () => cached ?? createDefaultValue(schema),
   );
-
-  useEffect(() => {
-    console.log({ schema, data: frontmatter.datasource.data });
-  }, [frontmatter.datasource.data, schema]);
 
   const uischema = useMemo(
     () =>
