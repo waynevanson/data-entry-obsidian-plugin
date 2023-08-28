@@ -1,5 +1,13 @@
 
 
+## [8.2.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.1.1...8.2.0) (2023-08-28)
+
+
+### Features
+
+* add defaults for frontmatter ([99f26b7](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/99f26b7e5d156588ba51fd12595a69c703bda59e))
+* display the stack trace when error thrown ([3c3289c](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/3c3289c9250b83064556bf6276aa7fb86934d8cc))
+
 ## [8.1.1](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.1.0...8.1.1) (2023-08-28)
 
 ## [8.1.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.0.1...8.1.0) (2023-08-28)
