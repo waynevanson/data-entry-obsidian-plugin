@@ -3,8 +3,8 @@
 
 # Copy manifest.json because BRAT doesn't follow symlinks
 cp packages/data-entry/manifest.json manifest.json
-git add manifest.json
 
 # returns error code when there is a change in the file
 git diff --exit-code -- manifest.json 1>/dev/null ||
+    git add manifest.json &&
     git commit --amend --no-verify --no-edit --allow-empty
