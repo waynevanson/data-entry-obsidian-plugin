@@ -44,10 +44,11 @@ export function useFrontmatter(
 
   const read = useCallback(
     (file: TFile) => {
+      if (file.path !== filePath) return;
       const data = app.metadataCache.getFileCache(file)?.frontmatter ?? null;
       dataSet(data);
     },
-    [app.metadataCache],
+    [app.metadataCache, filePath],
   );
 
   // listen to changes on file when it changes.
