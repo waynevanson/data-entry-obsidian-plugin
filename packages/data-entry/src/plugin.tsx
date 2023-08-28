@@ -63,62 +63,17 @@ export class MainPlugin extends Plugin {
   ): Handler {
     return async (source, element, context) => {
       const contents = createJsonify(yamls.includes(extension))(source);
-      const getFrontmatterByPath = tfile.createGetFrontmatterByPath(this.app);
 
-      const application = pipe(
-        either.Do,
-        either.apS(
-          'config',
-          pipe(
-            contents,
-            either.chainW(
-              flow(configuration.decode, either.mapLeft(decoder.draw)),
-            ),
-          ),
-        ),
-        either.bindW('schema', ({ config }) =>
-          pipe(
-            config.schema,
-            match({
-              inline: (inline) => either.right(inline),
-              file: ({ path, frontmatter }) =>
-                pipe(
-                  getFrontmatterByPath(path),
-                  either.map((json) => json[frontmatter] as never),
-                ),
-            }),
-          ),
-        ),
-        either.bindW('uischema', ({ config }) =>
-          pipe(
-            option.fromNullable(config?.uischema),
-            option.traverse(either.Applicative)(
-              match({
-                inline: (inline) => either.right(inline),
-                file: ({ frontmatter, path }) =>
-                  pipe(
-                    getFrontmatterByPath(path),
-                    either.map((json) => json[frontmatter] as never),
-                  ),
-              }),
-            ),
-            either.map(option.toNullable),
-          ),
-        ),
+      const config = pipe(
+        contents,
+        either.chainW(flow(configuration.decode, either.mapLeft(decoder.draw))),
         either.getOrElseW(notify),
       );
 
       const Component = () => (
         <StrictMode>
           <ThemeProvider theme={useTheme()}>
-            <ApplicationProvider
-              value={{
-                fileName: application.config.datasource.file.path,
-                app: this.app,
-                schema: application.schema,
-                uischema: application.uischema as never,
-              }}
-            >
+            <ApplicationProvider value={{ app: this.app, config }}>
               <Application />
             </ApplicationProvider>
           </ThemeProvider>

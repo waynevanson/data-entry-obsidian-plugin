@@ -5,33 +5,12 @@ import { pipe } from 'fp-ts/lib/function';
 import * as decoder from 'io-ts/Decoder';
 import { Decoder } from 'io-ts/Decoder';
 
-// remove the whole writing to a file thing, gross
-// also allow loading icon to happen somewhere without removing the form.
 export type Datasource = Sum<{
   file: {
     path: string;
     frontmatter: string; // defaults to 'data'
   };
 }>;
-
-export interface Configuration {
-  datasource: Datasource;
-  // todo - register definitions behind "data-entry" or "vault" key
-  schema: Sum<{
-    inline: JsonSchema;
-    file: {
-      path: string;
-      frontmatter: string;
-    }; // defaults to 'schema'
-  }>;
-  uischema?: Sum<{
-    inline: UISchemaElement;
-    file: {
-      path: string;
-      frontmatter: string;
-    }; // defaults to 'uischema'
-  }>;
-}
 
 export type Sum<T extends Record<string, unknown>> = keyof T extends never
   ? never
@@ -92,6 +71,9 @@ export const configuration = pipe(
     }),
   ),
 );
+export type UserConfiguration = decoder.InputOf<typeof configuration>;
+
+export type ApplicationConfiguration = decoder.TypeOf<typeof configuration>;
 
 export const match =
   <

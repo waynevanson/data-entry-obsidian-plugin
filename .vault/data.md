@@ -1,10 +1,9 @@
 ---
 schema:
-  type: object
   properties:
     name:
       type: string
 data:
-  name: Suck me off
-  age: 444
+  age: 4344444
+  name: sup
 ---

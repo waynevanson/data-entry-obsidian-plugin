@@ -1,38 +1,108 @@
-import { createDefaultValue } from '@jsonforms/core';
+import { JsonSchema, createDefaultValue } from '@jsonforms/core';
 import { Alert } from '@mui/material';
+import { option, readonlyRecord } from 'fp-ts';
+import { pipe } from 'fp-ts/lib/function';
 import * as React from 'react';
-import { ReactNode, useCallback, useState } from 'react';
-import { Form } from '../hooks';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { match } from '../common';
 import { useFrontmatter } from '../hooks/frontmatter';
 import { useApplication } from './context';
 import { Formed } from './form';
 
 export function Application() {
-  const application = useApplication();
-  const frontmatter = useFrontmatter(application.app, application.fileName);
-  const [defaultForm] = useState(
-    () => createDefaultValue(application.schema) as Form,
+  const { app, config } = useApplication();
+  const frontmatter = {
+    datasource: useFrontmatter(app, config.datasource.file.path),
+    schema: useFrontmatter(
+      app,
+      pipe(
+        config.schema,
+        match({ file: (file) => file.path, inline: () => null }),
+      ),
+    ),
+    uischema: useFrontmatter(
+      app,
+      pipe(
+        config.uischema,
+        option.fromNullable,
+        option.chainNullableK(
+          match({ file: (file) => file.path, inline: () => null }),
+        ),
+        option.toNullable,
+      ),
+    ),
+  };
+
+  const frontmatterErrors = pipe(
+    frontmatter,
+    readonlyRecord.fromRecord,
+    readonlyRecord.map((frontmatter) => frontmatter.error),
+    readonlyRecord.filterMap(option.fromNullable),
+    readonlyRecord.collect((type, error) => `${type}: ${error}`),
+  ).join('\n');
+
+  const schema = useMemo(
+    () =>
+      pipe(
+        config.schema,
+        match({
+          inline: (inline) => inline as JsonSchema,
+          file: (file) =>
+            (frontmatter.schema.data?.[file.frontmatter] as JsonSchema) ?? null,
+        }),
+      ),
+    [config.schema, frontmatter.schema.data],
   );
-  const [form, formSet] = useState<Form>(defaultForm);
-  // todo - update form contents when the file changes
+
+  const cached = useMemo(
+    () => frontmatter.datasource.data?.[config.datasource.file.frontmatter],
+    [config.datasource.file.frontmatter, frontmatter.datasource.data],
+  );
+
+  const [form, formSet] = useState<unknown>(
+    () => cached ?? createDefaultValue(schema),
+  );
+
+  useEffect(() => {
+    console.log({ schema, data: frontmatter.datasource.data });
+  }, [frontmatter.datasource.data, schema]);
+
+  const uischema = useMemo(
+    () =>
+      pipe(
+        config.uischema,
+        option.fromNullable,
+        option.chainNullableK(
+          match({
+            inline: (inline) => inline as JsonSchema,
+            file: (file) =>
+              frontmatter.schema.data?.[file.frontmatter] as JsonSchema | null,
+          }),
+        ),
+        option.toNullable,
+      ),
+    [config.uischema, frontmatter.schema.data],
+  );
 
   const [errors, errorsSet] = useState<Array<unknown>>([]);
 
   const handleSubmit = useCallback(() => {
-    frontmatter.modify((json) => ({ ...json, data: form as never }));
-  }, [form, frontmatter]);
+    frontmatter.datasource.modify((json) => {
+      json[config.datasource.file.frontmatter] = form;
+    });
+  }, [config.datasource.file.frontmatter, form, frontmatter.datasource]);
 
   return (
     <ErrorBoundary>
-      {frontmatter.error && (
-        <Alert severity="error">{frontmatter.error.message}</Alert>
+      {frontmatterErrors !== '' && (
+        <Alert severity="error">{frontmatterErrors}</Alert>
       )}
       <Formed
         errors={errors as never}
         onSubmit={handleSubmit}
         submit="Update"
-        schema={application.schema ?? undefined}
-        uischema={application.uischema ?? undefined}
+        schema={schema}
+        uischema={(uischema as never) ?? undefined}
         data={form}
         onChange={({ data, errors }) => {
           formSet(data);

@@ -1,7 +1,13 @@
-import { Endomorphism } from 'fp-ts/lib/Endomorphism';
-import { Json, JsonRecord } from 'fp-ts/lib/Json';
-import { FileManager, MetadataCache, TFile, Vault } from 'obsidian';
+import { JsonRecord } from 'fp-ts/lib/Json';
+import { FileManager, MetadataCache, Notice, TFile, Vault } from 'obsidian';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  FileNotFoundError,
+  FileNotTFileError,
+  FileError,
+  FileRenamedError,
+  FileModifiedError,
+} from '../lib/tfile';
 
 export function useFrontmatter(
   app: {
@@ -9,9 +15,12 @@ export function useFrontmatter(
     metadataCache: Pick<MetadataCache, 'getFileCache'>;
     fileManager: Pick<FileManager, 'processFrontMatter'>;
   },
-  filePath: string,
+  filePath: string | null,
 ) {
+  const [error, errorSet] = useState<FileError | null>(null);
+
   const file = useMemo(() => {
+    if (filePath == null) return null;
     const file = app.vault.getAbstractFileByPath(filePath);
 
     if (file == null) {
@@ -31,8 +40,7 @@ export function useFrontmatter(
     return data;
   }, [app.metadataCache, file]);
 
-  const [data, dataSet] = useState<Json | null>(getData);
-  const [error, errorSet] = useState<FileError | null>(null);
+  const [data, dataSet] = useState<JsonRecord | null>(getData);
 
   const read = useCallback(
     (file: TFile) => {
@@ -65,17 +73,14 @@ export function useFrontmatter(
   }, [app.vault, filePath, read]);
 
   const modify = useCallback(
-    (f: Endomorphism<JsonRecord>) => {
+    (f: (mutable: any) => void) => {
       if (file == null) return;
       //todo - add async loading
       app.fileManager
         .processFrontMatter(file, (data) => {
-          const cache = { ...data };
-          Object.keys(data).forEach((key) => {
-            delete data[key];
-          });
-          Object.assign(data, f(cache));
+          f(data);
         })
+        .then(() => new Notice('File has been saved!'))
         .catch(() => errorSet(new FileModifiedError(file.path)));
     },
     [app.fileManager, file],
@@ -83,49 +88,3 @@ export function useFrontmatter(
 
   return { data, error, modify };
 }
-
-export class FileNotFoundError extends Error {
-  constructor(filePath: string) {
-    const message = `Unable to find file at path "${filePath}".`;
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
-export class FileNotTFileError extends Error {
-  constructor(filePath: string) {
-    const message = `Cannot read contents of "${filePath}" as it is not a file.`;
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
-export class FileNotReadError extends Error {
-  constructor(filePath: string) {
-    const message = `Cannot read contents of "${filePath}" as it is not a file.`;
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
-export class FileRenamedError extends Error {
-  constructor(oldFilePath: string, newFilePath: string) {
-    const message = `"${oldFilePath}" has been renamed to "${newFilePath}"`;
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
-export class FileModifiedError extends Error {
-  constructor(filePath: string) {
-    const message = `Could not moidy file at "${filePath}"`;
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
-export type FileError =
-  | FileNotTFileError
-  | FileNotFoundError
-  | FileRenamedError
-  | FileModifiedError;

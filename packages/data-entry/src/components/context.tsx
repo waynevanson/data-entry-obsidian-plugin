@@ -1,15 +1,13 @@
-import { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { App } from 'obsidian';
 import { createContext, useContext } from 'react';
+import { ApplicationConfiguration } from '../common';
 
-export interface MainProps {
+export interface ApplicationProps {
   app: App;
-  schema: JsonSchema;
-  uischema?: UISchemaElement;
-  fileName: string;
+  config: ApplicationConfiguration;
 }
 
-const context = createContext<MainProps>(null as never);
+const context = createContext<ApplicationProps>(null as never);
 
 export const { Provider: ApplicationProvider } = context;
 export const useApplication = () => useContext(context);
