@@ -1,14 +1,56 @@
 # Data Entry - Obsidian Plugin
 
-Create forms that modify data in existing notes; the `dataview` plugin for data entry.
+An Obsidian.md plugin that turns your metadata into a form.
 
-Although this plugin exists in the obsidian store, it's still a work in progress.
+Feel free to submit issues and discussions with your desires [here on GitHub](https://github.com/waynevanson/data-entry-obsidian-plugin/issues/new).
 
-It does what it says on the tin but doesn't do what it could do.
+This is a passion project used to fit my use case, but generalised enough that it could fit yours too. I would love to see you [supporting this work](https://github.com/sponsors/waynevanson) however you can, it would be greatly appreciated!
 
-Feel free to submit issues and discussions with your desires.
+## Summary
 
-Instructions coming soon, check back next week!
+- Create your datasource (frontmatter metadata within a file)
+- Create the schema that represents that datasource using [JSONSCHEMA](https://json-schema.org/specification.html).
+- (Optionally) customise how the data is represented as a UI using [JSONFORMS](https://jsonforms.io/docs#how-does-it-work).
+- Add a `yaml-data-entry` codeblock with the form configuration
+- Enter read mode and enjoy a form!
+
+## Quick Start
+
+Once the plugin is installed from the community store and **enabled**,
+Copy the following into a new file and enter read mode.
+
+<pre>
+<code>
+---
+schema:
+  type: object
+  properties:
+    name:
+      type: string
+    hobbies:
+      type: array
+      items:
+        type: string
+data:
+---
+
+```yaml-data-entry
+datasource:
+  file:
+    path: .
+    frontmatter: data
+schema:
+  file:
+    path: .
+    frontmatter: schema
+```
+
+</code></pre>
+
+## Please Note
+
+- Although this plugin exists in the obsidian store, it's still a work in progress.
+- UI will look janky because Obsidian overrides some styles. Will start working on this soon.
 
 ## Preview
 
@@ -22,12 +64,20 @@ Instructions coming soon, check back next week!
 
 </details>
 
-## Goals
+## Developers
 
-- [x] Create forms using static configuration that modify data in existing notes.
-- [ ] Create the schema for forms using a GUI.
+Here is some info that we can use.
 
-## Packages
+## How it works
+
+Plugin holds the state of our application.
+Config is read into the plugin when a markdown file contains `yaml-data-entry`.
+We validate this config, inject some defaults and render the UI via react/preact.
+
+We read many files frontmatter contents for the datasource, schema and uischema if we need to.
+We use the JSONFORMS react component to render the schema and uischema, keeping track of the data as they fill it in.
+
+### Packages
 
 This repository contains multiple packages to ensure concerns are clearly separated.
 
