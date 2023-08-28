@@ -1,5 +1,12 @@
 
 
+## [8.0.1](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.0.0...8.0.1) (2023-08-28)
+
+
+### Bug Fixes
+
+* load current data when opening read view ([0ae55cb](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/0ae55cb07791bc07a3d84afaa00fd197932c0114))
+
 ## [8.0.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/6.0.0...8.0.0) (2023-08-27)
 
 
