@@ -61,6 +61,68 @@ schema:
 
 </details>
 
+## Configuration
+
+Please visit these links for the definitions of [JSONSCHEMA](https://json-schema.org/specification.html) and [JSONFORMS](https://jsonforms.io/docs#how-does-it-work).
+
+The config looks like the typescript interface below:
+
+```typescript
+export interface UserConfiguration {
+  datasource: {
+    file?: {
+      path?: string;
+      frontmatter?: string;
+    };
+  };
+  schema: {
+    file?:
+      | {
+          path?: string;
+          frontmatter?: string;
+        }
+      | {
+          inline: JSONSCHEMA;
+        };
+  };
+  uischema?: {
+    file?:
+      | {
+          path?: string;
+          frontmatter?: string;
+        }
+      | {
+          inline: UISCHEMA;
+        };
+  };
+}
+```
+
+Which will resolve with the following defaults, unless changed in the settings (settings coming soon)
+
+```typescript
+{
+  datasource: {
+    file: {
+      path: '${CURRENT_FILE}';
+      frontmatter: 'data';
+    }
+  },
+  schema:
+    file: {
+      path: '${CURRENT_FILE}';
+      frontmatter: 'schema';
+    }
+  // actually defaults to null because uischema can be inferred from schema.
+  // passing "file" will use the following configuration
+  uischema:
+    file: {
+      path: '${CURRENT_FILE}';
+      frontmatter: 'uischema';
+    }
+}
+```
+
 ## Developers
 
 Here is some info that we can use.
