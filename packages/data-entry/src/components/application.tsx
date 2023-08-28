@@ -90,7 +90,6 @@ export function Application() {
     });
   }, [config.datasource.file.frontmatter, form, frontmatter.datasource]);
 
-  console.log({ schema, config, frontmatter });
   return (
     <ErrorBoundary>
       {frontmatterErrors !== '' && (
@@ -114,15 +113,15 @@ export function Application() {
 
 class ErrorBoundary extends React.Component<
   { children?: ReactNode },
-  { hasError: false } | { hasError: true; error: unknown }
+  { hasError: false } | { hasError: true; error: Error }
 > {
   constructor(props: { children?: ReactNode }) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: unknown) {
-    return { hasError: true, error: error };
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
   }
 
   render() {
@@ -134,6 +133,7 @@ class ErrorBoundary extends React.Component<
         <p>Please see the error that was thrown below for more information.</p>
         <pre>
           <code>{String(this.state.error)}</code>
+          <code>{this.state.error?.stack}</code>
         </pre>
       </div>
     );
