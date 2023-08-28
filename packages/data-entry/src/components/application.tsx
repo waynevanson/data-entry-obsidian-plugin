@@ -4,10 +4,10 @@ import { option, readonlyRecord } from 'fp-ts';
 import { pipe } from 'fp-ts/lib/function';
 import * as React from 'react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
-import { match } from '../common';
 import { useFrontmatter } from '../hooks/frontmatter';
 import { useApplication } from './context';
 import { Formed } from './form';
+import { match } from '../lib/sum';
 
 export function Application() {
   const { app, config } = useApplication();
@@ -72,12 +72,14 @@ export function Application() {
           match({
             inline: (inline) => inline as JsonSchema,
             file: (file) =>
-              frontmatter.schema.data?.[file.frontmatter] as JsonSchema | null,
+              frontmatter.uischema.data?.[
+                file.frontmatter
+              ] as JsonSchema | null,
           }),
         ),
         option.toNullable,
       ),
-    [config.uischema, frontmatter.schema.data],
+    [config.uischema, frontmatter.uischema.data],
   );
 
   const [errors, errorsSet] = useState<Array<unknown>>([]);
@@ -88,6 +90,7 @@ export function Application() {
     });
   }, [config.datasource.file.frontmatter, form, frontmatter.datasource]);
 
+  console.log({ schema, config, frontmatter });
   return (
     <ErrorBoundary>
       {frontmatterErrors !== '' && (
@@ -124,9 +127,10 @@ class ErrorBoundary extends React.Component<
 
   render() {
     if (!this.state.hasError) return this.props.children;
+    console.error(this.state.error);
     return (
       <div>
-        <h1>Something went wrong.</h1>
+        <h2>Something went wrong.</h2>
         <p>Please see the error that was thrown below for more information.</p>
         <pre>
           <code>{String(this.state.error)}</code>

@@ -1,5 +1,7 @@
 import { ThemeProvider } from '@mui/material';
-import { either, option, boolean } from 'fp-ts';
+import { either } from 'fp-ts';
+import { Either } from 'fp-ts/lib/Either';
+import { Json } from 'fp-ts/lib/Json';
 import { flow, pipe } from 'fp-ts/lib/function';
 import * as decoder from 'io-ts/Decoder';
 import {
@@ -14,13 +16,10 @@ import {
 import * as React from 'react';
 import { StrictMode } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import { configuration, match } from './common';
+import { configuration } from './common';
 import { Application } from './components';
 import { ApplicationProvider } from './components/context';
 import { useTheme } from './components/material';
-import { tfile } from './lib';
-import { Either } from 'fp-ts/lib/Either';
-import { Json } from 'fp-ts/lib/Json';
 
 type Handler = Parameters<Plugin['registerMarkdownCodeBlockProcessor']>[1];
 
@@ -62,13 +61,28 @@ export class MainPlugin extends Plugin {
     yamls: ReadonlyArray<string>,
   ): Handler {
     return async (source, element, context) => {
+      const { path } = this.app.workspace.getActiveFile()!;
+      console.debug({ source });
+
       const contents = createJsonify(yamls.includes(extension))(source);
+      console.debug({ contents });
 
       const config = pipe(
         contents,
-        either.chainW(flow(configuration.decode, either.mapLeft(decoder.draw))),
+        either.chainW(
+          flow(
+            configuration({
+              datasource: { path },
+              schema: { path },
+              uischema: { path },
+            }).decode,
+            either.mapLeft(decoder.draw),
+          ),
+        ),
         either.getOrElseW(notify),
       );
+
+      console.debug({ config });
 
       const Component = () => (
         <StrictMode>

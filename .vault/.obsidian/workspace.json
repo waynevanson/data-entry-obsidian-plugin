@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "a7d9e04bdc96c515",
+        "id": "0716682fc1a1b562",
         "type": "tabs",
         "children": [
           {
-            "id": "8d986c1b03f0b8fc",
+            "id": "d5403f62d610686b",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -139,11 +139,12 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "8d986c1b03f0b8fc",
+  "active": "d5403f62d610686b",
   "lastOpenFiles": [
-    "Sample 01.md",
-    "data.md",
+    "Sample 03.md",
     "Sample 02.md",
+    "data.md",
+    "Sample 01.md",
     "d.md",
     "NonObject.md",
     "Yello world.md",

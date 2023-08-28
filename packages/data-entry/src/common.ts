@@ -1,9 +1,8 @@
-import { JsonSchema, UISchemaElement } from '@jsonforms/core';
-import { readonlyRecord, string } from 'fp-ts';
-import { Monoid } from 'fp-ts/lib/Monoid';
+import { option, readonlyRecord, string } from 'fp-ts';
 import { pipe } from 'fp-ts/lib/function';
-import * as decoder from 'io-ts/Decoder';
+import { decoder } from './lib';
 import { Decoder } from 'io-ts/Decoder';
+import { Sum } from './lib/sum';
 
 export type Datasource = Sum<{
   file: {
@@ -12,79 +11,44 @@ export type Datasource = Sum<{
   };
 }>;
 
-export type Sum<T extends Record<string, unknown>> = keyof T extends never
-  ? never
-  : {
-      [P in keyof T]: Record<P, T[P]>;
-    }[keyof T];
-
-// todo - intersect decoder with one key only
-const sum = <P extends Record<string, Decoder<unknown, unknown>>>(
-  properties: keyof P extends never ? never : P,
-): Decoder<
-  { [K in keyof P]: Record<K, decoder.InputOf<P[K]>> }[keyof P],
-  { [K in keyof P]: Record<K, decoder.TypeOf<P[K]>> }[keyof P]
-> =>
+export const configuration = (
+  defaults: Record<
+    'datasource' | 'uischema' | 'schema',
+    Record<'path', string>
+  >,
+) =>
   pipe(
-    properties,
-    readonlyRecord.fromRecord,
-    readonlyRecord.mapWithIndex((property, value) =>
-      decoder.struct({ [property]: value }),
-    ),
-    readonlyRecord.reduce(string.Ord)(
-      decoder.fromRefinement((i): i is never => false, 'Sum'),
-      (b, a) =>
-        pipe(
-          b,
-          decoder.alt(() => a as never),
-        ),
+    decoder.struct({
+      datasource: decoder.sum({ file: file(defaults.datasource) }),
+      schema: decoder.sum({
+        inline: decoder.UnknownRecord,
+        file: file(defaults.schema),
+      }),
+    }),
+    decoder.intersect(
+      decoder.partial({
+        uischema: decoder.sum({
+          inline: decoder.UnknownRecord,
+          file: file(defaults.datasource),
+        }),
+      }),
     ),
   );
 
-const file = decoder.struct({
-  path: decoder.string,
-  frontmatter: decoder.string,
-});
-/// schema
-const datasource = sum({ file });
-
-export const configuration = pipe(
-  decoder.struct({
-    datasource,
-    schema: sum({
-      inline: decoder.UnknownRecord,
-      file,
-    }),
-  }),
-  decoder.intersect(
-    decoder.partial({
-      uischema: sum({
-        inline: decoder.UnknownRecord,
-        file,
-      }),
-    }),
-  ),
+const path = pipe(
+  decoder.string,
+  // allows relative paths
+  decoder.map((string) => string.replace(/^\./, '')),
 );
-export type UserConfiguration = decoder.InputOf<typeof configuration>;
 
-export type ApplicationConfiguration = decoder.TypeOf<typeof configuration>;
+const file = (defaults: Record<'path', string>) =>
+  pipe(
+    decoder.struct({
+      frontmatter: decoder.string,
+    }),
+    decoder.intersect(decoder.configurable({ path }, defaults)),
+  );
 
-export const match =
-  <
-    T extends Record<string, unknown>,
-    CS extends T extends unknown
-      ? {
-          [P in keyof T]: (argument: T[P]) => unknown;
-        }
-      : never,
-  >(
-    cases: CS,
-  ) =>
-  (sum: T): ReturnType<CS[keyof CS]> => {
-    const name = Object.keys(sum)[0] as keyof T;
-    const value = sum[name];
-    const fn = cases[name as keyof CS];
-    return fn(value) as never;
-  };
-
-pipe({ one: 'two' }, match({ one: () => '' }));
+export type ApplicationConfiguration = decoder.TypeOf<
+  ReturnType<typeof configuration>
+>;
