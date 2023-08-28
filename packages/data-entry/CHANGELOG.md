@@ -1,5 +1,7 @@
 
 
+## [8.1.1](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.1.0...8.1.1) (2023-08-28)
+
 ## [8.1.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.0.1...8.1.0) (2023-08-28)
 
 
