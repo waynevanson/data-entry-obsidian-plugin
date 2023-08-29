@@ -1,5 +1,12 @@
 
 
+## [8.3.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.2.0...8.3.0) (2023-08-29)
+
+
+### Features
+
+* add setting panel but disabled ([637b776](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/637b776810bd28049f4eca3304e80ee5fc54c9c5))
+
 ## [8.2.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.1.1...8.2.0) (2023-08-28)
 
 
