@@ -1,5 +1,12 @@
 
 
+## [8.4.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.3.0...8.4.0) (2023-08-29)
+
+
+### Features
+
+* apply settings to config ([85371d9](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/85371d9cd9f5c674b41ccc7a2022e8bd189c368c))
+
 ## [8.3.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.2.0...8.3.0) (2023-08-29)
 
 
