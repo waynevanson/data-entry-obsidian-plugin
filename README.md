@@ -50,6 +50,7 @@ schema:
 
 - Although this plugin exists in the obsidian store, it's still a work in progress.
 - UI will look janky because Obsidian overrides some styles. Will start working on this soon.
+- There's a major bug when editing a schema for a note that is already open. Close the note and reopen it to remove the error. This is next priority.
 
 ## Preview
 
