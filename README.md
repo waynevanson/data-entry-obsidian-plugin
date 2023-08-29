@@ -14,6 +14,8 @@ This is a passion project used to fit my use case, but generalised enough that i
 - Add a `yaml-data-entry` codeblock with the form configuration
 - Enter read mode and enjoy a form!
 
+For recent additions to this plugin, please visit the [changelog](https://github.com/waynevanson/data-entry-obsidian-plugin/blob/main/packages/data-entry/CHANGELOG.md)
+
 ## Quick Start
 
 Once the plugin is installed from the community store and **enabled**,
