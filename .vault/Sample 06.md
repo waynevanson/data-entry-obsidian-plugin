@@ -9,7 +9,7 @@ datasource:
   name: Yo bro
 ---
 
-```yaml-data-entry
+```data-entry
 datasource:
   file:
 schema:

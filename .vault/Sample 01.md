@@ -1,4 +1,4 @@
-```yaml-data-entry
+```data-entry
 datasource:
   file:
     path: data.md

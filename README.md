@@ -11,7 +11,7 @@ This is a passion project used to fit my use case, but generalised enough that i
 - Create your datasource (frontmatter metadata within a file)
 - Create the schema that represents that datasource using [JSONSCHEMA](https://json-schema.org/specification.html).
 - (Optionally) customise how the data is represented as a UI using [JSONFORMS](https://jsonforms.io/docs#how-does-it-work).
-- Add a `yaml-data-entry` codeblock with the form configuration
+- Add a `data-entry` codeblock with the form configuration
 - Enter read mode and enjoy a form!
 
 For recent additions to this plugin, please visit the [changelog](https://github.com/waynevanson/data-entry-obsidian-plugin/blob/main/packages/data-entry/CHANGELOG.md)
@@ -35,7 +35,7 @@ schema:
         type: string
 ---
 
-```yaml-data-entry
+```data-entry
 datasource:
   file:
 schema:
@@ -133,7 +133,7 @@ Here is some info that we can use.
 ## How it works
 
 Plugin holds the state of our application.
-Config is read into the plugin when a markdown file contains `yaml-data-entry`.
+Config is read into the plugin when a markdown file contains `data-entry`.
 We validate this config, inject some defaults and render the UI via react/preact.
 
 We read many files frontmatter contents for the datasource, schema and uischema if we need to.

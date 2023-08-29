@@ -7,7 +7,7 @@ data:
   name: Shrek the best
 ---
 
-```yaml-data-entry
+```data-entry
 datasource:
   file:
     frontmatter: data

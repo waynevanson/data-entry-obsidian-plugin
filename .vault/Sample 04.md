@@ -6,7 +6,7 @@ schema:
 datasource: {}
 ---
 
-```yaml-data-entry
+```data-entry
 datasource:
   file:
 schema:

@@ -22,7 +22,7 @@ The easiest way to install the plugin is using the `BRAT` plugin.
 Here is an example entry point.
 
 <pre>
-```yaml-data-entry
+```data-entry
 datasource:
     file: data.md
 forms:
@@ -50,7 +50,7 @@ We are looking into ways to decrease this entry point, by making a GUI editor fo
 ### Quick Start
 
 1. Go to a new file and go to source mode
-2. Add code block with `yaml-data-entry` or `json-data-entry` in the format section.
+2. Add code block with `data-entry` or `json-data-entry` in the format section.
 3. Within the code block add:
    1. Add `datasource.file` with `.md` extension on it that you would like to save the data to (ie. `path/to/my-file.md`)
    2. Add your schema within `form.schema`.
