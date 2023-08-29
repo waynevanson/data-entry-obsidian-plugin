@@ -1,5 +1,18 @@
 
 
+## [9.0.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.4.1...9.0.0) (2023-08-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* markdown block is now `data-entry`
+* datasource default is now `datasource`
+
+### Features
+
+* datasource default is now `datasource` ([96adb9c](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/96adb9c624ba251561ef8b69f97e4369ddbf069c))
+* markdown block is now `data-entry` ([f2ac6c0](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/f2ac6c075b8dbff8c202f03549ca6ee5d0c6f789))
+
 ## [8.4.1](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.4.0...8.4.1) (2023-08-29)
 
 
