@@ -91,7 +91,7 @@ export function Application() {
   }, [config.datasource.file.frontmatter, form, frontmatter.datasource]);
 
   return (
-    <ErrorBoundary>
+    <>
       {frontmatterErrors !== '' && (
         <Alert severity="error">{frontmatterErrors}</Alert>
       )}
@@ -107,35 +107,6 @@ export function Application() {
           errorsSet(errors ?? []);
         }}
       />
-    </ErrorBoundary>
+    </>
   );
-}
-
-class ErrorBoundary extends React.Component<
-  { children?: ReactNode },
-  { hasError: false } | { hasError: true; error: Error }
-> {
-  constructor(props: { children?: ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
-  }
-
-  render() {
-    if (!this.state.hasError) return this.props.children;
-    console.error(this.state.error);
-    return (
-      <div>
-        <h2>Something went wrong.</h2>
-        <p>Please see the error that was thrown below for more information.</p>
-        <pre>
-          <code>{String(this.state.error)}</code>
-          <code>{this.state.error?.stack}</code>
-        </pre>
-      </div>
-    );
-  }
 }
