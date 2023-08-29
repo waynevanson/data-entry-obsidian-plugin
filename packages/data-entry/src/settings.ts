@@ -35,16 +35,6 @@ export class ApplicationSettings extends PluginSettingTab {
     this.containerEl.empty();
 
     this.containerEl.createEl('h1').setText('Data Entry');
-
-    this.containerEl
-      .createEl('p')
-      .setText(
-        [
-          'These settings are currently disabled and are for testing purposes only.',
-          'Please wait another release for these to be enabled.',
-        ].join('\n'),
-      );
-
     this.containerEl.createEl('h2').setText('Configuration');
     this.containerEl.createEl('h3').setText('Defaults');
 

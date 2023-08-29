@@ -11,18 +11,17 @@ import {
   Notice,
   Plugin,
   PluginManifest,
-  PluginSettingTab,
   YamlParseError,
   parseYaml,
 } from 'obsidian';
 import * as React from 'react';
 import { StrictMode } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import { configuration } from './config';
 import { Application } from './components';
 import { ApplicationProvider } from './components/context';
 import { useTheme } from './components/material';
-import { ApplicationSettings, SettingsConfiguration } from './settings';
+import { configuration } from './config';
+import { ApplicationSettings } from './settings';
 
 type Handler = Parameters<Plugin['registerMarkdownCodeBlockProcessor']>[1];
 
@@ -77,14 +76,19 @@ export class MainPlugin extends Plugin {
       const contents = createJsonify(yamls.includes(extension))(source);
       console.debug({ contents });
 
+      const settings = this.settings.settings;
+
       const config = pipe(
         contents,
         either.chainW(
           flow(
             configuration({
-              datasource: { path, frontmatter: 'data' }, // todo - change to `datasource`
-              schema: { path, frontmatter: 'schema' },
-              uischema: { path, frontmatter: 'uischema' },
+              datasource: {
+                path,
+                frontmatter: settings.datasource.frontmatter,
+              }, // todo - change to `datasource`
+              schema: { path, frontmatter: settings.schema.frontmatter },
+              uischema: { path, frontmatter: settings.uischema.frontmatter },
             }).decode,
             either.mapLeft(decoder.draw),
           ),

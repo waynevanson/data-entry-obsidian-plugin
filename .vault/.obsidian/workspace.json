@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "de95ac78283896a0",
+        "id": "9eaa83374cb4cf87",
         "type": "tabs",
         "children": [
           {
-            "id": "73baacbde27bf18c",
+            "id": "76b757e0be450594",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sample 05.md",
+                "file": "Sample 06.md",
                 "mode": "source",
                 "source": true
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Sample 05.md",
+                "file": "Sample 06.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Sample 05.md",
+                "file": "Sample 06.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Sample 05.md"
+                "file": "Sample 06.md"
               }
             }
           }
@@ -147,8 +147,9 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "73baacbde27bf18c",
+  "active": "76b757e0be450594",
   "lastOpenFiles": [
+    "Sample 06.md",
     "Sample 05.md",
     "Sample 04.md",
     "Sample 03.md",
