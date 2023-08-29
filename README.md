@@ -66,7 +66,7 @@ schema:
 
 ## Configuration
 
-Please visit these links for the definitions of [JSONSCHEMA](https://json-schema.org/specification.html) and [JSONFORMS](https://jsonforms.io/docs#how-does-it-work).
+Please visit these links for the definitions of [JSONSCHEMA](https://json-schema.org/specification.html) and [JSONFORMS](https://jsonforms.io/docs#how-does-it-work). JJSONSCHEMA capabilities have been extended with the [following formats](https://ajv.js.org/packages/ajv-formats.html)
 
 The config looks like the typescript interface below:
 
