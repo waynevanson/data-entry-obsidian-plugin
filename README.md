@@ -78,30 +78,30 @@ export interface UserConfiguration {
       frontmatter?: string;
     };
   };
-  schema: {
-    file?:
-      | {
+  schema:
+    | {
+        file?: {
           path?: string;
           frontmatter?: string;
-        }
-      | {
-          inline: JSONSCHEMA;
         };
-  };
-  uischema?: {
-    file?:
-      | {
+      }
+    | {
+        inline: JSONSCHEMA;
+      };
+  uischema:
+    | {
+        file?: {
           path?: string;
           frontmatter?: string;
-        }
-      | {
-          inline: UISCHEMA;
         };
-  };
+      }
+    | {
+        inline: UISCHEMA;
+      };
 }
 ```
 
-Which will resolve with the following defaults, unless changed in the settings (settings coming soon)
+Which will resolve with the following defaults, unless changed in the settings.
 
 ```typescript
 {
