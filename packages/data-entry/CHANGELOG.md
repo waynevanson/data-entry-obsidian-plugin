@@ -1,5 +1,12 @@
 
 
+## [8.4.1](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.4.0...8.4.1) (2023-08-29)
+
+
+### Bug Fixes
+
+* remove error boundary ([2be645a](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/2be645a7a9c4c16a9d98e5410d0c05537f14c949))
+
 ## [8.4.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.3.0...8.4.0) (2023-08-29)
 
 
