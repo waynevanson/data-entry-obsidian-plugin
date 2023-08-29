@@ -10,6 +10,8 @@ import {
   MarkdownRenderChild,
   Notice,
   Plugin,
+  PluginManifest,
+  PluginSettingTab,
   YamlParseError,
   parseYaml,
 } from 'obsidian';
@@ -20,6 +22,7 @@ import { configuration } from './config';
 import { Application } from './components';
 import { ApplicationProvider } from './components/context';
 import { useTheme } from './components/material';
+import { ApplicationSettings, SettingsConfiguration } from './settings';
 
 type Handler = Parameters<Plugin['registerMarkdownCodeBlockProcessor']>[1];
 
@@ -36,7 +39,14 @@ const notify = (error: any) => {
 };
 
 export class MainPlugin extends Plugin {
+  public settings = new ApplicationSettings(this);
+
+  constructor(app: App, manifest: PluginManifest) {
+    super(app, manifest);
+  }
+
   async onload(): Promise<void> {
+    this.addSettingTab(this.settings);
     this.registerMarkdownCodeBlockProcessors();
   }
 

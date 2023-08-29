@@ -1,0 +1,13 @@
+{
+  "settings": {
+    "datasource": {
+      "frontmatter": "data"
+    },
+    "schema": {
+      "frontmatter": "schema"
+    },
+    "uischema": {
+      "frontmatter": "uischema"
+    }
+  }
+}
