@@ -7,7 +7,6 @@ schema:
       type: number
 datasource:
   name: Yo bro
-data: {}
 ---
 
 ```yaml-data-entry

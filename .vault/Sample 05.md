@@ -3,7 +3,7 @@ schema:
   properties:
     name:
       type: string
-data: {}
+datasource: {}
 ---
 
 ```yaml-data-entry

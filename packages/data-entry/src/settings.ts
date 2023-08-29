@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { Notice, PluginSettingTab, Setting } from 'obsidian';
+import { PluginSettingTab, Setting } from 'obsidian';
 import { MainPlugin } from './plugin';
 
 export type SettingsConfiguration = Record<
@@ -9,7 +9,7 @@ export type SettingsConfiguration = Record<
 
 export class ApplicationSettings extends PluginSettingTab {
   public settings: SettingsConfiguration = {
-    datasource: { frontmatter: 'data' },
+    datasource: { frontmatter: 'datasource' },
     schema: { frontmatter: 'schema' },
     uischema: { frontmatter: 'uischema' },
   };
