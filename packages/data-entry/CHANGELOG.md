@@ -1,5 +1,12 @@
 
 
+## [9.0.1](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/9.0.0...9.0.1) (2023-08-30)
+
+
+### Bug Fixes
+
+* uischema frontmatter reads from 'uischema' ([b3acfc2](https://github.com/waynevanson/obsidian-plugin-data-entry/commit/b3acfc2f21adc94e98016eada7e5de67833fca68))
+
 ## [9.0.0](https://github.com/waynevanson/obsidian-plugin-data-entry/compare/8.4.1...9.0.0) (2023-08-29)
 
 
