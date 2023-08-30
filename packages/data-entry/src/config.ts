@@ -19,7 +19,7 @@ export const configuration = (
       decoder.partial({
         uischema: decoder.sum({
           inline: decoder.UnknownRecord,
-          file: file(defaults.datasource),
+          file: file(defaults.uischema),
         }),
       }),
     ),
