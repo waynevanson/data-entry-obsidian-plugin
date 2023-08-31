@@ -1,5 +1,7 @@
 // import * as sum from './sum';
 import { Sum } from './sum';
+import { Treeable } from './treeson';
+import * as treeable from './treeson';
 
 export type Reference = string;
 
@@ -36,6 +38,7 @@ export interface UIArray {
 
 export type UI = UIArray | UILeaf;
 
+function toTreeable(ui: UI): Treeable<UILeaf> {}
 // labels,
 
 // add decoder
