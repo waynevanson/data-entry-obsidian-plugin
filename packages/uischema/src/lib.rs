@@ -3,11 +3,7 @@ mod utils;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
-}
+extern "C" {}
 
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, uischema!");
-}
+#[derive(Deserialize)]
+enum Element {}

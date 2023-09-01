@@ -17,3 +17,10 @@ node_modules
 coverage/
 
 .turbo/
+
+/target
+**/*.rs.bk
+Cargo.lock
+bin/
+pkg/
+wasm-pack.log
