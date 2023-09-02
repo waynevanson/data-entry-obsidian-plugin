@@ -1,0 +1,218 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UISchema",
+  "allOf": [
+    {
+      "$ref": "#/definitions/Structure"
+    }
+  ],
+  "definitions": {
+    "ArrayComponent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "checkbox"
+          ],
+          "properties": {
+            "checkbox": {
+              "$ref": "#/definitions/Element_for_Null"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "BooleanComponent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "checkbox"
+          ],
+          "properties": {
+            "checkbox": {
+              "$ref": "#/definitions/Element_for_Null"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "switch"
+          ],
+          "properties": {
+            "switch": {
+              "$ref": "#/definitions/Element_for_Null"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "toggle"
+          ],
+          "properties": {
+            "toggle": {
+              "$ref": "#/definitions/Element_for_Null"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Component": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "string"
+          ],
+          "properties": {
+            "string": {
+              "$ref": "#/definitions/StringComponent"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "number"
+          ],
+          "properties": {
+            "number": {
+              "$ref": "#/definitions/NumberComponent"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "boolean"
+          ],
+          "properties": {
+            "boolean": {
+              "$ref": "#/definitions/BooleanComponent"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "array"
+          ],
+          "properties": {
+            "array": {
+              "$ref": "#/definitions/ArrayComponent"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Element_for_Null": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "$ref"
+          ],
+          "properties": {
+            "$ref": {
+              "type": "string"
+            },
+            "options": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "NumberComponent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "number"
+          ],
+          "properties": {
+            "number": {
+              "$ref": "#/definitions/Element_for_Null"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "StringComponent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "text"
+          ],
+          "properties": {
+            "text": {
+              "$ref": "#/definitions/Element_for_Null"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "textarea"
+          ],
+          "properties": {
+            "textarea": {
+              "$ref": "#/definitions/Element_for_Null"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "select"
+          ],
+          "properties": {
+            "select": {
+              "$ref": "#/definitions/Element_for_Null"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Structure": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Component"
+        },
+        {
+          "type": "object",
+          "required": [
+            "$ref",
+            "array"
+          ],
+          "properties": {
+            "$ref": {
+              "type": "string"
+            },
+            "array": {
+              "$ref": "#/definitions/Structure"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

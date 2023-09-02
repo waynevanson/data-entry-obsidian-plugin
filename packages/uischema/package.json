@@ -1,0 +1,13 @@
+{
+  "name": "@waynevanson/uischema",
+  "scripts": {
+    "generate": "run-s generate:*",
+    "generate:rs": "cargo run uischema",
+    "generate:js": "node generate.mjs"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "~10.1.4",
+    "npm-run-all": "~4.1.5",
+    "typescript": "~4.3.5"
+  }
+}
