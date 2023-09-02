@@ -1,4 +1,5 @@
 mod config;
+mod optics;
 mod output;
 mod utils;
 

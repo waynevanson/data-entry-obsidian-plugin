@@ -1,3 +1,5 @@
+
+
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -80,3 +82,10 @@ pub enum UISchemable {
 
 #[derive(Debug, Deserialize, Serialize, JsonSchema)]
 pub struct UISchema(UISchemable);
+
+enum ScopePath {
+    One,
+    Many, // when we need to zoom in on an array
+}
+
+// fn get_scope_paths(uischemable: UISchemable) -> Vec<ScopePath> {}
