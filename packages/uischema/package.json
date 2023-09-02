@@ -2,7 +2,7 @@
   "name": "@waynevanson/uischema",
   "scripts": {
     "generate": "run-s generate:*",
-    "generate:rs": "cargo run uischema",
+    "generate:rs": "cargo run --release uischema",
     "generate:js": "node generate.mjs"
   },
   "devDependencies": {

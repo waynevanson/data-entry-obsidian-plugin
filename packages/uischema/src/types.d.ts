@@ -1,14 +1,16 @@
-export type UISchema = Structure;
+export type UISchema = UISchemable;
 
-export type Structure =
+export type UISchemable =
   | Component
   | {
       $ref: string;
-      array: Structure;
+      array: UISchemable;
       [k: string]: unknown;
     };
 
-export type Component =
+export type Component = ComponentValue | ComponentLayout;
+
+export type ComponentValue =
   | {
       string: StringComponent;
     }
@@ -59,3 +61,14 @@ export type BooleanComponent =
 export type ArrayComponent = {
   checkbox: ElementForNull;
 };
+
+export type ComponentLayout =
+  | {
+      label: string;
+    }
+  | {
+      horizontal: UISchemable;
+    }
+  | {
+      vertical: UISchemable;
+    };

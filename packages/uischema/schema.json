@@ -3,7 +3,7 @@
   "title": "UISchema",
   "allOf": [
     {
-      "$ref": "#/definitions/Structure"
+      "$ref": "#/definitions/UISchemable"
     }
   ],
   "definitions": {
@@ -64,6 +64,56 @@
       ]
     },
     "Component": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ComponentValue"
+        },
+        {
+          "$ref": "#/definitions/ComponentLayout"
+        }
+      ]
+    },
+    "ComponentLayout": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "label"
+          ],
+          "properties": {
+            "label": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "horizontal"
+          ],
+          "properties": {
+            "horizontal": {
+              "$ref": "#/definitions/UISchemable"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "vertical"
+          ],
+          "properties": {
+            "vertical": {
+              "$ref": "#/definitions/UISchemable"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ComponentValue": {
       "oneOf": [
         {
           "type": "object",
@@ -192,7 +242,7 @@
         }
       ]
     },
-    "Structure": {
+    "UISchemable": {
       "anyOf": [
         {
           "$ref": "#/definitions/Component"
@@ -208,7 +258,7 @@
               "type": "string"
             },
             "array": {
-              "$ref": "#/definitions/Structure"
+              "$ref": "#/definitions/UISchemable"
             }
           }
         }
