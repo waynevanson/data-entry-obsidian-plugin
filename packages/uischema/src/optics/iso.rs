@@ -28,16 +28,12 @@ pub struct IsoId<S> {
 }
 
 impl<S> IsoId<S> {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    pub fn imap<G, H, B>(self, covariant: G, contravariant: H) -> InvariantMap<Self, G, H>
+    pub fn imap<G, H, B>(self, covariant: G, contravariant: H) -> IsoInvariantMap<Self, G, H>
     where
         G: Fn(S) -> B,
         H: Fn(B) -> S,
     {
-        InvariantMap {
+        IsoInvariantMap {
             iso: self,
             covariant,
             contravariant,
@@ -86,22 +82,22 @@ impl<S> IsoMut for IsoId<S> {
     }
 }
 
-pub struct InvariantMap<I, F, G> {
+pub struct IsoInvariantMap<I, F, G> {
     iso: I,
     covariant: F,
     contravariant: G,
 }
 
-impl<I, F, G, A> InvariantMap<I, F, G>
+impl<I, F, G, A> IsoInvariantMap<I, F, G>
 where
     I: IsoRef<Target = A>,
 {
-    pub fn map<H, J, B>(self, covariant: H, contravariant: J) -> InvariantMap<Self, H, J>
+    pub fn map<H, J, B>(self, covariant: H, contravariant: J) -> IsoInvariantMap<Self, H, J>
     where
         H: Fn(A) -> B,
         J: Fn(B) -> A,
     {
-        InvariantMap {
+        IsoInvariantMap {
             iso: self,
             covariant,
             contravariant,
@@ -119,7 +115,7 @@ where
     }
 }
 
-impl<I, F, G, A, B> IsoRef for InvariantMap<I, F, G>
+impl<I, F, G, A, B> IsoRef for IsoInvariantMap<I, F, G>
 where
     I: IsoRef<Target = A>,
     F: Fn(A) -> B,
@@ -137,7 +133,7 @@ where
     }
 }
 
-impl<I, F, G, A, B> IsoMut for InvariantMap<I, F, G>
+impl<I, F, G, A, B> IsoMut for IsoInvariantMap<I, F, G>
 where
     I: IsoRef<Target = A>,
     F: Fn(A) -> B,
@@ -161,12 +157,12 @@ impl<I, V, A> IsoCompose<I, V>
 where
     I: IsoRef<Target = A>,
 {
-    pub fn map<G, H, B>(self, closure: G, contravariant: H) -> InvariantMap<Self, G, H>
+    pub fn map<G, H, B>(self, closure: G, contravariant: H) -> IsoInvariantMap<Self, G, H>
     where
         G: Fn(A) -> B,
         H: Fn(B) -> A,
     {
-        InvariantMap {
+        IsoInvariantMap {
             iso: self,
             covariant: closure,
             contravariant,
