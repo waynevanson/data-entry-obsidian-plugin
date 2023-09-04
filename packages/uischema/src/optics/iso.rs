@@ -92,7 +92,7 @@ impl<I, F, G, A> IsoInvariantMap<I, F, G>
 where
     I: IsoRef<Target = A>,
 {
-    pub fn map<H, J, B>(self, covariant: H, contravariant: J) -> IsoInvariantMap<Self, H, J>
+    pub fn imap<H, J, B>(self, covariant: H, contravariant: J) -> IsoInvariantMap<Self, H, J>
     where
         H: Fn(A) -> B,
         J: Fn(B) -> A,
@@ -157,7 +157,7 @@ impl<I, V, A> IsoCompose<I, V>
 where
     I: IsoRef<Target = A>,
 {
-    pub fn map<G, H, B>(self, closure: G, contravariant: H) -> IsoInvariantMap<Self, G, H>
+    pub fn imap<G, H, B>(self, closure: G, contravariant: H) -> IsoInvariantMap<Self, G, H>
     where
         G: Fn(A) -> B,
         H: Fn(B) -> A,
