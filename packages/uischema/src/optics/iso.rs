@@ -1,17 +1,24 @@
 pub mod traits {
+    /// An `IsoRef` is an optic which converts elements of type `Source` into elements of type `Target` without loss,
+    /// where the `IsoRef` is a reference.
     pub trait IsoRef {
         type Source;
         type Target;
 
         fn get_ref(&self, source: Self::Source) -> Self::Target;
+        fn apply_ref(&self, target: Self::Target) -> Self::Source;
     }
 
+    /// An `Iso` is an optic which converts elements of type `Source` into elements of type `Target` without loss.
     pub trait IsoMut: IsoRef {
         fn get_mut(&mut self, source: Self::Source) -> Self::Target;
+        fn apply_mut(&mut self, target: Self::Target) -> Self::Source;
     }
 
+    /// An `Iso` is an optic which converts elements of type `Source` into elements of type `Target` without loss.
     pub trait Iso: IsoMut {
         fn get(self, source: Self::Source) -> Self::Target;
+        fn apply(self, target: Self::Target) -> Self::Source;
     }
 }
 
@@ -29,13 +36,15 @@ pub mod impls {
             Self::default()
         }
 
-        pub fn map<G, B>(self, closure: G) -> Map<Self, G>
+        pub fn imap<G, H, B>(self, covariant: G, contravariant: H) -> InvariantMap<Self, G, H>
         where
             G: Fn(S) -> B,
+            H: Fn(B) -> S,
         {
-            Map {
+            InvariantMap {
                 iso: self,
-                f: closure,
+                covariant,
+                contravariant,
             }
         }
 
@@ -65,30 +74,41 @@ pub mod impls {
         fn get_ref(&self, source: Self::Source) -> Self::Target {
             source
         }
+
+        fn apply_ref(&self, target: Self::Target) -> Self::Source {
+            target
+        }
     }
 
     impl<S> IsoMut for IsoId<S> {
         fn get_mut(&mut self, source: Self::Source) -> Self::Target {
             self.get_ref(source)
         }
+
+        fn apply_mut(&mut self, target: Self::Target) -> Self::Source {
+            self.apply_ref(target)
+        }
     }
 
-    pub struct Map<I, F> {
+    pub struct InvariantMap<I, F, G> {
         iso: I,
-        f: F,
+        covariant: F,
+        contravariant: G,
     }
 
-    impl<I, F, A> Map<I, F>
+    impl<I, F, G, A> InvariantMap<I, F, G>
     where
         I: IsoRef<Target = A>,
     {
-        pub fn map<G, B>(self, closure: G) -> Map<Self, G>
+        pub fn map<H, J, B>(self, covariant: H, contravariant: J) -> InvariantMap<Self, H, J>
         where
-            G: Fn(A) -> B,
+            H: Fn(A) -> B,
+            J: Fn(B) -> A,
         {
-            Map {
+            InvariantMap {
                 iso: self,
-                f: closure,
+                covariant,
+                contravariant,
             }
         }
 
@@ -103,28 +123,36 @@ pub mod impls {
         }
     }
 
-    impl<I, F, A, B> IsoRef for Map<I, F>
+    impl<I, F, G, A, B> IsoRef for InvariantMap<I, F, G>
     where
         I: IsoRef<Target = A>,
         F: Fn(A) -> B,
+        G: Fn(B) -> A,
     {
         type Source = I::Source;
         type Target = B;
 
         fn get_ref(&self, source: Self::Source) -> Self::Target {
-            let a = self.iso.get_ref(source);
-            (self.f)(a)
+            (self.covariant)(self.iso.get_ref(source))
+        }
+
+        fn apply_ref(&self, target: Self::Target) -> Self::Source {
+            self.iso.apply_ref((self.contravariant)(target))
         }
     }
 
-    impl<I, F, A, B> IsoMut for Map<I, F>
+    impl<I, F, G, A, B> IsoMut for InvariantMap<I, F, G>
     where
         I: IsoRef<Target = A>,
         F: Fn(A) -> B,
+        G: Fn(B) -> A,
     {
         fn get_mut(&mut self, source: Self::Source) -> Self::Target {
-            let a = self.iso.get_ref(source);
-            (self.f)(a)
+            (self.covariant)(self.iso.get_ref(source))
+        }
+
+        fn apply_mut(&mut self, target: Self::Target) -> Self::Source {
+            self.iso.apply_ref((self.contravariant)(target))
         }
     }
 
@@ -137,13 +165,15 @@ pub mod impls {
     where
         I: IsoRef<Target = A>,
     {
-        pub fn map<G, B>(self, closure: G) -> Map<Self, G>
+        pub fn map<G, H, B>(self, closure: G, contravariant: H) -> InvariantMap<Self, G, H>
         where
             G: Fn(A) -> B,
+            H: Fn(B) -> A,
         {
-            Map {
+            InvariantMap {
                 iso: self,
-                f: closure,
+                covariant: closure,
+                contravariant,
             }
         }
     }
@@ -175,6 +205,10 @@ pub mod impls {
             let a = self.first.get_ref(source);
             self.second.get_ref(a)
         }
+
+        fn apply_ref(&self, target: Self::Target) -> Self::Source {
+            self.first.apply_ref(self.second.apply_ref(target))
+        }
     }
 
     impl<I, V, A> IsoMut for IsoCompose<I, V>
@@ -183,8 +217,11 @@ pub mod impls {
         V: IsoMut<Source = A>,
     {
         fn get_mut(&mut self, source: Self::Source) -> Self::Target {
-            let a = self.first.get_ref(source);
-            self.second.get_ref(a)
+            self.second.get_ref(self.first.get_ref(source))
+        }
+
+        fn apply_mut(&mut self, target: Self::Target) -> Self::Source {
+            self.first.apply_mut(self.second.apply_mut(target))
         }
     }
 }
