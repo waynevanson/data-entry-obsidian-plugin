@@ -1,17 +1,21 @@
 use std::marker::PhantomData;
 
-use super::iso::{Iso, IsoMut, IsoRef};
+pub trait LensRef {
+    type Source;
+    type Target;
 
-pub trait LensRef: IsoRef {
-    fn replace_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source;
+    fn get_ref(&self, source: Self::Source) -> Self::Target;
+    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source;
 }
 
-pub trait LensMut: IsoMut {
-    fn replace_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source;
+pub trait LensMut: LensRef {
+    fn get_mut(&mut self, source: Self::Source) -> Self::Target;
+    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source;
 }
 
-pub trait Lens: Iso {
-    fn replace(&mut self, source: Self::Source, target: Self::Target) -> Self::Source;
+pub trait Lens: LensMut {
+    fn get(self, source: Self::Source) -> Self::Target;
+    fn set(&mut self, source: Self::Source, target: Self::Target) -> Self::Source;
 }
 
 pub struct LensId<S> {
@@ -40,7 +44,7 @@ impl<S> LensId<S> {
     }
 }
 
-impl<S> IsoRef for LensId<S> {
+impl<S> LensRef for LensId<S> {
     type Source = S;
     type Target = S;
 
@@ -48,13 +52,7 @@ impl<S> IsoRef for LensId<S> {
         source
     }
 
-    fn apply_ref(&self, target: Self::Target) -> Self::Source {
-        target
-    }
-}
-
-impl<S> LensRef for LensId<S> {
-    fn replace_ref(&self, _source: Self::Source, target: Self::Target) -> Self::Source {
+    fn set_ref(&self, _source: Self::Source, target: Self::Target) -> Self::Source {
         target
     }
 }
@@ -82,9 +80,9 @@ where
     }
 }
 
-impl<L, F, G, A, B> IsoRef for LensInvariantMap<L, F, G>
+impl<L, F, G, A, B> LensRef for LensInvariantMap<L, F, G>
 where
-    L: IsoRef<Target = A>,
+    L: LensRef<Target = A>,
     F: Fn(A) -> B,
     G: Fn(B) -> A,
 {
@@ -95,34 +93,8 @@ where
         (self.covariant)(self.lens.get_ref(source))
     }
 
-    fn apply_ref(&self, target: Self::Target) -> Self::Source {
-        self.lens.apply_ref((self.contravariant)(target))
-    }
-}
-
-impl<L, F, G, A, B> LensRef for LensInvariantMap<L, F, G>
-where
-    L: LensRef<Target = A>,
-    F: Fn(A) -> B,
-    G: Fn(B) -> A,
-{
-    fn replace_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
-        self.lens.replace_ref(source, (self.contravariant)(target))
-    }
-}
-
-impl<L, F, G, A, B> IsoMut for LensInvariantMap<L, F, G>
-where
-    L: IsoMut<Target = A>,
-    F: Fn(A) -> B,
-    G: Fn(B) -> A,
-{
-    fn get_mut(&mut self, source: Self::Source) -> Self::Target {
-        (self.covariant)(self.lens.get_mut(source))
-    }
-
-    fn apply_mut(&mut self, target: Self::Target) -> Self::Source {
-        self.lens.apply_ref((self.contravariant)(target))
+    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
+        self.lens.set_ref(source, (self.contravariant)(target))
     }
 }
 
@@ -132,8 +104,12 @@ where
     F: Fn(A) -> B,
     G: Fn(B) -> A,
 {
-    fn replace_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
-        self.lens.replace_mut(source, (self.contravariant)(target))
+    fn get_mut(&mut self, source: Self::Source) -> Self::Target {
+        (self.covariant)(self.lens.get_ref(source))
+    }
+
+    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
+        self.lens.set_ref(source, (self.contravariant)(target))
     }
 }
 
@@ -174,60 +150,39 @@ where
     }
 }
 
-impl<I, V, A> IsoRef for LensCompose<I, V>
+impl<I, V, A, B, C> LensRef for LensCompose<I, V>
 where
-    I: IsoRef<Target = A>,
-    V: IsoRef<Source = A>,
+    I: LensRef<Source = A, Target = B>,
+    V: LensRef<Source = B, Target = C>,
+    A: Clone,
 {
-    type Source = I::Source;
-    type Target = V::Target;
+    type Source = A;
+    type Target = C;
 
     fn get_ref(&self, source: Self::Source) -> Self::Target {
-        let a = self.first.get_ref(source);
-        self.second.get_ref(a)
-    }
-
-    fn apply_ref(&self, target: Self::Target) -> Self::Source {
-        self.first.apply_ref(self.second.apply_ref(target))
-    }
-}
-
-impl<I, V, A> LensRef for LensCompose<I, V>
-where
-    I: LensRef<Target = A>,
-    V: LensRef<Source = A>,
-    Self::Source: Clone,
-{
-    fn replace_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
-        let a = self.first.get_ref(source.clone());
-        let a = self.second.replace_ref(a, target);
-        self.first.replace_ref(source, a)
-    }
-}
-
-impl<I, V, A> IsoMut for LensCompose<I, V>
-where
-    I: IsoMut<Target = A>,
-    V: IsoMut<Source = A>,
-{
-    fn get_mut(&mut self, source: Self::Source) -> Self::Target {
         self.second.get_ref(self.first.get_ref(source))
     }
 
-    fn apply_mut(&mut self, target: Self::Target) -> Self::Source {
-        self.first.apply_mut(self.second.apply_mut(target))
+    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
+        let a = self.first.get_ref(source.clone());
+        let a = self.second.set_ref(a, target);
+        self.first.set_ref(source, a)
     }
 }
 
-impl<I, V, A> LensMut for LensCompose<I, V>
+impl<I, V, A, B, C> LensMut for LensCompose<I, V>
 where
-    I: LensMut<Target = A>,
-    V: LensMut<Source = A>,
-    Self::Source: Clone,
+    I: LensMut<Source = A, Target = B>,
+    V: LensMut<Source = B, Target = C>,
+    A: Clone,
 {
-    fn replace_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
+    fn get_mut(&mut self, source: Self::Source) -> Self::Target {
+        self.second.get_mut(self.first.get_ref(source))
+    }
+
+    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
         let a = self.first.get_mut(source.clone());
-        let a = self.second.replace_mut(a, target);
-        self.first.replace_mut(source, a)
+        let a = self.second.set_mut(a, target);
+        self.first.set_mut(source, a)
     }
 }
