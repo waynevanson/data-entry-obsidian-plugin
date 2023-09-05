@@ -100,3 +100,39 @@ where
             .set_all_ref(source, (self.contravariant)(target))
     }
 }
+
+pub struct TraversalCompose<T, U> {
+    first: T,
+    second: U,
+}
+
+impl<T, U, B> TraversalRef for TraversalCompose<T, U>
+where
+    T: TraversalRef<Target = B>,
+    T::Source: FromIterator<T::Source> + Clone,
+    U::Target: Clone,
+    T::Container: IntoIterator<Item = B>,
+    U: TraversalRef<Source = B>,
+    U::Container: IntoIterator<Item = U::Target> + FromIterator<U::Target>,
+{
+    type Source = T::Source;
+    type Target = U::Target;
+    type Container = U::Container;
+
+    fn get_all_ref(&self, source: Self::Source) -> Self::Container {
+        self.first
+            .get_all_ref(source)
+            .into_iter()
+            .flat_map(|b| self.second.get_all_ref(b))
+            .collect()
+    }
+
+    fn set_all_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
+        self.first
+            .get_all_ref(source.clone())
+            .into_iter()
+            .map(|b| self.second.set_all_ref(b, target.clone()))
+            .map(|b| self.first.set_all_ref(source.clone(), b))
+            .collect()
+    }
+}

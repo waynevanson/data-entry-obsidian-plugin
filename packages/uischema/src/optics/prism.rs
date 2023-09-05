@@ -3,7 +3,7 @@ pub trait PrismRef {
     type Target;
 
     fn get_option_ref(&self, source: Self::Source) -> Option<Self::Target>;
-    fn set_ref() {}
+    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source;
 }
 
 pub trait PrismMut: PrismRef {

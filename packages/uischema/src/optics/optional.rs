@@ -5,12 +5,12 @@ pub trait OptionalRef {
     type Target;
 
     fn get_optional_ref(&self, source: Self::Source) -> Option<Self::Target>;
-    fn set_ref(&self, target: Self::Target) -> Self::Source;
+    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source;
 }
 
 pub trait OptionalMut: OptionalRef {
     fn get_optional_mut(&mut self, source: Self::Source) -> Option<Self::Target>;
-    fn set_mut(&mut self, target: Self::Target) -> Self::Source;
+    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source;
 }
 
 pub trait Optional: OptionalMut {
@@ -38,7 +38,7 @@ impl<S> OptionalRef for OptionalId<S> {
         Some(source)
     }
 
-    fn set_ref(&self, target: Self::Target) -> Self::Source {
+    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
         target
     }
 }
@@ -48,7 +48,7 @@ impl<S> OptionalMut for OptionalId<S> {
         Some(source)
     }
 
-    fn set_mut(&mut self, target: Self::Target) -> Self::Source {
+    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
         target
     }
 }
@@ -77,8 +77,8 @@ where
         }
     }
 
-    fn set_ref(&self, target: Self::Target) -> Self::Source {
-        self.optional.set_ref((self.contravariant)(target))
+    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
+        self.optional.set_ref(source, (self.contravariant)(target))
     }
 }
 
@@ -97,7 +97,7 @@ where
         }
     }
 
-    fn set_mut(&mut self, target: Self::Target) -> Self::Source {
-        self.optional.set_ref((self.contravariant)(target))
+    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
+        self.optional.set_mut(source, (self.contravariant)(target))
     }
 }

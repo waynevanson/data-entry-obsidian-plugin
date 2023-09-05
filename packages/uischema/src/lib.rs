@@ -1,5 +1,6 @@
 mod config;
 mod optics;
+mod optics_js;
 mod output;
 mod utils;
 
