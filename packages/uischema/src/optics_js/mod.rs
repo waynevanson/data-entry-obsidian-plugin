@@ -1,4 +1,4 @@
-use crate::optics::*;
+use optics::*;
 use serde_json::{Map, Number, Value as JsonValue};
 
 pub struct JsonNull;

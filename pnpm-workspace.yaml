@@ -1,2 +1,4 @@
 packages:
-  - 'packages/*'
+  - 'packages/data-entry'
+  - 'packages/uischema'
+  - 'packages/obsidian-mocks'
