@@ -94,7 +94,7 @@ impl OptionalRef for JsonIndex {
         source.get(self.index).cloned()
     }
 
-    fn set_ref(&self, mut source: Self::Source, target: Self::Target) -> Self::Source {
+    fn set_or_replace_ref(&self, mut source: Self::Source, target: Self::Target) -> Self::Source {
         match source.get_mut(self.index) {
             Some(value) => {
                 *value = target;
@@ -135,7 +135,7 @@ impl OptionalRef for JsonProperty {
         source.get(&self.property).cloned()
     }
 
-    fn set_ref(&self, mut source: Self::Source, target: Self::Target) -> Self::Source {
+    fn set_or_replace_ref(&self, mut source: Self::Source, target: Self::Target) -> Self::Source {
         match source.get_mut(&self.property) {
             Some(value) => {
                 *value = target;

@@ -8,16 +8,6 @@ pub trait LensRef {
     fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source;
 }
 
-pub trait LensMut: LensRef {
-    fn get_mut(&mut self, source: Self::Source) -> Self::Target;
-    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source;
-}
-
-pub trait Lens: LensMut {
-    fn get(self, source: Self::Source) -> Self::Target;
-    fn set(&mut self, source: Self::Source, target: Self::Target) -> Self::Source;
-}
-
 pub struct LensId<S> {
     phantom: PhantomData<S>,
 }
@@ -98,21 +88,6 @@ where
     }
 }
 
-impl<L, F, G, A, B> LensMut for LensInvariantMap<L, F, G>
-where
-    L: LensMut<Target = A>,
-    F: Fn(A) -> B,
-    G: Fn(B) -> A,
-{
-    fn get_mut(&mut self, source: Self::Source) -> Self::Target {
-        (self.covariant)(self.lens.get_ref(source))
-    }
-
-    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
-        self.lens.set_ref(source, (self.contravariant)(target))
-    }
-}
-
 pub struct LensCompose<I, V> {
     first: I,
     second: V,
@@ -167,22 +142,5 @@ where
         let a = self.first.get_ref(source.clone());
         let a = self.second.set_ref(a, target);
         self.first.set_ref(source, a)
-    }
-}
-
-impl<I, V, A, B, C> LensMut for LensCompose<I, V>
-where
-    I: LensMut<Source = A, Target = B>,
-    V: LensMut<Source = B, Target = C>,
-    A: Clone,
-{
-    fn get_mut(&mut self, source: Self::Source) -> Self::Target {
-        self.second.get_mut(self.first.get_ref(source))
-    }
-
-    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
-        let a = self.first.get_mut(source.clone());
-        let a = self.second.set_mut(a, target);
-        self.first.set_mut(source, a)
     }
 }

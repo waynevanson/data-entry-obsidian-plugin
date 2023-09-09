@@ -1,5 +1,8 @@
+use jmespath::ast::Ast;
+use optics::TraversalRef;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 pub trait SchemaReference {
     fn into_jsme_query(self) -> String;
@@ -159,8 +162,10 @@ pub fn get_jmespath_queries(uischemable: UISchemable) -> Vec<String> {
 
 // fn from_jmes_ast_to_traversal(jmes_ast: Ast) -> impl TraversalRef<Source = Value, Target = Value> {
 //     match jmes_ast {
+//         // todo - compose the rest!
 //         Ast::And { lhs, rhs, .. } => from_jmes_ast_to_traversal(*lhs),
-//         Ast::Identity { .. } => TraversalConstructor::<Value, Option<Value>>::new(),
+//         // Ast::Identity { .. } => TraversalSingle::<Value>::new(),
+//         _ => todo!(),
 //     }
 // }
 

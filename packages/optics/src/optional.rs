@@ -5,17 +5,34 @@ pub trait OptionalRef {
     type Target;
 
     fn get_optional_ref(&self, source: Self::Source) -> Option<Self::Target>;
-    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source;
-}
+    fn set_or_replace_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source;
 
-pub trait OptionalMut: OptionalRef {
-    fn get_optional_mut(&mut self, source: Self::Source) -> Option<Self::Target>;
-    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source;
-}
+    fn modify(
+        &self,
+        source: Self::Source,
+        modify: impl Fn(Self::Target) -> Self::Target,
+    ) -> Self::Source
+    where
+        Self::Source: Clone,
+    {
+        match self.get_optional_ref(source.clone()) {
+            None => source,
+            Some(target) => self.set_or_replace_ref(source, modify(target)),
+        }
+    }
 
-pub trait Optional: OptionalMut {
-    fn get_optional(&self, source: Self::Source) -> Option<Self::Target>;
-    fn set_mut(self, target: Self::Target) -> Self::Source;
+    fn modify_only(
+        &self,
+        source: Self::Source,
+        modify: impl Fn(Self::Target) -> Self::Target,
+    ) -> Option<Self::Source>
+    where
+        Self::Source: Clone,
+    {
+        self.get_optional_ref(source.clone())
+            .map(modify)
+            .map(|target| self.set_or_replace_ref(source, target))
+    }
 }
 
 pub struct OptionalId<S> {
@@ -38,17 +55,7 @@ impl<S> OptionalRef for OptionalId<S> {
         Some(source)
     }
 
-    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
-        target
-    }
-}
-
-impl<S> OptionalMut for OptionalId<S> {
-    fn get_optional_mut(&mut self, source: Self::Source) -> Option<Self::Target> {
-        Some(source)
-    }
-
-    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
+    fn set_or_replace_ref(&self, _source: Self::Source, target: Self::Target) -> Self::Source {
         target
     }
 }
@@ -77,27 +84,8 @@ where
         }
     }
 
-    fn set_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
-        self.optional.set_ref(source, (self.contravariant)(target))
-    }
-}
-
-impl<O, F, G, S, A, B> OptionalMut for OptionalInvariantMap<O, F, G>
-where
-    O: OptionalMut<Source = S, Target = A>,
-    F: Fn(A) -> B,
-    G: Fn(B) -> A,
-{
-    fn get_optional_mut(&mut self, source: Self::Source) -> Option<Self::Target> {
-        // Option::map is FnOnce, not Fn
-        #[allow(clippy::manual_map)]
-        match self.optional.get_optional_ref(source) {
-            Some(a) => Some((self.covariant)(a)),
-            None => None,
-        }
-    }
-
-    fn set_mut(&mut self, source: Self::Source, target: Self::Target) -> Self::Source {
-        self.optional.set_mut(source, (self.contravariant)(target))
+    fn set_or_replace_ref(&self, source: Self::Source, target: Self::Target) -> Self::Source {
+        self.optional
+            .set_or_replace_ref(source, (self.contravariant)(target))
     }
 }

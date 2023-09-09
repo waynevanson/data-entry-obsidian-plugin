@@ -1,13 +1,14 @@
-use super::fold::{Fold, FoldMut, FoldRef};
+pub trait GetterRef {
+    type Source;
+    type Target;
 
-pub trait GetterRef: FoldRef {
     fn get_ref(&self, source: Self::Source) -> Self::Target;
 }
 
-pub trait GetterMut: GetterRef + FoldMut {
+pub trait GetterMut: GetterRef {
     fn get_mut(&mut self, source: Self::Source) -> Self::Target;
 }
 
-pub trait Getter: GetterMut + Fold {
+pub trait Getter: GetterMut {
     fn get(self, source: Self::Source) -> Self::Target;
 }
