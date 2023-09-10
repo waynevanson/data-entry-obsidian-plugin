@@ -15,9 +15,9 @@ impl<'context> Traversal<'context> {
         Self { ast, context }
     }
 
-    pub fn set(mut self, source: Value, target: Value) -> Option<Value> {
+    pub fn modify(mut self, source: Value, modify: impl Fn(Value) -> Value) -> Option<Value> {
         match self.ast {
-            Ast::Identity { .. } => target.into(),
+            Ast::Identity { .. } => Some(modify(source)),
             Ast::Index { idx, .. } => {
                 let mut array = source.as_array()?.to_owned();
                 let index = if idx >= 0 {
@@ -25,32 +25,34 @@ impl<'context> Traversal<'context> {
                 } else {
                     idx + (array.len() as i32)
                 };
-                let item = array.get_mut(index as usize)?;
-                *item = target;
+                let target = array.get(index as usize)?.to_owned();
+                let element = array.get_mut(index as usize)?;
+                *element = modify(target);
                 Some(array.into())
             }
             Ast::Field { name, .. } => {
                 let mut object = source.as_object()?.to_owned();
-                let item = object.get_mut(&name)?;
-                *item = target;
+                let target = object.get(&name)?.to_owned();
+                let element = object.get_mut(&name)?;
+                *element = modify(target);
                 Some(object.into())
             }
             Ast::And { lhs, rhs, .. } => {
                 let data = Rc::new(source.clone().try_into().ok()?);
                 let interpretted = interpret(&data, &lhs, &mut self.context).ok()?;
-                let ast = if !interpretted.is_truthy() {
-                    *lhs
-                } else {
-                    *rhs
-                };
+                let ast = *if !interpretted.is_truthy() { lhs } else { rhs };
                 Traversal {
                     ast,
                     context: self.context,
                 }
-                .set(source, target)
+                .modify(source, modify)
             }
             _ => todo!(),
         }
+    }
+
+    pub fn set(self, source: Value, target: Value) -> Option<Value> {
+        self.modify(source, |_| target.clone())
     }
 }
 #[cfg(test)]
