@@ -1,5 +1,4 @@
 use jmespath::ast::Ast;
-use optics::TraversalRef;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -12,8 +11,7 @@ pub trait SchemaReference {
 #[serde(untagged)]
 pub enum Element<A = ()> {
     Object {
-        #[serde(rename = "$ref")]
-        reference: String,
+        scope: String,
         #[serde(alias = "props")]
         options: Option<A>,
     },
@@ -24,7 +22,9 @@ impl<A> SchemaReference for Element<A> {
     fn into_jsme_query(self) -> String {
         match self {
             Element::Expression(reference) => reference,
-            Element::Object { reference, .. } => reference,
+            Element::Object {
+                scope: reference, ..
+            } => reference,
         }
     }
 }
@@ -133,8 +133,7 @@ pub enum Component {
 pub enum UISchemable {
     One(Box<Component>),
     Many {
-        #[serde(rename = "$ref")]
-        reference: String,
+        scope: String,
         array: Box<UISchemable>,
     },
 }
@@ -144,9 +143,9 @@ pub struct UISchema(UISchemable);
 
 pub fn get_jmespath_queries(uischemable: UISchemable) -> Vec<String> {
     match uischemable {
-        UISchemable::Many { reference, array } => {
+        UISchemable::Many { scope, array } => {
             let mut scopes = get_jmespath_queries(*array);
-            scopes.push(reference);
+            scopes.push(scope);
             scopes
         }
         UISchemable::One(component) => match *component {
@@ -160,25 +159,23 @@ pub fn get_jmespath_queries(uischemable: UISchemable) -> Vec<String> {
     }
 }
 
-// fn from_jmes_ast_to_traversal(jmes_ast: Ast) -> impl TraversalRef<Source = Value, Target = Value> {
-//     match jmes_ast {
-//         // todo - compose the rest!
-//         Ast::And { lhs, rhs, .. } => from_jmes_ast_to_traversal(*lhs),
-//         // Ast::Identity { .. } => TraversalSingle::<Value>::new(),
-//         _ => todo!(),
-//     }
-// }
+#[cfg(test)]
+mod test {
+    use std::rc::Rc;
 
-// how could I use jmespath to create optics?
-// thought I'd be able to traverse the AST, which is possible.
-// seems like a lot of work.
-// is there a computed version of the expression where the pipe operators are compiled (required?)
-// AST -> Optics for JSONValue
-
-//
-// Instead of referencing the schema for the optic, let's use the data because that's what really matters.
-// if it doesn't match what it's supposed to then we'll do the thing.
-pub enum ScopePathStep {
-    ObjectByProperty(String),
-    ArrayElements,
+    #[test]
+    fn test() {
+        let expression = jmespath::compile("@").unwrap();
+        let variable = jmespath::Variable::from_json(r#"{ "hello": "world" }"#).unwrap();
+        let result = expression.search(variable).unwrap();
+        let keys = result.as_object().unwrap().keys().collect::<Vec<_>>();
+        let values = result.as_object().unwrap().values().collect::<Vec<_>>();
+        assert_eq!(keys, vec![&"hello".to_string()]);
+        assert_eq!(
+            values,
+            vec![&Rc::new(
+                jmespath::Variable::from_json(r#""world""#).unwrap()
+            )]
+        );
+    }
 }

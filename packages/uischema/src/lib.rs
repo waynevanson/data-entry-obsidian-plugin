@@ -1,5 +1,4 @@
 mod config;
-mod optics_js;
 mod utils;
 
 pub use config::*;
