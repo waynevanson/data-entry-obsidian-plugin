@@ -47,6 +47,16 @@ impl<'context> Traversal<'context> {
                 }
                 .modify(source, modify)
             }
+            Ast::Or { lhs, rhs, .. } => {
+                let data = Rc::new(source.clone().try_into().ok()?);
+                let interpretted = interpret(&data, &lhs, &mut self.context).ok()?;
+                let ast = *if interpretted.is_truthy() { lhs } else { rhs };
+                Traversal {
+                    ast,
+                    context: self.context,
+                }
+                .modify(source, modify)
+            }
             _ => todo!(),
         }
     }
@@ -134,4 +144,40 @@ mod test {
         let result: Value = traversal.set(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
+
+    #[test]
+    fn or_left() {
+        let runtime = Runtime::new();
+        let traversal = Traversal::new(r#"hello || goodbye"#, &runtime);
+
+        let source = json!({ "hello": "", "goodbye": "earth" });
+        let target = json!("sup");
+        let expected = json!({ "hello": "", "goodbye": target});
+        let result: Value = traversal.set(source, target.clone()).unwrap();
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn or_right() {
+        let runtime = Runtime::new();
+        let traversal = Traversal::new(r#"hello || goodbye"#, &runtime);
+
+        let source = json!({ "hello": "world", "goodbye": "earth" });
+        let target = json!("sup");
+        let expected = json!({ "hello": target, "goodbye": "earth" });
+        let result: Value = traversal.set(source, target.clone()).unwrap();
+        assert_eq!(result, expected);
+    }
+
+    // #[test]
+    // fn or_null() {
+    //     let runtime = Runtime::new();
+    //     let traversal = Traversal::new(r#"hello || goodbye"#, &runtime);
+
+    //     let source = json!({ "hello": "world", "goodbye": "earth" });
+    //     let target = json!("sup");
+    //     let expected = json!({ "hello": "world", "goodbye": target });
+    //     let result: Value = traversal.set(source, target.clone()).unwrap();
+    //     assert_eq!(result, expected);
+    // }
 }
