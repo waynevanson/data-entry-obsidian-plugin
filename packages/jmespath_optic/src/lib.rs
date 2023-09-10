@@ -1,7 +1,6 @@
-use std::{default, rc::Rc};
-
-use jmespath::{ast::Ast, interpreter::interpret, parse, runtime, Context, Runtime};
+use jmespath::{ast::Ast, interpreter::interpret, parse, Context, Runtime};
 use serde_json::Value;
+use std::rc::Rc;
 
 pub struct Traversal<'context> {
     ast: Ast,

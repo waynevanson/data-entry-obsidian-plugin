@@ -1,7 +1,7 @@
-use jmespath::ast::Ast;
+
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+
 
 pub trait SchemaReference {
     fn into_jsme_query(self) -> String;
