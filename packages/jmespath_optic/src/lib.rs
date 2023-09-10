@@ -50,13 +50,25 @@ mod test {
 
     // todo - negative indexes
     #[test]
-    fn index() {
+    fn index_positive() {
         let expression = jmespath::compile("[0]").unwrap();
         let ast = expression.as_ast();
 
         let source = json!(["world"]);
         let target = json!("sup");
         let expected = json!([target]);
+        let result: Value = ast.modify_json_value(source, target.clone()).unwrap();
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn index_negative() {
+        let expression = jmespath::compile("[-1]").unwrap();
+        let ast = expression.as_ast();
+
+        let source = json!(["world", "earth", "globe"]);
+        let target = json!("sup");
+        let expected = json!(["world", "earth", target]);
         let result: Value = ast.modify_json_value(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
