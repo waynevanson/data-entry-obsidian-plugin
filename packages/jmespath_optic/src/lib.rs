@@ -21,6 +21,12 @@ impl JmesTraversal for &Ast {
                 *item = target;
                 Some(array.into())
             }
+            Ast::Field { name, .. } => {
+                let mut object = source.as_object()?.to_owned();
+                let item = object.get_mut(name)?;
+                *item = target;
+                Some(object.into())
+            }
             _ => todo!(),
         }
     }
@@ -42,6 +48,7 @@ mod test {
         assert_eq!(result, target);
     }
 
+    // todo - negative indexes
     #[test]
     fn index() {
         let expression = jmespath::compile("[0]").unwrap();
@@ -50,6 +57,19 @@ mod test {
         let source = json!(["world"]);
         let target = json!("sup");
         let expected = json!([target]);
+        let result: Value = ast.modify_json_value(source, target.clone()).unwrap();
+        assert_eq!(result, expected);
+    }
+
+    // todo - negative indexes
+    #[test]
+    fn field() {
+        let expression = jmespath::compile("hello").unwrap();
+        let ast = expression.as_ast();
+
+        let source = json!({ "hello": "world" });
+        let target = json!("sup");
+        let expected = json!({ "hello": target });
         let result: Value = ast.modify_json_value(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
