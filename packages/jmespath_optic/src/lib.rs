@@ -5,6 +5,7 @@ use std::rc::Rc;
 pub struct Traversal<'context> {
     ast: Ast,
     context: Context<'context>,
+    expression: String,
 }
 
 impl<'context> Traversal<'context> {
@@ -12,16 +13,28 @@ impl<'context> Traversal<'context> {
         let context = Context::new(expression, runtime);
         let ast = parse(expression).unwrap();
 
-        Self { ast, context }
+        Self {
+            ast,
+            context,
+            expression: expression.to_string(),
+        }
     }
 
-    pub fn modify_option(
+    pub fn from_ast(&'context self, ast: Ast) -> Self {
+        Self {
+            ast,
+            context: Context::new(&self.expression, self.context.runtime),
+            expression: self.expression.to_owned(),
+        }
+    }
+
+    pub fn modify_option_kleisli(
         mut self,
         source: Value,
-        modify: impl Fn(Value) -> Value,
+        modify: impl Fn(Value) -> Option<Value>,
     ) -> Option<Value> {
         match self.ast {
-            Ast::Identity { .. } => Some(modify(source)),
+            Ast::Identity { .. } => modify(source),
             Ast::Index { idx, .. } => {
                 let mut array = source.as_array()?.to_owned();
                 let index = if idx >= 0 {
@@ -31,14 +44,14 @@ impl<'context> Traversal<'context> {
                 };
                 let target = array.get(index as usize)?.to_owned();
                 let element = array.get_mut(index as usize)?;
-                *element = modify(target);
+                *element = modify(target)?;
                 Some(array.into())
             }
             Ast::Field { name, .. } => {
                 let mut object = source.as_object()?.to_owned();
                 let target = object.get(&name)?.to_owned();
                 let element = object.get_mut(&name)?;
-                *element = modify(target);
+                *element = modify(target)?;
                 Some(object.into())
             }
             Ast::And { lhs, rhs, .. } => {
@@ -48,8 +61,9 @@ impl<'context> Traversal<'context> {
                 Traversal {
                     ast,
                     context: self.context,
+                    expression: self.expression,
                 }
-                .modify_option(source, modify)
+                .modify_option_kleisli(source, modify)
             }
             Ast::Or { lhs, rhs, .. } => {
                 let data = Rc::new(source.clone().try_into().ok()?);
@@ -64,9 +78,11 @@ impl<'context> Traversal<'context> {
                 Traversal {
                     ast,
                     context: self.context,
+                    expression: self.expression,
                 }
-                .modify_option(source, modify)
+                .modify_option_kleisli(source, modify)
             }
+            Ast::Comparison { .. } => unimplemented!(),
             _ => todo!(),
         }
     }
@@ -76,11 +92,11 @@ impl<'context> Traversal<'context> {
     }
 
     pub fn set_option(self, source: Value, target: Value) -> Option<Value> {
-        self.modify_option(source, |_| target.clone())
+        self.modify_option_kleisli(source, |_| Some(target.clone()))
     }
 
-    pub fn modify(self, source: Value, target: Value) -> Value {
-        self.modify_option(source.clone(), |_| target.clone())
+    pub fn modify(self, source: Value, modify: impl Fn(Value) -> Value) -> Value {
+        self.modify_option_kleisli(source.clone(), |target| Some(modify(target)))
             .unwrap_or(source)
     }
 }
