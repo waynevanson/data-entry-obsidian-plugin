@@ -15,7 +15,11 @@ impl<'context> Traversal<'context> {
         Self { ast, context }
     }
 
-    pub fn modify(mut self, source: Value, modify: impl Fn(Value) -> Value) -> Option<Value> {
+    pub fn modify_option(
+        mut self,
+        source: Value,
+        modify: impl Fn(Value) -> Value,
+    ) -> Option<Value> {
         match self.ast {
             Ast::Identity { .. } => Some(modify(source)),
             Ast::Index { idx, .. } => {
@@ -45,24 +49,39 @@ impl<'context> Traversal<'context> {
                     ast,
                     context: self.context,
                 }
-                .modify(source, modify)
+                .modify_option(source, modify)
             }
             Ast::Or { lhs, rhs, .. } => {
                 let data = Rc::new(source.clone().try_into().ok()?);
                 let interpretted = interpret(&data, &lhs, &mut self.context).ok()?;
-                let ast = *if interpretted.is_truthy() { lhs } else { rhs };
+                let ast = *if interpretted.is_truthy() {
+                    Some(lhs)
+                } else if interpret(&data, &rhs, &mut self.context).ok()?.is_truthy() {
+                    Some(rhs)
+                } else {
+                    None
+                }?;
                 Traversal {
                     ast,
                     context: self.context,
                 }
-                .modify(source, modify)
+                .modify_option(source, modify)
             }
             _ => todo!(),
         }
     }
 
-    pub fn set(self, source: Value, target: Value) -> Option<Value> {
-        self.modify(source, |_| target.clone())
+    pub fn set(self, source: Value, target: Value) -> Value {
+        self.set_option(source.clone(), target).unwrap_or(source)
+    }
+
+    pub fn set_option(self, source: Value, target: Value) -> Option<Value> {
+        self.modify_option(source, |_| target.clone())
+    }
+
+    pub fn modify(self, source: Value, target: Value) -> Value {
+        self.modify_option(source.clone(), |_| target.clone())
+            .unwrap_or(source)
     }
 }
 #[cfg(test)]
@@ -79,7 +98,7 @@ mod test {
         let target = json!("my man");
         let expected = target.clone();
 
-        let result: Value = traversal.set(source, target).unwrap();
+        let result: Value = traversal.set_option(source, target).unwrap();
         assert_eq!(result, expected);
     }
 
@@ -93,7 +112,7 @@ mod test {
         let target = json!("sup");
         let expected = json!([target]);
 
-        let result: Value = traversal.set(source, target.clone()).unwrap();
+        let result: Value = traversal.set_option(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
 
@@ -105,7 +124,7 @@ mod test {
         let source = json!(["world", "earth", "globe"]);
         let target = json!("sup");
         let expected = json!(["world", "earth", target]);
-        let result: Value = traversal.set(source, target.clone()).unwrap();
+        let result: Value = traversal.set_option(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
 
@@ -117,7 +136,7 @@ mod test {
         let source = json!({ "hello": "world" });
         let target = json!("sup");
         let expected = json!({ "hello": target });
-        let result: Value = traversal.set(source, target.clone()).unwrap();
+        let result: Value = traversal.set_option(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
 
@@ -129,7 +148,7 @@ mod test {
         let source = json!({ "hello": "", "goodbye": "earth" });
         let target = json!("sup");
         let expected = json!({ "hello": target, "goodbye": "earth"});
-        let result: Value = traversal.set(source, target.clone()).unwrap();
+        let result: Value = traversal.set_option(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
 
@@ -141,7 +160,7 @@ mod test {
         let source = json!({ "hello": "world", "goodbye": "earth" });
         let target = json!("sup");
         let expected = json!({ "hello": "world", "goodbye": target });
-        let result: Value = traversal.set(source, target.clone()).unwrap();
+        let result: Value = traversal.set_option(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
 
@@ -153,7 +172,7 @@ mod test {
         let source = json!({ "hello": "", "goodbye": "earth" });
         let target = json!("sup");
         let expected = json!({ "hello": "", "goodbye": target});
-        let result: Value = traversal.set(source, target.clone()).unwrap();
+        let result: Value = traversal.set_option(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
 
@@ -165,19 +184,18 @@ mod test {
         let source = json!({ "hello": "world", "goodbye": "earth" });
         let target = json!("sup");
         let expected = json!({ "hello": target, "goodbye": "earth" });
-        let result: Value = traversal.set(source, target.clone()).unwrap();
+        let result: Value = traversal.set_option(source, target.clone()).unwrap();
         assert_eq!(result, expected);
     }
 
-    // #[test]
-    // fn or_null() {
-    //     let runtime = Runtime::new();
-    //     let traversal = Traversal::new(r#"hello || goodbye"#, &runtime);
+    #[test]
+    fn or_null() {
+        let runtime = Runtime::new();
+        let traversal = Traversal::new(r#"hello || goodbye"#, &runtime);
 
-    //     let source = json!({ "hello": "world", "goodbye": "earth" });
-    //     let target = json!("sup");
-    //     let expected = json!({ "hello": "world", "goodbye": target });
-    //     let result: Value = traversal.set(source, target.clone()).unwrap();
-    //     assert_eq!(result, expected);
-    // }
+        let source = json!({ "hello": "", "goodbye": "" });
+        let target = json!("sup");
+        let result: Option<Value> = traversal.set_option(source, target.clone());
+        assert_eq!(result, None);
+    }
 }
