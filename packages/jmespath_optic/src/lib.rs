@@ -256,4 +256,26 @@ mod test {
         );
         assert_eq!(result, None);
     }
+
+    #[test]
+    fn subexpr_pipe() {
+        let runtime = Runtime::new();
+        let expression = "hello | goodbye";
+        let ast = parse(expression).unwrap();
+        let context = Context::new(expression, &runtime);
+
+        let source = json!({ "hello": { "goodbye": "earth" } });
+        let target = json!("sup");
+        let result = modify_option_kleisli(
+            ast,
+            context,
+            expression,
+            source,
+            Box::new(&|_| Some(target.clone())),
+        )
+        .unwrap();
+
+        let expected = json!({ "hello": { "goodbye": target}});
+        assert_eq!(result, expected);
+    }
 }
