@@ -66,6 +66,21 @@ pub fn modify_option_kleisli(
     }
 }
 
+pub fn modify(
+    ast: Ast,
+    expression: &str,
+    source: Value,
+    modify: impl Fn(Value) -> Value,
+) -> Option<Value> {
+    modify_option_kleisli(
+        ast,
+        Context::new(&expression, &DEFAULT_RUNTIME),
+        expression,
+        source,
+        Box::new(&|target| Some(modify(target))),
+    )
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
