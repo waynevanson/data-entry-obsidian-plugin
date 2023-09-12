@@ -7,10 +7,10 @@ pub fn modify_option_kleisli(
     mut context: Context,
     expression: &str,
     source: Value,
-    modify: Box<&dyn Fn(Value) -> Option<Value>>,
+    kleisli: Box<&dyn Fn(Value) -> Option<Value>>,
 ) -> Option<Value> {
     match ast {
-        Ast::Identity { .. } => modify(source),
+        Ast::Identity { .. } => kleisli(source),
         Ast::Index { idx, .. } => {
             let mut array = source.as_array()?.to_owned();
             let index = if idx >= 0 {
@@ -20,14 +20,14 @@ pub fn modify_option_kleisli(
             };
             let target = array.get(index as usize)?.to_owned();
             let element = array.get_mut(index as usize)?;
-            *element = modify(target)?;
+            *element = kleisli(target)?;
             Some(array.into())
         }
         Ast::Field { name, .. } => {
             let mut object = source.as_object()?.to_owned();
             let target = object.get(&name)?.to_owned();
             let element = object.get_mut(&name)?;
-            *element = modify(target)?;
+            *element = kleisli(target)?;
             Some(object.into())
         }
         Ast::And { lhs, rhs, .. } => {
@@ -35,7 +35,7 @@ pub fn modify_option_kleisli(
             let interpretted = interpret(&data, &lhs, &mut context).ok()?;
             let ast = *if !interpretted.is_truthy() { lhs } else { rhs };
 
-            modify_option_kleisli(ast, context, expression, source, modify)
+            modify_option_kleisli(ast, context, expression, source, kleisli)
         }
         Ast::Or { lhs, rhs, .. } => {
             let data = Rc::new(source.clone().try_into().ok()?);
@@ -47,7 +47,7 @@ pub fn modify_option_kleisli(
             } else {
                 None
             }?;
-            modify_option_kleisli(ast, context, expression, source, modify)
+            modify_option_kleisli(ast, context, expression, source, kleisli)
         }
         Ast::Subexpr { lhs, rhs, .. } => {
             let closure = |target: Value| {
@@ -56,7 +56,7 @@ pub fn modify_option_kleisli(
                     Context::new(expression, &DEFAULT_RUNTIME),
                     expression,
                     target,
-                    Box::new(modify.as_ref()),
+                    Box::new(kleisli.as_ref()),
                 )
             };
             modify_option_kleisli(*lhs, context, expression, source, Box::new(&closure))
