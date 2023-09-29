@@ -2,83 +2,101 @@ use jmespath::{ast::Ast, interpreter::interpret, Context, DEFAULT_RUNTIME};
 use serde_json::Value;
 use std::rc::Rc;
 
-pub fn modify_option_kleisli(
-    ast: Ast,
-    mut context: Context,
+pub type Kleisi<'a, A> = Box<&'a dyn Fn(A) -> Option<A>>;
+
+pub fn modify_option(
+    ast: &Ast,
+    context: &mut Context,
     expression: &str,
     source: Value,
-    kleisli: Box<&dyn Fn(Value) -> Option<Value>>,
+    kleisli: Kleisi<Value>,
 ) -> Option<Value> {
     match ast {
         Ast::Identity { .. } => kleisli(source),
-        Ast::Index { idx, .. } => {
+        Ast::Index { ref idx, .. } => {
             let mut array = source.as_array()?.to_owned();
-            let index = if idx >= 0 {
-                idx
+            let index = if idx >= &0 {
+                *idx
             } else {
-                idx + (array.len() as i32)
+                *idx + (array.len() as i32)
             };
             let target = array.get(index as usize)?.to_owned();
             let element = array.get_mut(index as usize)?;
             *element = kleisli(target)?;
             Some(array.into())
         }
-        Ast::Field { name, .. } => {
+        Ast::Field { ref name, .. } => {
             let mut object = source.as_object()?.to_owned();
-            let target = object.get(&name)?.to_owned();
-            let element = object.get_mut(&name)?;
+            let target = object.get(name)?.to_owned();
+            let element = object.get_mut(name)?;
             *element = kleisli(target)?;
             Some(object.into())
         }
-        Ast::And { lhs, rhs, .. } => {
+        Ast::And {
+            ref lhs, ref rhs, ..
+        } => {
             let data = Rc::new(source.clone().try_into().ok()?);
-            let interpretted = interpret(&data, &lhs, &mut context).ok()?;
-            let ast = *if !interpretted.is_truthy() { lhs } else { rhs };
+            let interpretted = interpret(&data, &data, &lhs, context).ok()?;
+            let ast = if !interpretted.is_truthy() { lhs } else { rhs };
 
-            modify_option_kleisli(ast, context, expression, source, kleisli)
+            modify_option(&ast, context, expression, source, kleisli)
         }
-        Ast::Or { lhs, rhs, .. } => {
+        Ast::Or {
+            ref lhs, ref rhs, ..
+        } => {
             let data = Rc::new(source.clone().try_into().ok()?);
-            let interpretted = interpret(&data, &lhs, &mut context).ok()?;
-            let ast = *if interpretted.is_truthy() {
+            let interpretted = interpret(&data, &data, &lhs, context).ok()?;
+            let ast = if interpretted.is_truthy() {
                 Some(lhs)
-            } else if interpret(&data, &rhs, &mut context).ok()?.is_truthy() {
+            } else if interpret(&data, &data, &rhs, context).ok()?.is_truthy() {
                 Some(rhs)
             } else {
                 None
             }?;
-            modify_option_kleisli(ast, context, expression, source, kleisli)
+            modify_option(ast, context, expression, source, kleisli)
         }
-        Ast::Subexpr { lhs, rhs, .. } => {
+        Ast::Subexpr {
+            ref lhs, ref rhs, ..
+        } => {
             let closure = |target: Value| {
-                modify_option_kleisli(
-                    *rhs.clone(),
-                    Context::new(expression, &DEFAULT_RUNTIME),
+                modify_option(
+                    &*rhs.clone(),
+                    &mut Context::new(expression, &DEFAULT_RUNTIME),
                     expression,
                     target,
                     Box::new(kleisli.as_ref()),
                 )
             };
-            modify_option_kleisli(*lhs, context, expression, source, Box::new(&closure))
+            modify_option(lhs, context, expression, source, Box::new(&closure))
         }
         Ast::Comparison { .. } => unimplemented!(),
         _ => todo!(),
     }
 }
 
-pub fn modify(
+pub struct Traversal<'a> {
+    expression: &'a str,
     ast: Ast,
-    expression: &str,
-    source: Value,
-    modify: impl Fn(Value) -> Value,
-) -> Option<Value> {
-    modify_option_kleisli(
-        ast,
-        Context::new(&expression, &DEFAULT_RUNTIME),
-        expression,
-        source,
-        Box::new(&|target| Some(modify(target))),
-    )
+}
+
+impl<'a> Traversal<'a> {
+    pub fn new(expression: &'a str) -> Self {
+        let ast = jmespath::parse(expression).unwrap();
+        Self { expression, ast }
+    }
+
+    pub fn modify_option(&self, source: Value, kleisli: Kleisi<Value>) -> Option<Value> {
+        let context = &mut Context::new(&self.expression, &DEFAULT_RUNTIME);
+        modify_option(&self.ast, context, &self.expression, source, kleisli)
+    }
+
+    pub fn modify(&self, source: Value, modify: impl Fn(Value) -> Value) -> Option<Value> {
+        self.modify_option(source, Box::new(&|target| Some(modify(target))))
+    }
+
+    pub fn put(&self, source: Value, target: Value) -> Option<Value> {
+        self.modify_option(source, Box::new(&|_| Some(target.clone())))
+    }
 }
 
 #[cfg(test)]
@@ -92,14 +110,13 @@ mod test {
         let runtime = &DEFAULT_RUNTIME;
         let expression = "@";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, runtime);
 
         let source = json!({ "hello": "world"});
         let target = json!("my man");
         let expected = target.clone();
         let m = move |_: Value| Some(target.clone());
-        let result: Value =
-            modify_option_kleisli(ast, context, expression, source, Box::new(&m)).unwrap();
+        let result: Value = modify_option(&ast, context, expression, source, Box::new(&m)).unwrap();
         assert_eq!(result, expected);
     }
 
@@ -108,14 +125,14 @@ mod test {
         let runtime = Runtime::new();
         let expression = "[0]";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, &runtime);
 
         let source = json!(["world"]);
         let target = json!("sup");
         let expected = json!([target]);
 
-        let result: Value = modify_option_kleisli(
-            ast,
+        let result: Value = modify_option(
+            &ast,
             context,
             expression,
             source,
@@ -130,13 +147,13 @@ mod test {
         let runtime = Runtime::new();
         let expression = "[-1]";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, &runtime);
 
         let source = json!(["world", "earth", "globe"]);
         let target = json!("sup");
         let expected = json!(["world", "earth", target]);
-        let result: Value = modify_option_kleisli(
-            ast,
+        let result: Value = modify_option(
+            &ast,
             context,
             expression,
             source,
@@ -151,13 +168,13 @@ mod test {
         let runtime = Runtime::new();
         let expression = "hello";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, &runtime);
 
         let source = json!({ "hello": "world" });
         let target = json!("sup");
         let expected = json!({ "hello": target });
-        let result: Value = modify_option_kleisli(
-            ast,
+        let result: Value = modify_option(
+            &ast,
             context,
             expression,
             source,
@@ -172,13 +189,13 @@ mod test {
         let runtime = Runtime::new();
         let expression = "hello && goobye";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, &runtime);
 
         let source = json!({ "hello": "", "goodbye": "earth" });
         let target = json!("sup");
         let expected = json!({ "hello": target, "goodbye": "earth"});
-        let result: Value = modify_option_kleisli(
-            ast,
+        let result: Value = modify_option(
+            &ast,
             context,
             expression,
             source,
@@ -193,13 +210,13 @@ mod test {
         let runtime = Runtime::new();
         let expression = "hello && goodbye";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, &runtime);
 
         let source = json!({ "hello": "world", "goodbye": "earth" });
         let target = json!("sup");
         let expected = json!({ "hello": "world", "goodbye": target});
-        let result: Value = modify_option_kleisli(
-            ast,
+        let result: Value = modify_option(
+            &ast,
             context,
             expression,
             source,
@@ -214,13 +231,13 @@ mod test {
         let runtime = Runtime::new();
         let expression = "hello || goodbye";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, &runtime);
 
         let source = json!({ "hello": "", "goodbye": "earth" });
         let target = json!("sup");
         let expected = json!({ "hello": "", "goodbye": target});
-        let result: Value = modify_option_kleisli(
-            ast,
+        let result: Value = modify_option(
+            &ast,
             context,
             expression,
             source,
@@ -236,13 +253,13 @@ mod test {
         let runtime = Runtime::new();
         let expression = "hello || goodbye";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, &runtime);
 
         let source = json!({ "hello": "", "goodbye": "earth" });
         let target = json!("sup");
         let expected = json!({ "hello": "", "goodbye": target });
-        let result: Value = modify_option_kleisli(
-            ast,
+        let result: Value = modify_option(
+            &ast,
             context,
             expression,
             source,
@@ -258,12 +275,12 @@ mod test {
         let runtime = Runtime::new();
         let expression = "hello || goodbye";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, &runtime);
 
         let source = json!({ "hello": "", "goodbye": "" });
         let target = json!("sup");
-        let result = modify_option_kleisli(
-            ast,
+        let result = modify_option(
+            &ast,
             context,
             expression,
             source,
@@ -277,12 +294,12 @@ mod test {
         let runtime = Runtime::new();
         let expression = "hello | goodbye";
         let ast = parse(expression).unwrap();
-        let context = Context::new(expression, &runtime);
+        let context = &mut Context::new(expression, &runtime);
 
         let source = json!({ "hello": { "goodbye": "earth" } });
         let target = json!("sup");
-        let result = modify_option_kleisli(
-            ast,
+        let result = modify_option(
+            &ast,
             context,
             expression,
             source,
