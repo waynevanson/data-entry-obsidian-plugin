@@ -1,0 +1,6 @@
+{
+  "name": "@waynevanson/jmespath-traversal",
+  "main": "lib.js",
+  "type": "module",
+  "types": "lib.d.ts"
+}

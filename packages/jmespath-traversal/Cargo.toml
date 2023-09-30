@@ -1,5 +1,5 @@
 [package]
-name = "jmespath_optic"
+name = "jmespath_traversal"
 version = "0.1.0"
 edition = "2021"
 

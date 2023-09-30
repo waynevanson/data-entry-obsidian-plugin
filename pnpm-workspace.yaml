@@ -1,5 +1,4 @@
 packages:
   - 'packages/data-entry'
-  - 'packages/uischema'
   - 'packages/obsidian-mocks'
-  - 'packages/forms'
+  - 'packages/jmespath-traversal'
