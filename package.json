@@ -1,5 +1,9 @@
 {
   "scripts": {
+    "dev": "pnpm turbo dev",
+    "watch": "pnpm turbo watch",
+    "build": "pnpm turbo build",
+    "test": "pnpm turbo test",
     "postinstall": "husky install",
     "version": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' run version",
     "release": "pnpm -r --filter '@waynevanson/obsidian-plugin-data-entry' exec semantic-release"
