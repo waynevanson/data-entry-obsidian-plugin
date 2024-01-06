@@ -4,7 +4,7 @@ An Obsidian.md plugin that turns your metadata into a form.
 
 Feel free to submit issues and discussions with your desires [here on GitHub](https://github.com/waynevanson/data-entry-obsidian-plugin/issues/new).
 
-This is a passion project used to fit my use case, but generalised enough that it could fit yours too. Show you <3 by [supporting this work](https://github.com/sponsors/waynevanson) however you can, it would be greatly appreciated!
+This is a passion project used to fit my use case, but generalised enough that it could fit yours too. Show you <3 by [supporting this work](https://github.com/sponsors/waynevanson).
 
 ## Summary
 
