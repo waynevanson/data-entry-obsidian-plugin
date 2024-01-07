@@ -6,6 +6,8 @@ Feel free to submit issues and discussions with your desires [here on GitHub](ht
 
 This is a passion project used to fit my use case, but generalised enough that it could fit yours too. Show you <3 by [supporting this work](https://github.com/sponsors/waynevanson).
 
+CUrrently haven' had a releasedue to big refactor.
+
 ## Summary
 
 - Create your datasource (frontmatter metadata within a file)
